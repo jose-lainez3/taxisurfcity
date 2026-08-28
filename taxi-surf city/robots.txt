@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://taxituncoelsalvador.com/sitemapsurfcity.xml
