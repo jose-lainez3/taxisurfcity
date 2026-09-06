@@ -3,7 +3,7 @@
   
   <!-- Página Principal (Index / Inicio) -->
   <url>
-    <loc>https://taxituncoelsalvador.com/</loc>
+    <loc>https://taxistuncoelsalvador.com/</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>1.0</priority>
@@ -11,7 +11,7 @@
   
   <!-- Página de Tours y Cotizaciones -->
   <url>
-    <loc>https://taxituncoelsalvador.com/tours.html</loc>
+    <loc>https://taxistuncoelsalvador.com/tours.html</loc>
     <lastmod>2026-08-12</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
