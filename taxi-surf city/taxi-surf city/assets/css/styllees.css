@@ -278,7 +278,7 @@ p { line-height: 1.7; margin: 0 0 16px; color: var(--text-grey); font-weight: 30
   position: relative;
   padding: 130px 0 100px;
   text-align: center;
-  background: linear-gradient(to bottom, rgba(5,5,5,0.55), var(--bg-black) 85%), url('../img/1.jpg') center/cover no-repeat;
+  background: linear-gradient(to bottom, rgba(5,5,5,0.55), var(--bg-black) 85%), url('../img/1-hero.webp') center/cover no-repeat;
 }
 .hero h1 {
   font-size: clamp(2rem, 5vw, 3.4rem);
@@ -439,7 +439,7 @@ footer {
   padding: 60px 0 28px;
 }
 .footer-grid { display: grid; grid-template-columns: 1.3fr 1fr 1fr 1fr; gap: 36px; margin-bottom: 36px; }
-.footer-grid h5 { color: #fff; font-size: 1rem; margin-bottom: 16px; }
+.footer-grid h4 { color: #fff; font-size: 1rem; margin-bottom: 16px; }
 .footer-grid ul { list-style: none; margin: 0; padding: 0; }
 .footer-grid li { margin-bottom: 10px; }
 .footer-link { color: var(--text-grey); text-decoration: none; font-weight: 300; font-size: 0.92rem; transition: color 0.25s ease; }

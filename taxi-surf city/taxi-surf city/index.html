@@ -27,9 +27,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://elfsightcdn.com" crossorigin>
-<link rel="preload" as="image" href="assets/img/1.jpg" fetchpriority="high">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link rel="preload" as="image" href="assets/img/1-hero.webp" fetchpriority="high">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap">
+<link rel="preload" as="style" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" media="print" onload="this.media='all'">
+<noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</noscript>
 <link rel="stylesheet" href="assets/css/styllees.css">
 
 <script type="application/ld+json">
@@ -111,7 +117,7 @@
 
     <div class="grid grid-3">
       <div class="card" data-reveal>
-        <img src="assets/img/aero.jpeg" alt="Traslado Aeropuerto El Salvador a Surf City" loading="lazy" decoding="async" width="400" height="220">
+        <img src="assets/img/aero.webp" alt="Traslado Aeropuerto El Salvador a Surf City" loading="lazy" decoding="async" width="400" height="220">
         <div class="card-body">
           <h3 data-i18n="servicio.aeropuerto.title">Traslados al Aeropuerto</h3>
           <p data-i18n="servicio.aeropuerto.desc">Te esperamos en el Aeropuerto Internacional de El Salvador (SAL) para llevarte directo y súper cómodo a tu destino en la costa o en San Salvador. Servicio puntual y ejecutivo.</p>
@@ -120,7 +126,7 @@
       </div>
 
       <div class="card" data-reveal>
-        <img src="assets/img/1.jpg" alt="Taxi seguro en El Tunco y La Libertad" loading="lazy" decoding="async" width="400" height="220">
+        <img src="assets/img/1.webp" alt="Taxi seguro en El Tunco y La Libertad" loading="lazy" decoding="async" width="400" height="220">
         <div class="card-body">
           <h3 data-i18n="servicio.tunco.title">Taxi en El Tunco y La Libertad</h3>
           <p data-i18n="servicio.tunco.desc">¿Vas a cenar, de fiesta o a explorar las playas de La Libertad? Somos tu conductor designado de confianza en Surf City, El Zonte y alrededores. Disponibilidad a cualquier hora.</p>
@@ -129,7 +135,7 @@
       </div>
 
       <div class="card" data-reveal>
-        <img src="assets/img/mi-pais.jpg" alt="Tours turísticos guiados en El Salvador" loading="lazy" decoding="async" width="400" height="220">
+        <img src="assets/img/mi-pais.webp" alt="Tours turísticos guiados en El Salvador" loading="lazy" decoding="async" width="400" height="220">
         <div class="card-body">
           <h3 data-i18n="servicio.tours.title">Tours Turísticos Guiados</h3>
           <p data-i18n="servicio.tours.desc">Descubre la magia de la Ruta de las Flores, el Lago de Coatepeque y nuestros volcanes. Viajes privados con choferes que conocen las mejores rutas turísticas de El Salvador.</p>
@@ -192,7 +198,7 @@
       </div>
       <div class="reviews-cta-card" data-reveal>
         <i class="bi bi-star-fill"></i>
-        <h4 data-i18n="resenas.cta.title">¿Viajaste con nosotros?</h4>
+        <h3 data-i18n="resenas.cta.title">¿Viajaste con nosotros?</h3>
         <p data-i18n="resenas.cta.desc">Tu opinión nos ayuda a seguir brindando el mejor servicio VIP y las mejores excursiones. ¡Califícanos en Google!</p>
         <a href="https://g.page/r/Cfq3QpLNeP75EBM/review" target="_blank" rel="noopener" class="btn btn-lime" style="width:100%;"><i class="bi bi-google"></i> <span data-i18n="resenas.cta.btn">Evalúanos</span></a>
       </div>
@@ -216,11 +222,11 @@
   <div class="container">
     <div class="footer-grid">
       <div>
-        <h5>Taxi Surfcity <span class="text-lime">Lainez</span></h5>
+        <h4>Taxi Surfcity <span class="text-lime">Lainez</span></h4>
         <p style="font-size:0.92rem;" data-i18n="footer.about">Tu servicio de transporte ejecutivo y agencia de tours privados en El Salvador. Disponibilidad 24/7 para traslados al aeropuerto, playas y expediciones turísticas.</p>
       </div>
       <div>
-        <h5 data-i18n="footer.contacto">Contacto Directo</h5>
+        <h4 data-i18n="footer.contacto">Contacto Directo</h4>
         <ul>
           <li><a class="footer-link" href="https://wa.me/50376401181" target="_blank" rel="noopener"><i class="bi bi-whatsapp text-lime"></i> +503 7640-1181</a></li>
           <li><a class="footer-link" href="mailto:Transportelainezsv@gmail.com"><i class="bi bi-envelope text-lime"></i> Transportelainezsv@gmail.com</a></li>
@@ -228,7 +234,7 @@
         </ul>
       </div>
       <div>
-        <h5 data-i18n="footer.tours">Tours populares</h5>
+        <h4 data-i18n="footer.tours">Tours populares</h4>
         <ul>
           <li><a class="footer-link" href="tours.html#ruta-de-las-flores" data-i18n="footer.tour.flores">Ruta de las Flores</a></li>
           <li><a class="footer-link" href="tours.html#volcan-coatepeque" data-i18n="footer.tour.volcan">Volcán y Lago de Coatepeque</a></li>
@@ -237,7 +243,7 @@
         </ul>
       </div>
       <div>
-        <h5 data-i18n="footer.siguenos">Síguenos</h5>
+        <h4 data-i18n="footer.siguenos">Síguenos</h4>
         <div class="social-row">
           <a class="social-btn" href="https://www.instagram.com/transportes_lainezsurfcity/" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
           <a class="social-btn" href="https://www.facebook.com/" target="_blank" rel="noopener" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
