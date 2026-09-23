@@ -217,10 +217,18 @@ p { line-height: 1.7; margin: 0 0 16px; color: var(--text-grey); font-weight: 30
 .btn-whatsapp:hover { background-color: var(--lime-dark); transform: translateY(-2px) scale(1.03); box-shadow: 0 8px 22px var(--lime-glow); }
 .btn-whatsapp:active { transform: translateY(0) scale(0.97); }
 
+
+/* ---------- BANNER PROMOCIONAL ---------- */
+.promo-banner {
+  position: relative; /* Lo mantiene en el flujo normal del documento */
+  z-index: 1001; /* Asegura que esté por encima de casi todo */
+  display: block;
+}
+
 /* ---------- NAVBAR ---------- */
 .navbar {
-  position: fixed;
-  top: 0; left: 0; right: 0;
+  position: sticky; /* Cambio clave: respeta el espacio del promo-banner */
+  top: 0; 
   z-index: 1000;
   background-color: var(--glass-bg);
   backdrop-filter: var(--glass-blur);
@@ -254,14 +262,14 @@ p { line-height: 1.7; margin: 0 0 16px; color: var(--text-grey); font-weight: 30
 .nav-links a:hover, .nav-links a.active { color: var(--lime-green); }
 .nav-links .icon-link { font-size: 1.15rem; display: flex; }
 
-/* ---------- TRUST BAR (estilo agencia de tours) ---------- */
+/* ---------- TRUST BAR ---------- */
 .trust-bar {
   background: var(--glass-bg);
   backdrop-filter: var(--glass-blur-sm);
   -webkit-backdrop-filter: var(--glass-blur-sm);
   border-bottom: 1px solid var(--glass-border);
   padding: 10px 0;
-  margin-top: 66px; /* deja espacio bajo navbar fija */
+  margin-top: 0; /* Cambio clave: ya no necesita empujar la navbar fija */
 }
 .trust-bar .container {
   display: flex; flex-wrap: wrap; gap: 10px 28px; justify-content: center;
