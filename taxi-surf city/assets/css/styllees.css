@@ -1204,3 +1204,297 @@ body::after {
   body::before, body::after { display: none; }
   .hero .btn-lime::before { display: none; }
 }
+
+
+/* ============================================================
+   TEMA + PROMO ANIMADA + ORDEN DE ADORNOS (debe ir al final)
+   1) Tokens de tema: la promo y los adornos nuevos leen estas
+      variables, así que al cambiar el tema cambian solos.
+   2) Banner de promo con movimiento (solo transform/opacity).
+   3) Adornos reordenados: telarañas en esquinas alternas,
+      divisores de sección y encabezados uniformes.
+   ============================================================ */
+
+/* ---------- 1. TOKENS DE TEMA ---------- */
+:root,
+[data-theme="halloween"] {
+  --theme-accent: var(--hw-orange);
+  --theme-accent-bright: var(--hw-orange-bright);
+  --theme-accent-alt: var(--hw-amber);
+  --theme-base: var(--lime-green);
+  --theme-accent-rgb: 255, 102, 0;
+  --theme-base-rgb: 37, 211, 102;
+  --theme-promo-bg: linear-gradient(100deg, #150a02 0%, #2a1004 38%, #1d0a2e 100%);
+  --theme-promo-text: #fff3e2;
+  --theme-web-l: var(--hw-cobweb-tl);
+  --theme-web-r: var(--hw-cobweb-tr);
+  --theme-critter: var(--hw-bat-one);
+  --promo-web-size: 150%;
+}
+
+/* Plantilla para otro tema (ejemplo, descomentar y ajustar):
+[data-theme="navidad"] {
+  --theme-accent: #e63946;
+  --theme-accent-bright: #ff6b74;
+  --theme-accent-alt: #ffd166;
+  --theme-accent-rgb: 230, 57, 70;
+  --theme-promo-bg: linear-gradient(100deg, #0b1f14 0%, #123524 45%, #3a0d12 100%);
+  --theme-promo-text: #f4fff8;
+  --theme-web-l: none;
+  --theme-web-r: none;
+  --theme-critter: none;
+}
+Se activa con: <html data-theme="navidad"> */
+
+/* ---------- 2. BANNER DE PROMO ANIMADO ---------- */
+/* Los !important ganan a los estilos en línea que genera el CMS */
+.promo-banner {
+  position: relative;
+  z-index: 1001;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  min-height: 48px;
+  padding: 10px 84px !important;
+  overflow: hidden;
+  isolation: isolate;
+  text-align: center !important;
+  font-size: clamp(0.84rem, 1.5vw, 0.98rem);
+  font-weight: 700 !important;
+  letter-spacing: 0.2px;
+  line-height: 1.35;
+  color: var(--theme-promo-text) !important;
+  background:
+    var(--theme-web-l) left top / auto var(--promo-web-size) no-repeat,
+    var(--theme-web-r) right top / auto var(--promo-web-size) no-repeat,
+    radial-gradient(ellipse at 50% 130%, rgba(var(--theme-accent-rgb), 0.30), transparent 62%),
+    var(--theme-promo-bg) !important;
+  border-bottom: 2px solid rgba(var(--theme-accent-rgb), 0.75);
+  box-shadow: 0 6px 22px -6px rgba(var(--theme-accent-rgb), 0.55);
+  animation: promoIn 0.6s var(--ease-fluid) both;
+}
+.promo-banner > * { position: relative; z-index: 1; }
+.promo-banner > span { text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6); }
+
+/* Punto de aviso que late antes del texto */
+.promo-banner > span::before {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 8px;
+  margin-right: 0.7em;
+  vertical-align: middle;
+  border-radius: 50%;
+  background: var(--theme-accent-alt);
+  box-shadow: 0 0 10px rgba(var(--theme-accent-rgb), 0.9);
+  animation: promoDot 1.8s ease-in-out infinite;
+}
+
+/* Criatura del tema cruzando el banner */
+.promo-banner::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 0;
+  width: 30px; height: 13px;
+  margin-top: -7px;
+  background: var(--theme-critter) center / contain no-repeat;
+  opacity: 0.85;
+  pointer-events: none;
+  z-index: 0;
+  will-change: transform;
+  animation: promoCritter 14s linear 2s infinite, batFlap 0.32s ease-in-out infinite alternate;
+}
+
+/* Destello que barre el banner */
+.promo-banner::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.16) 50%, transparent 62%);
+  transform: translate3d(-100%, 0, 0);
+  will-change: transform;
+  animation: promoSweep 6s ease-in-out 1s infinite;
+}
+
+/* Botón (si la promo trae CTA) */
+.promo-banner a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  background: var(--theme-accent-alt);
+  color: #1a0a02 !important;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(var(--theme-accent-rgb), 0.45);
+  transition: transform 0.3s var(--ease-spring);
+}
+.promo-banner a::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: inherit;
+  border: 2px solid var(--theme-accent);
+  opacity: 0;
+  pointer-events: none;
+  animation: haloPulse 2.6s ease-out infinite;
+}
+.promo-banner a:hover { transform: translate3d(0, -2px, 0) scale(1.05); }
+
+@keyframes promoIn {
+  from { opacity: 0; transform: translate3d(0, -100%, 0); }
+  to   { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+@keyframes promoSweep {
+  0%        { transform: translate3d(-100%, 0, 0); }
+  45%, 100% { transform: translate3d(100%, 0, 0); }
+}
+@keyframes promoCritter {
+  0%   { transform: translate3d(-8vw, 4px, 0); }
+  25%  { transform: translate3d(26vw, -6px, 0); }
+  50%  { transform: translate3d(54vw, 4px, 0); }
+  75%  { transform: translate3d(82vw, -6px, 0); }
+  100% { transform: translate3d(108vw, 0, 0); }
+}
+@keyframes promoDot {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.55; }
+}
+
+/* ---------- 3. ADORNOS REORDENADOS ---------- */
+
+/* Se quitan dos adornos que tapaban contenido al hacer scroll:
+   la telaraña gigante fija y el segundo murciélago fijo */
+.liquid-bg::before { display: none; }
+body::after { display: none; }
+
+/* Hero: telaraña a la izquierda; a la derecha quedan luna, murciélagos y araña */
+.hero::after {
+  right: auto;
+  left: 0;
+  width: 140px; height: 140px;
+  background-image: var(--theme-web-l);
+  opacity: 0.6;
+}
+.hero > .container::before { left: 11%; }
+
+/* Tarjetas: telaraña en esquinas alternas (impares izquierda, pares derecha) */
+.card::after,
+.tour-card::after {
+  right: auto; left: 0;
+  width: 88px; height: 88px;
+  background-image: var(--theme-web-l);
+  background-position: top left;
+  opacity: 0.55;
+  transform-origin: top left;
+}
+.card:nth-child(even)::after,
+.tour-card:nth-child(even)::after {
+  left: auto; right: 0;
+  background-image: var(--theme-web-r);
+  background-position: top right;
+  transform-origin: top right;
+}
+.card:nth-child(odd):hover::after,
+.tour-card:nth-child(odd):hover::after { transform-origin: top left; }
+.card:nth-child(even):hover::after,
+.tour-card:nth-child(even):hover::after { transform-origin: top right; }
+
+/* Grillas de 3 columnas: telarañas solo en las esquinas exteriores (izq. / der.), columna central limpia */
+.grid-3 > .card:nth-child(3n+1)::after,
+.grid-3 > .tour-card:nth-child(3n+1)::after {
+  left: 0; right: auto;
+  background-image: var(--theme-web-l);
+  background-position: top left;
+  transform-origin: top left;
+}
+.grid-3 > .card:nth-child(3n)::after,
+.grid-3 > .tour-card:nth-child(3n)::after {
+  left: auto; right: 0;
+  background-image: var(--theme-web-r);
+  background-position: top right;
+  transform-origin: top right;
+}
+.grid-3 > .card:nth-child(3n+2)::after,
+.grid-3 > .tour-card:nth-child(3n+2)::after { background-image: none; }
+.grid-3 > .card:nth-child(3n+1):hover::after,
+.grid-3 > .tour-card:nth-child(3n+1):hover::after { transform-origin: top left; }
+.grid-3 > .card:nth-child(3n):hover::after,
+.grid-3 > .tour-card:nth-child(3n):hover::after { transform-origin: top right; }
+
+/* Cotizador y footer: telarañas equilibradas en ambas esquinas */
+.quote-box::after { width: 100px; height: 100px; background-image: var(--theme-web-r); }
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 130px; height: 130px;
+  background-image: var(--theme-web-l);
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.5;
+  pointer-events: none;
+}
+footer::after { background-image: var(--theme-web-r); }
+
+/* Divisor entre secciones: línea con nodo central */
+.section::before {
+  content: '';
+  position: absolute;
+  top: 28px; left: 50%;
+  width: min(1140px, calc(100% - 40px));
+  height: 1px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, transparent 0%, rgba(var(--theme-accent-rgb), 0.5) 50%, transparent 100%);
+  pointer-events: none;
+}
+.section::after {
+  content: '';
+  position: absolute;
+  top: 24px; left: 50%;
+  width: 9px; height: 9px;
+  margin-left: -4.5px;
+  transform: rotate(45deg);
+  background: var(--theme-accent);
+  box-shadow: 0 0 12px rgba(var(--theme-accent-rgb), 0.8);
+  pointer-events: none;
+}
+
+/* Encabezados uniformes: una sola insignia y una barra bajo el título */
+.eyebrow::after { display: none; }
+.section-head h1::after,
+.section-head h2::after {
+  content: '';
+  display: block;
+  width: 64px; height: 3px;
+  margin: 14px auto 0;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--theme-base), var(--theme-accent));
+}
+.quote-box .section-head h2::after { margin-left: 0; }
+
+/* Móvil */
+@media (max-width: 767px) {
+  .promo-banner { padding: 9px 40px !important; }
+  .promo-banner::before { display: none; }
+  :root, [data-theme] { --promo-web-size: 110%; }
+  .hero::after { width: 96px; height: 96px; }
+  .card::after, .tour-card::after { width: 72px; height: 72px; }
+}
+
+/* Accesibilidad: sin movimiento en la promo */
+@media (prefers-reduced-motion: reduce) {
+  .promo-banner,
+  .promo-banner > span::before,
+  .promo-banner a::before { animation: none !important; }
+  .promo-banner::before,
+  .promo-banner::after,
+  .promo-banner a::before { display: none; }
+}
