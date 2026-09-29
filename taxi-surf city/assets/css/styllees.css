@@ -371,7 +371,18 @@ p { line-height: 1.75; margin: 0 0 16px; color: var(--text-grey); font-weight: 3
 }
 
 /* ---------- HERO IMPONENTE CON LUNA Y MURCIÉLAGOS ---------- */
-
+.hero {
+  position: relative;
+  padding: 145px 0 115px;
+  text-align: center;
+  overflow: hidden;
+  background:
+    /* Luna llena de cosecha (Halloween Moon) en la parte superior derecha */
+    radial-gradient(circle at 82% 22%, rgba(255, 165, 50, 0.28) 0%, rgba(255, 102, 0, 0.12) 12%, transparent 32%),
+    radial-gradient(circle at 20% 30%, rgba(37, 211, 102, 0.14) 0%, transparent 45%),
+    linear-gradient(to bottom, rgba(5, 5, 7, 0.40) 0%, rgba(5, 5, 7, 0.82) 70%, var(--bg-black) 100%),
+    url('../img/1-hero.webp') center/cover no-repeat;
+}
 /* Murciélagos sobrevolando la luna en el Hero */
 .hero::before {
   content: '';
@@ -1566,16 +1577,33 @@ footer::after { background-image: var(--theme-web-r); }
 .hero-collage-wrap::before,
 .hero-collage-wrap::after { z-index: 2; }
 
-/* Luna llena sobre el collage (los murciélagos del hero la sobrevuelan) */
+/* Contorno oscuro en los murciélagos para que se lean sobre la luna */
+.hero-collage-wrap::before {
+  filter: drop-shadow(0 0 1.5px rgba(10, 2, 0, 0.95)) drop-shadow(0 2px 5px rgba(10, 2, 0, 0.7));
+}
+
+/* Luna spooky arriba a la derecha, detrás de los murciélagos y la araña:
+   cráteres, sombra lateral para dar volumen, brillo naranja cerca y un aura
+   oscura más lejos que apaga la foto alrededor y hace que resalte */
 .hero-collage-wrap .hero-overlay::before {
   content: '';
   position: absolute;
-  top: 52px;
-  left: 42%;
-  width: 84px; height: 84px;
+  top: 44px;
+  right: 7%;
+  width: 118px; height: 118px;
   border-radius: 50%;
-  background: radial-gradient(circle at 38% 34%, #fff3cf 0%, #ffd58a 40%, #ff9a3c 74%);
-  box-shadow: 0 0 46px 14px rgba(255, 140, 40, 0.34), 0 0 120px 40px rgba(var(--theme-accent-rgb), 0.16);
+  background:
+    radial-gradient(circle at 30% 36%, rgba(120, 52, 8, 0.55) 0 7%, transparent 8%),
+    radial-gradient(circle at 58% 24%, rgba(120, 52, 8, 0.45) 0 5%, transparent 6%),
+    radial-gradient(circle at 66% 58%, rgba(120, 52, 8, 0.55) 0 10%, transparent 11%),
+    radial-gradient(circle at 38% 70%, rgba(120, 52, 8, 0.4) 0 6%, transparent 7%),
+    radial-gradient(circle at 78% 34%, rgba(120, 52, 8, 0.35) 0 4%, transparent 5%),
+    radial-gradient(circle at 34% 30%, #ffe9b8 0%, #f7b45a 46%, #c4581a 82%, #6a230a 100%);
+  box-shadow:
+    inset -22px -14px 30px rgba(24, 4, 0, 0.72),
+    inset 5px 4px 12px rgba(255, 244, 214, 0.28),
+    0 0 34px 8px rgba(255, 122, 26, 0.42),
+    0 0 130px 64px rgba(22, 6, 38, 0.62);
   pointer-events: none;
   will-change: transform, opacity;
   animation: moonGlow 6s ease-in-out infinite;
@@ -1685,7 +1713,7 @@ footer::after { background-image: var(--theme-web-r); }
 /* ---------- D. MÓVIL Y ACCESIBILIDAD ---------- */
 @media (max-width: 767px) {
   .tour-card-media::before { left: 20px; width: 30px; height: 30px; bottom: -15px; font-size: 0.9rem; }
-  .hero-collage-wrap .hero-overlay::before { width: 54px; height: 54px; top: 30px; left: 44%; }
+  .hero-collage-wrap .hero-overlay::before { width: 64px; height: 64px; top: 30px; right: 8%; box-shadow: inset -12px -8px 16px rgba(24,4,0,.72), 0 0 20px 5px rgba(255,122,26,.4), 0 0 70px 32px rgba(22,6,38,.6); }
   .hero-collage-wrap .hero-overlay::after { height: 28%; }
   #cotiza-tu-tour > .container::before,
   #preguntas > .container::before { display: none; }
