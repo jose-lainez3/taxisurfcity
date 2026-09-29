@@ -1,46 +1,22 @@
 // main.js — Taxi Surfcity Lainez
 document.addEventListener('DOMContentLoaded', () => {
 
-  /* 0. Rendimiento: pausar el fondo líquido cuando la pestaña no es visible */
-  const liquidBg = document.querySelector('.liquid-bg');
-  if (liquidBg) {
-    document.addEventListener('visibilitychange', () => {
-      liquidBg.style.animationPlayState = document.hidden ? 'paused' : 'running';
-      liquidBg.querySelectorAll('span').forEach(s => {
-        s.style.animationPlayState = document.hidden ? 'paused' : 'running';
-      });
-    });
-  }
+  /* 0. Rendimiento: pausar animaciones con la pestaña oculta + limpieza */
+  const root = document.documentElement;
+  document.addEventListener('visibilitychange', () => {
+    root.classList.toggle('fx-paused', document.hidden);
+  });
 
-  /* 0.1 Efecto "liquid glass": brillo que sigue al cursor en tarjetas (solo con puntero fino, sin coste en móvil) */
-  const supportsHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  const reduceMotionGlass = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (supportsHover && !reduceMotionGlass) {
-    const glassTargets = document.querySelectorAll('.card, .tour-card, .quote-box, .faq-item');
-    let ticking = false;
-    let lastEvent = null;
+  // Los spans del fondo están ocultos por CSS: se eliminan del DOM
+  document.querySelectorAll('.liquid-bg span').forEach(s => s.remove());
 
-    const applyGlow = () => {
-      ticking = false;
-      if (!lastEvent) return;
-      const target = lastEvent.currentTarget;
-      const rect = target.getBoundingClientRect();
-      const x = ((lastEvent.clientX - rect.left) / rect.width) * 100;
-      const y = ((lastEvent.clientY - rect.top) / rect.height) * 100;
-      target.style.setProperty('--mx', x + '%');
-      target.style.setProperty('--my', y + '%');
-    };
-
-    glassTargets.forEach(el => {
-      el.addEventListener('pointermove', (e) => {
-        lastEvent = e;
-        if (!ticking) {
-          ticking = true;
-          requestAnimationFrame(applyGlow);
-        }
-      });
-    });
-  }
+  // Carga diferida de imágenes fuera del hero
+  document.querySelectorAll('img').forEach(img => {
+    img.decoding = 'async';
+    if (!img.closest('.hero, .hero-collage-wrap, .navbar') && !img.hasAttribute('loading')) {
+      img.loading = 'lazy';
+    }
+  });
 
   /* 1. Menú móvil */
   const toggle = document.querySelector('.nav-toggle');
