@@ -1498,3 +1498,215 @@ footer::after { background-image: var(--theme-web-r); }
   .promo-banner::after,
   .promo-banner a::before { display: none; }
 }
+
+
+/* ============================================================
+   DETALLES EXTRA (página de Tours + FAQ + mapa)
+   Todo por CSS y por selectores de estructura, así que las
+   tarjetas que regenera el CMS heredan los adornos solas.
+   Solo se animan transform y opacity.
+   ============================================================ */
+
+/* ---------- A. TARJETAS DE TOUR ---------- */
+
+/* Velo sobre la foto: hace que la telaraña y la etiqueta se lean
+   y funde la imagen con el cuerpo de la tarjeta */
+.tour-card-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(5, 5, 7, 0.5) 0%, transparent 36%, transparent 58%, rgba(10, 11, 14, 0.88) 100%);
+}
+
+/* Medallón con el adorno de la tarjeta, montado en el borde de la foto y
+   alineado con el texto. Un adorno distinto por posición (tablero 3x2). */
+.tour-card-media::before {
+  content: '🎃';
+  position: absolute;
+  left: 26px;
+  bottom: -17px;
+  z-index: 3;
+  width: 34px; height: 34px;
+  display: grid;
+  place-items: center;
+  font-size: 1rem;
+  line-height: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 25%, #2b1607 0%, #0a0b0e 72%);
+  border: 1.5px solid var(--theme-accent);
+  box-shadow: 0 0 0 4px rgba(10, 11, 14, 0.92), 0 6px 16px rgba(var(--theme-accent-rgb), 0.35);
+  pointer-events: none;
+  will-change: transform;
+  animation: tourBadgeBob 4.6s ease-in-out infinite;
+  transition: scale 0.35s var(--ease-spring), rotate 0.35s var(--ease-spring);
+}
+.tour-card:nth-child(6n+2) .tour-card-media::before { content: '🦇'; animation-delay: -0.8s; }
+.tour-card:nth-child(6n+3) .tour-card-media::before { content: '👻'; animation-delay: -1.6s; }
+.tour-card:nth-child(6n+4) .tour-card-media::before { content: '🕯️'; animation-delay: -2.4s; }
+.tour-card:nth-child(6n+5) .tour-card-media::before { content: '🌙'; animation-delay: -3.2s; }
+.tour-card:nth-child(6n)   .tour-card-media::before { content: '🕷️'; animation-delay: -4s; }
+.tour-card:hover .tour-card-media::before { scale: 1.14; rotate: -8deg; }
+
+@keyframes tourBadgeBob {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50%      { transform: translate3d(0, -3px, 0); }
+}
+
+/* Telaraña de la tarjeta más marcada para que se lea sobre la foto */
+.tour-card::after {
+  opacity: 0.9;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.9));
+}
+
+/* Si la tarjeta lleva etiqueta de precio (esquina superior derecha), la telaraña pasa a la izquierda */
+.grid-3 > .tour-card:has(.tour-price-tag)::after {
+  left: 0; right: auto;
+  background-image: var(--theme-web-l);
+  background-position: top left;
+  transform-origin: top left;
+}
+.grid-3 > .tour-card:has(.tour-price-tag):hover::after { transform-origin: top left; }
+
+/* Detalles abiertos: divisor punteado con el color del tema */
+.tour-details-inner { border-top: 1px dashed rgba(var(--theme-accent-rgb), 0.4); }
+
+/* ---------- B. HERO DE TOURS (collage) ---------- */
+
+/* Los adornos del hero quedaban detrás del collage: se suben por encima */
+.hero-collage-wrap::before,
+.hero-collage-wrap::after { z-index: 2; }
+
+/* Luna llena sobre el collage (los murciélagos del hero la sobrevuelan) */
+.hero-collage-wrap .hero-overlay::before {
+  content: '';
+  position: absolute;
+  top: 52px;
+  left: 42%;
+  width: 84px; height: 84px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 34%, #fff3cf 0%, #ffd58a 40%, #ff9a3c 74%);
+  box-shadow: 0 0 46px 14px rgba(255, 140, 40, 0.34), 0 0 120px 40px rgba(var(--theme-accent-rgb), 0.16);
+  pointer-events: none;
+  will-change: transform, opacity;
+  animation: moonGlow 6s ease-in-out infinite;
+}
+/* Neblina baja que se desplaza lento en la base del hero */
+.hero-collage-wrap .hero-overlay::after {
+  content: '';
+  position: absolute;
+  left: -25%; right: -25%; bottom: 0;
+  height: 40%;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 30% 60% at 18% 100%, rgba(196, 176, 226, 0.16), transparent 70%),
+    radial-gradient(ellipse 34% 55% at 52% 100%, rgba(var(--theme-accent-rgb), 0.13), transparent 70%),
+    radial-gradient(ellipse 28% 65% at 84% 100%, rgba(196, 176, 226, 0.14), transparent 70%);
+  will-change: transform, opacity;
+  animation: mistDrift 22s ease-in-out infinite alternate;
+}
+@keyframes moonGlow {
+  0%, 100% { transform: scale(1);    opacity: 0.82; }
+  50%      { transform: scale(1.05); opacity: 1; }
+}
+@keyframes mistDrift {
+  from { transform: translate3d(-5%, 0, 0); opacity: 0.7; }
+  to   { transform: translate3d(5%, -6px, 0); opacity: 1; }
+}
+
+/* Insignia del hero con calabaza */
+.badge-tour::before {
+  content: '🎃';
+  display: inline-block;
+  margin-right: 6px;
+  transform-origin: 50% 90%;
+  animation: pumpkinWiggle 4.6s ease-in-out infinite;
+}
+
+/* ---------- C. SECCIONES: UN ADORNO POR LADO, ALTERNADO ---------- */
+#cotiza-tu-tour > .container,
+#preguntas > .container { position: relative; }
+
+/* Cotizador: araña colgando del divisor, a la izquierda (la del menú queda a la derecha) */
+#cotiza-tu-tour > .container::before {
+  content: '';
+  position: absolute;
+  top: -90px;
+  left: 5%;
+  width: 34px; height: 90px;
+  background: var(--hw-spider) top center / contain no-repeat;
+  transform-origin: 50% 0;
+  pointer-events: none;
+  animation: spiderSwing 5.5s ease-in-out infinite;
+}
+/* Preguntas: fantasma flotando, a la derecha */
+#preguntas > .container::before {
+  content: '👻';
+  position: absolute;
+  top: 4px;
+  right: 5%;
+  font-size: 2.2rem;
+  line-height: 1;
+  opacity: 0.7;
+  pointer-events: none;
+  animation: ghostFloat 7s ease-in-out infinite;
+}
+
+/* FAQ: barra de acento lateral que se enciende al abrir */
+.faq-item { position: relative; }
+.faq-item::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--theme-base), var(--theme-accent));
+  opacity: 0.5;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.faq-item.open::before { opacity: 1; }
+
+/* Mapa: telaraña en la esquina, por encima del iframe */
+#ubicacion .map-wrap { position: relative; }
+#ubicacion .map-wrap::before {
+  content: '';
+  position: absolute;
+  top: 8px; left: 8px;
+  width: 96px; height: 96px;
+  z-index: 2;
+  background: var(--theme-web-l) top left / contain no-repeat;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* La araña del menú se desvanece al bajar, para no tapar botones de las tarjetas
+   (navegadores sin scroll-timeline la dejan como estaba) */
+@supports (animation-timeline: scroll()) {
+  .navbar::before {
+    animation: spiderSwing 5.5s ease-in-out infinite, spiderFade linear both;
+    animation-timeline: auto, scroll(root block);
+    animation-range: normal, 0 240px;
+  }
+}
+@keyframes spiderFade {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ---------- D. MÓVIL Y ACCESIBILIDAD ---------- */
+@media (max-width: 767px) {
+  .tour-card-media::before { left: 20px; width: 30px; height: 30px; bottom: -15px; font-size: 0.9rem; }
+  .hero-collage-wrap .hero-overlay::before { width: 54px; height: 54px; top: 30px; left: 44%; }
+  .hero-collage-wrap .hero-overlay::after { height: 28%; }
+  #cotiza-tu-tour > .container::before,
+  #preguntas > .container::before { display: none; }
+  #ubicacion .map-wrap::before { width: 64px; height: 64px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tour-card-media::before,
+  .hero-collage-wrap .hero-overlay::before,
+  .hero-collage-wrap .hero-overlay::after,
+  .badge-tour::before,
+  #cotiza-tu-tour > .container::before,
+  #preguntas > .container::before { animation: none !important; }
+}
