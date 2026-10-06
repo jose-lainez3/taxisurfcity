@@ -199,26 +199,25 @@ CMS:DATA:PROMO:END -->
 <nav class="navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
-      <!-- Optimizada con width y height para evitar CLS -->
       <img src="assets/img/logo.png" alt="Logo Taxis en El Salvador - Taxi Surfcity Lainez" width="40" height="40">
       <span>Taxi Surfcity <span class="text-lime">Lainez</span></span>
     </a>
-    <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">&#9776;</button>
+
+    <div class="nav-actions">
+      <button id="langToggle" class="lang-btn" type="button" aria-label="Cambiar idioma / Change language">
+        <i class="bi bi-translate"></i> <span id="langLabel">EN</span>
+      </button>
+      <button class="nav-toggle" aria-label="Abrir menú" aria-expanded="false">&#9776;</button>
+    </div>
+
     <ul class="nav-links">
       <li><a href="#servicios" data-i18n="nav.servicios">Servicios</a></li>
-      <li><a href="#cobertura">Rutas y Zonas</a></li>
+      <li><a href="#cobertura" data-i18n="nav.cobertura">Rutas y Zonas</a></li>
       <li><a href="#tarifas" data-i18n="nav.tarifas">Tarifas</a></li>
       <li><a href="/tours" data-i18n="nav.tours">Tours</a></li>
       <li><a href="#reserva" data-i18n="nav.reservar">Reservar</a></li>
       <li><a class="icon-link" href="https://www.instagram.com/transportes_lainezsurfcity/" target="_blank" rel="noopener" aria-label="Instagram"><i class="bi bi-instagram"></i></a></li>
-      <li><a class="icon-link" href="https://www.tiktok.com/@taxi.surf.city.la" target="_blank" rel="noopener" aria-label="tiktok"><i class="bi bi-tiktok"></i></a></li>
-      <!-- Selector de Idioma -->
-    <!-- Selector de Idioma -->
-<li class="lang-menu">
-  <button id="langToggle" class="btn btn-outline" style="padding: 6px 12px; display: flex; align-items: center; gap: 5px; cursor: pointer;">
-    <i class="bi bi-globe"></i> <span id="langLabel">EN</span>
-  </button>
-</li>
+      <li><a class="icon-link" href="https://www.tiktok.com/@taxi.surf.city.la" target="_blank" rel="noopener" aria-label="TikTok"><i class="bi bi-tiktok"></i></a></li>
       <li>
         <a href="https://wa.me/50376401181" target="_blank" rel="noopener" class="btn-whatsapp"><i class="bi bi-whatsapp"></i> <span data-i18n="nav.contactar">Contactar</span></a>
       </li>
