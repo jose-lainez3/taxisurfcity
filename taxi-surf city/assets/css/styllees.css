@@ -1727,3 +1727,34 @@ footer::after { background-image: var(--theme-web-r); }
   #cotiza-tu-tour > .container::before,
   #preguntas > .container::before { animation: none !important; }
 }
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;   /* empuja el botón a la derecha */
+  order: 2;
+}
+.lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font: 600 0.85rem 'Poppins', sans-serif;
+  color: #fff;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background .2s, border-color .2s, color .2s;
+}
+.lang-btn:hover,
+.lang-btn:focus-visible {
+  border-color: #b6ff00;   /* cambia por tu color lime */
+  color: #b6ff00;
+  outline: none;
+}
+@media (min-width: 992px) {
+  /* En escritorio el menú va después y el botón queda a su lado */
+  .nav-links { order: 1; }
+  .nav-actions { margin-left: 16px; }
+}
