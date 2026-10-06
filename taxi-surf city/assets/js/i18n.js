@@ -36,8 +36,7 @@
 
     "tarifas.eyebrow": "Transparency & Safety",
     "tarifas.title": 'Estimated Rates for <span class="text-lime-gradient">Popular Transfers</span>',
-    "tarifas.subtitle": "Fair prices with no hidden fees. Rates may vary slightly depending on night hours or number of passengers."
-    // ...agrega aquí el resto de tus claves data-i18n
+    "tarifas.subtitle": "Fair prices with no hidden fees. Rates may vary slightly depending on night hours or number of passengers.",
     "nav.resenas": "Reviews",
 
 "destacados.eyebrow": "Tourism & Excursions",
