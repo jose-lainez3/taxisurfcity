@@ -1,4 +1,3 @@
-<script>
 (function () {
   'use strict';
 
@@ -106,4 +105,3 @@
   btn.addEventListener('click', toggleLang);
   if (getLang() === 'en') applyLang('en');
 })();
-</script>
