@@ -67,7 +67,26 @@
 "footer.tour.suchitoto": "Suchitoto",
 "footer.tour.ceren": "Joya de Cerén",
 "footer.siguenos": "Follow us",
-"footer.rights": "All rights reserved."
+"footer.rights": "All rights reserved.",
+    "footer.rights": "All rights reserved.",
+
+"cobertura.eyebrow": "Coverage nationwide",
+"cobertura.title": 'Main Routes for <span class="text-lime-gradient">Taxis in El Salvador</span>',
+"cobertura.subtitle": "We connect the International Airport (SAL), the capital and all the beaches with clear rates and instant booking.",
+
+"cobertura.aero.title": "Airport (SAL) Connections",
+"cobertura.aero.1": "• Airport Taxi to <strong>San Salvador</strong> (Zona Rosa, Escalón, Historic Center)",
+"cobertura.aero.2": "• Airport Taxi to <strong>El Tunco Beach & Surf City</strong>",
+"cobertura.aero.3": "• Airport Taxi to <strong>El Zonte, El Sunzal & Mizata</strong>",
+"cobertura.aero.4": "• Airport Taxi to <strong>Costa del Sol & La Herradura</strong>",
+"cobertura.aero.5": "• Airport Taxi to <strong>Santa Ana, San Miguel & the East</strong>",
+
+"cobertura.playas.title": "Executive Taxis & Beaches",
+"cobertura.playas.1": "• 24-hour taxis in <strong>La Libertad & Surf City</strong>",
+"cobertura.playas.2": "• Transfers from <strong>San Salvador to El Tunco Beach</strong>",
+"cobertura.playas.3": "• Private transport to <strong>Hotels, Airbnbs & Resorts</strong>",
+"cobertura.playas.4": "• Designated driver for <strong>events, dinners & nightlife</strong>",
+"cobertura.playas.5": "• Surfer shuttle (<strong>room for boards & luggage</strong>)"
   };
 
   const STORAGE_KEY = 'lang';
