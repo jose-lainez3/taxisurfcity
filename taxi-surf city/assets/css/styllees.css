@@ -1758,3 +1758,4 @@ footer::after { background-image: var(--theme-web-r); }
   .nav-links { order: 1; }
   .nav-actions { margin-left: 16px; }
 }
+[data-reveal] { opacity: 1 !important; transform: none !important; }
