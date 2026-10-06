@@ -1755,7 +1755,16 @@ footer::after { background-image: var(--theme-web-r); }
 }
 @media (min-width: 992px) {
   /* En escritorio el menú va después y el botón queda a su lado */
-  .nav-links { order: 1; }
-  .nav-actions { margin-left: 16px; }
+ .nav-actions { display:flex; align-items:center; gap:10px; margin-left:auto; order:2; }
+.lang-btn {
+  display:inline-flex; align-items:center; gap:6px; padding:6px 12px;
+  font:600 .85rem 'Poppins',sans-serif; color:#fff; background:transparent;
+  border:1px solid rgba(255,255,255,.35); border-radius:999px; cursor:pointer;
+  transition:border-color .2s,color .2s;
+}
+.lang-btn:hover,.lang-btn:focus-visible { border-color:#22c55e; color:#22c55e; outline:none; }
+@media (min-width:992px){
+  .nav-links{order:1;}
+  .nav-actions{margin-left:16px;}
 }
 [data-reveal] { opacity: 1 !important; transform: none !important; }
