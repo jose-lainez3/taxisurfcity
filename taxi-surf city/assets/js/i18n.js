@@ -38,6 +38,37 @@
     "tarifas.title": 'Estimated Rates for <span class="text-lime-gradient">Popular Transfers</span>',
     "tarifas.subtitle": "Fair prices with no hidden fees. Rates may vary slightly depending on night hours or number of passengers."
     // ...agrega aquí el resto de tus claves data-i18n
+    "nav.resenas": "Reviews",
+
+"destacados.eyebrow": "Tourism & Excursions",
+"destacados.title": 'Discover El Salvador: <span class="text-lime-gradient">Private Tourist Transport</span>',
+"destacados.subtitle": "More than a taxi in El Salvador, we're your travel partner with custom routes to the country's most visited destinations.",
+"destacado.flores.title": "Ruta de las Flores Tour",
+"destacado.flores.desc": "Private transport to Juayúa, Ataco, Apaneca and Nahuizalco. Enjoy the best highland coffee, local food and waterfalls without worrying about driving.",
+"destacado.volcanes.title": "Volcanoes & Lake Coatepeque",
+"destacado.volcanes.desc": "Travel comfortably to Cerro Verde National Park, Santa Ana Volcano (Ilamatepec), San Salvador Volcano (El Boquerón) and Lake Coatepeque.",
+"destacado.ciudad.title": "San Salvador City Tour & Mayan Ruins",
+"destacado.ciudad.desc": "Tours of San Salvador's Historic Center, the National Library (BINAES), Puerta del Diablo and the archaeological sites of Joya de Cerén, Tazumal and San Andrés.",
+"destacados.cta": "See All Our Tours",
+
+"resenas.title": 'What our passengers say on <span class="text-lime-gradient">Google</span>',
+"resenas.subtitle": "Read real experiences from local and international travelers who trust our taxis and tours in El Salvador.",
+"resenas.cta.title": "Did you ride with us?",
+"resenas.cta.desc": "Your feedback helps us keep offering the best private transport and excursions in El Salvador. Rate us on Google!",
+"resenas.cta.btn": "Rate us",
+
+"ubicacion.index.title": 'Our Base of Operations in <span class="text-lime">Surf City, El Salvador</span>',
+"ubicacion.index.subtitle": "Strategically located in La Libertad with vehicles ready to travel to the International Airport (SAL), San Salvador and the whole country.",
+
+"footer.about": "24/7 taxi service in El Salvador, executive transport to the International Airport (SAL) and private tour agency in Surf City, San Salvador and across the country.",
+"footer.contacto": "Direct Contact 24/7",
+"footer.tours": "Tours & Destinations",
+"footer.tour.flores": "Ruta de las Flores",
+"footer.tour.volcan": "Coatepeque Volcano & Lake",
+"footer.tour.suchitoto": "Suchitoto",
+"footer.tour.ceren": "Joya de Cerén",
+"footer.siguenos": "Follow us",
+"footer.rights": "All rights reserved."
   };
 
   const STORAGE_KEY = 'lang';
