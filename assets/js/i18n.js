@@ -3,6 +3,8 @@
 
   /* ---------- Diccionario en inglés ---------- */
   const EN = {
+    /* ===== Navegación ===== */
+    "nav.inicio": "Home",
     "nav.servicios": "Services",
     "nav.cobertura": "Routes & Areas",
     "nav.tarifas": "Rates",
@@ -10,11 +12,13 @@
     "nav.reservar": "Book",
     "nav.contactar": "Contact",
     "nav.resenas": "Reviews",
+    "nav.cotizar": "Get a quote",
 
     "trust.cancelacion": "Flexible cancellation",
     "trust.chofer": "Trusted local driver",
     "trust.disponibilidad": "24/7 availability across El Salvador",
 
+    /* ===== Index ===== */
     "hero.index.title": 'Taxis in El Salvador 24/7: Airport Transfers, <br><span class="text-lime-gradient">Surf City, San Salvador &amp; Tours.</span>',
     "hero.index.lead": 'Your leading <strong>taxi and private transport service in El Salvador</strong>. Ride with <strong>Taxi Surfcity Lainez</strong>: transfers from <strong>El Salvador International Airport (SAL)</strong> to San Salvador, El Tunco, El Zonte, hotels and tourist routes 24/7.',
     "hero.index.cta": "Book my Taxi Now",
@@ -85,7 +89,132 @@
     "cobertura.playas.2": "Transfers from <strong>San Salvador to El Tunco Beach</strong>",
     "cobertura.playas.3": "Private transport to <strong>Hotels, Airbnbs & Resorts</strong>",
     "cobertura.playas.4": "Designated driver for <strong>events, dinners & nightlife</strong>",
-    "cobertura.playas.5": "Surfer shuttle (<strong>room for boards & luggage</strong>)"
+    "cobertura.playas.5": "Surfer shuttle (<strong>room for boards & luggage</strong>)",
+
+    /* ===== Página de Tours ===== */
+    "t.hero.badge": "Private tourist transport · Excursions and trips in El Salvador",
+    "t.hero.title": 'Tours in El Salvador &amp; Private Trips <br><span class="text-lime-gradient">from Surf City, El Tunco &amp; the Airport.</span>',
+    "t.hero.lead": "Explore El Salvador's most impressive destinations with a local driver and an exclusive vehicle. Custom routes to the Ruta de las Flores, volcano hikes, lakes, colonial architecture and surf beaches, with complete safety and comfort.",
+    "t.hero.cta": "Build my Custom Tour",
+
+    "t.ben.1.title": "100% Private Transport",
+    "t.ben.1.desc": "Air-conditioned vehicles exclusively for you and your group.",
+    "t.ben.2.title": "Flexible Itineraries",
+    "t.ben.2.desc": "You decide the schedule, the stops and the time at each attraction.",
+    "t.ben.3.title": "Expert Local Drivers",
+    "t.ben.3.desc": "Drivers with deep knowledge of the country's best routes and destinations.",
+
+    "t.cat.eyebrow": "Excursion catalog",
+    "t.cat.title": "The Best Guided Tours and Excursions in El Salvador",
+    "t.cat.desc": "Discover the natural, archaeological and cultural wonders of El Salvador, departing from your accommodation in El Tunco, El Zonte, Surf City or the airport. Choose your excursion and book via WhatsApp.",
+
+    "t.toggle": "View details",
+    "t.reserve": "Book",
+    "t.includes": "What this tour includes",
+    "t.pax": "Up to 4 pax",
+    "t.veh": "Private vehicle",
+    "t.veh.ac": "Private air-conditioned vehicle",
+    "t.cta": "Check availability and prices",
+    "t.price.custom": "Custom price",
+
+    "t.dur.full8": "Full day (8-10 hrs)",
+    "t.dur.full": "Full day",
+    "t.dur.halfOrFull": "Half day / Full day",
+    "t.dur.half45": "Half day (4-5 hrs)",
+    "t.dur.half": "Half day",
+    "t.dur.flex": "Flexible schedule",
+
+    "t.1.title": "Ruta de las Flores Tour from El Tunco",
+    "t.1.summary": "Visit the colonial towns of Juayúa, Ataco and Apaneca. Enjoy highland coffee trails, local cuisine, art murals and dreamy waterfalls.",
+    "t.1.li1": "Private round-trip transport from your hotel in Surf City or El Tunco",
+    "t.1.li2": "Tour of Juayúa, Apaneca (maze and coffee) and Concepción de Ataco",
+    "t.1.li3": "Local driver with food and cultural recommendations",
+    "t.1.li4": "Free time for handicraft shopping and coffee tasting",
+
+    "t.2.title": "Santa Ana Volcano & Lake Coatepeque Tour",
+    "t.2.summary": "Climb El Salvador's highest volcano (Ilamatepec) to see its emerald crater lake, and end the afternoon with lunch and views of Lake Coatepeque.",
+    "t.2.li1": "Direct transfer to Los Volcanes National Park (Cerro Verde)",
+    "t.2.li2": "Waiting time during the guided hike to the crater",
+    "t.2.li3": "Transfer to restaurants and viewpoints at Lake Coatepeque",
+    "t.2.li4": "Safe return to your hotel in Surf City or San Salvador",
+
+    "t.3.title": "Colonial Tour of Suchitoto",
+    "t.3.summary": "Immerse yourself in Salvadoran history walking cobblestone streets, the iconic Santa Lucía Church, art galleries, indigo looms and Lake Suchitlán.",
+    "t.3.li1": "Private round-trip transport from Surf City or San Salvador",
+    "t.3.li2": "Walk through the colonial center, historic squares and art galleries",
+    "t.3.li3": "Stops at panoramic viewpoints over Lake Suchitlán",
+    "t.3.li4": "Flexibility for indigo workshops or a boat ride",
+
+    "t.4.title": "Joya de Cerén Archaeological Tour",
+    "t.4.summary": 'Visit the "Pompeii of the Americas", a Maya farming village buried intact under volcanic ash more than 1,400 years ago. UNESCO World Heritage Site.',
+    "t.4.li1": "Private round-trip transfer from hotels in El Tunco / Surf City",
+    "t.4.li2": "Time to explore the protected structures and the site museum",
+    "t.4.li3": "Option to combine with the San Andrés Ruins or El Boquerón",
+    "t.4.li4": "Driver at your disposal throughout the itinerary",
+
+    "t.5.title": "El Boquerón National Park Tour",
+    "t.5.summary": "Explore the crater of the San Salvador volcano covered in cloud forest, with cool trails and restaurants offering panoramic views of the capital.",
+    "t.5.li1": "Private door-to-door transport (ideal for layovers)",
+    "t.5.li2": "Easy walk along the viewpoints toward the crater",
+    "t.5.li3": "Stops at cafés and landmark viewpoints of the Bálsamo mountain range",
+    "t.5.li4": "Schedule coordinated with your departure or flight time",
+
+    "t.6.title": "Surf City Beaches Tour: El Tunco, El Zonte & Mizata",
+    "t.6.summary": "Coastal tour of El Salvador's most famous beaches. Perfect for surfing, sea caves, seafood and the best sunsets.",
+    "t.6.li1": "Full tour of El Tunco, El Sunzal, El Zonte and Mizata",
+    "t.6.li2": "Stops at seaside restaurants and panoramic viewpoints",
+    "t.6.li3": "Safe space to carry surfboards and luggage",
+    "t.6.li4": "Time set aside to enjoy the sunset on the coast",
+
+    "t.more.text": "Want to visit another destination in El Salvador? We design custom routes: Ruta de la Paz, Gulf of Fonseca, Costa del Sol, Tamanique Waterfalls and more.",
+    "t.more.btn": "Request a tour or itinerary made for me",
+
+    "t.form.eyebrow": "Book your experience",
+    "t.form.title": "Get a Quote for Your Tour or Trip in El Salvador",
+    "t.form.desc": "Tell us your pickup point, preferred destination, date and number of travelers. We'll send you a formal proposal and availability right away.",
+    "t.form.pickup": "Pickup location",
+    "t.form.pickup.ph": "E.g. Hotel in El Tunco, El Zonte, San Salvador or Airport...",
+    "t.form.dest": "Tour or Tourist Destination",
+    "t.form.dest.select": "Select your destination",
+    "t.form.opt.1": "Ruta de las Flores Tour (Juayúa, Ataco, Apaneca)",
+    "t.form.opt.2": "Santa Ana Volcano & Lake Coatepeque Tour",
+    "t.form.opt.3": "Colonial Tour Suchitoto & Lake Suchitlán",
+    "t.form.opt.4": "Joya de Cerén Archaeological Tour",
+    "t.form.opt.5": "El Boquerón National Park Tour",
+    "t.form.opt.6": "Surf City Beaches Tour (El Tunco, El Zonte, Mizata)",
+    "t.form.opt.7": "Other custom tourist destination",
+    "t.form.date": "Planned date",
+    "t.form.people": "Number of passengers",
+    "t.form.people.ph": "E.g. 2 people",
+    "t.form.notes": "Additional details (optional)",
+    "t.form.notes.ph": "E.g. We're bringing surfboards, we'd like a lunch stop, kids on board, etc.",
+    "t.form.submit": "Request quote via WhatsApp",
+
+    "t.faq.eyebrow": "Common questions",
+    "t.faq.title": "Frequently Asked Questions about Trips and Tours in El Salvador",
+    "t.faq.desc": "We answer the most common questions about logistics, safety and bookings for your vacation.",
+    "t.faq.1.q": "What are the best tours and places to visit in El Salvador?",
+    "t.faq.1.a": "El Salvador's top attractions include the <strong>Ruta de las Flores</strong> (colonial towns, coffee plantations and waterfalls), the hike to the <strong>Santa Ana Volcano</strong> crater alongside <strong>Lake Coatepeque</strong>, the colonial historic center of <strong>Suchitoto</strong>, the Maya site <strong>Joya de Cerén</strong> and the internationally renowned beaches of <strong>Surf City</strong>.",
+    "t.faq.2.q": "Do tourist tours in El Salvador include private transport?",
+    "t.faq.2.a": "Yes. All our services are 100% private: we assign you an exclusive air-conditioned vehicle and a local driver from the moment we leave your hotel in El Tunco, Surf City, San Salvador or the airport until your return. You won't share the vehicle with strangers.",
+    "t.faq.3.q": "How long does a full-day excursion or tour last?",
+    "t.faq.3.a": "Full-day excursions (like the Ruta de las Flores or the Santa Ana Volcano) usually last between 8 and 10 hours. Since the tour is private, you set the pace of stops, photos and meals.",
+    "t.faq.4.q": "Can I book a tour during a layover at El Salvador Airport?",
+    "t.faq.4.a": "Yes. If you have a layover of 5 hours or more at San Óscar Arnulfo Romero International Airport (SAL), we can pick you up to visit El Boquerón Volcano, the Historic Center or enjoy seafood at the La Libertad beaches before your next flight.",
+    "t.faq.5.q": "How are payment and tour confirmation handled?",
+    "t.faq.5.a": "The process is simple and fast via WhatsApp (+503 7640-1181). We send you a quote based on your group and date; once accepted, your booking is scheduled with an assigned driver and vehicle.",
+
+    "t.map.title": 'Base of Operations in <span class="text-lime">Surf City El Salvador</span>',
+    "t.map.desc": "A strategic departure point to connect with any tourist attraction in the country.",
+
+    "t.footer.about": "Leading company in private tours, excursions and tourist transport in El Salvador. Service available 24/7 for airport transfers, Surf City beaches and national routes.",
+    "t.footer.tours": "Excursions & Tours",
+    "t.footer.l1": "Ruta de las Flores Tour",
+    "t.footer.l2": "Santa Ana Volcano & Coatepeque Tour",
+    "t.footer.l3": "Suchitoto Colonial Tour",
+    "t.footer.l4": "Joya de Cerén Archaeological Tour",
+    "t.footer.l5": "Surf City Beaches Tour",
+    "t.footer.tagline": "Tours and Trips in El Salvador."
   };
 
   const STORAGE_KEY = 'lang';
