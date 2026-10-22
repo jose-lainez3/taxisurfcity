@@ -217,10 +217,39 @@
     "t.footer.tagline": "Tours and Trips in El Salvador."
   };
 
+  const META = {
+    index: {
+      es: {
+        title: 'Taxi Surfcity Lainez | Aeropuerto SAL y Surf City 24/7',
+        description: 'Taxi privado 24/7 en El Salvador: traslados desde el Aeropuerto SAL a San Salvador, Surf City, El Tunco y El Zonte. Reserva por WhatsApp.'
+      },
+      en: {
+        title: 'Taxi Surfcity Lainez | SAL Airport & Surf City 24/7',
+        description: 'Private 24/7 taxi in El Salvador: transfers from SAL Airport to San Salvador, Surf City, El Tunco and El Zonte. Book via WhatsApp.'
+      }
+    },
+    tours: {
+      es: {
+        title: 'Tours en El Salvador y Viajes Privados | Surf City y El Tunco',
+        description: 'Descubre los mejores tours y viajes por El Salvador con transporte privado. Excursiones a Ruta de las Flores, Volcán de Santa Ana, Suchitoto y playas. ¡Cotiza!'
+      },
+      en: {
+        title: 'Tours in El Salvador & Private Trips | Surf City & El Tunco',
+        description: 'Discover the best tours and trips in El Salvador with private transport. Excursions to Ruta de las Flores, Santa Ana Volcano, Suchitoto and beaches. Get a quote!'
+      }
+    }
+  };
+
   const STORAGE_KEY = 'lang';
   const btn = document.getElementById('langToggle');
   const label = document.getElementById('langLabel');
   if (!btn) return;
+  const page = document.documentElement.dataset.page === 'tours' ? 'tours' : 'index';
+
+  function setMeta(selector, value) {
+    const el = document.querySelector(selector);
+    if (el) el.setAttribute('content', value);
+  }
 
   /* ---------- Guardar el español original desde el HTML ---------- */
   const ES = {};
@@ -264,8 +293,16 @@
       if (txt !== undefined) el.setAttribute('placeholder', txt);
     });
 
-    // Estado general
+    // Estado general y metadatos de la página
+    const meta = META[page][lang];
     document.documentElement.lang = lang;
+    document.title = meta.title;
+    setMeta('meta[name="description"]', meta.description);
+    setMeta('meta[property="og:title"]', meta.title);
+    setMeta('meta[property="og:description"]', meta.description);
+    setMeta('meta[property="og:locale"]', lang === 'en' ? 'en_US' : 'es_SV');
+    setMeta('meta[name="twitter:title"]', meta.title);
+    setMeta('meta[name="twitter:description"]', meta.description);
     label.textContent = lang === 'en' ? 'ES' : 'EN';
     btn.setAttribute('aria-label', lang === 'en' ? 'Cambiar a español' : 'Switch to English');
     saveLang(lang);

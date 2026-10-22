@@ -61,14 +61,17 @@ document.addEventListener('DOMContentLoaded', () => {
         if (other !== item) {
           other.classList.remove('open');
           other.querySelector('.faq-answer').style.maxHeight = null;
+          other.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
         }
       });
       if (isOpen) {
         item.classList.remove('open');
         answer.style.maxHeight = null;
+        btn.setAttribute('aria-expanded', 'false');
       } else {
         item.classList.add('open');
         answer.style.maxHeight = answer.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
       }
     });
   });
@@ -82,6 +85,15 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   /* 5. Tarjetas de tour expandibles ("Ver detalles") */
+  function setTourToggleLabel(btn, open) {
+    const label = btn.querySelector('span');
+    if (!label) return;
+    const en = document.documentElement.lang === 'en';
+    label.textContent = open
+      ? (en ? 'View less' : 'Ver menos')
+      : (en ? 'View details' : 'Ver detalles');
+  }
+
   document.querySelectorAll('.tour-card').forEach(card => {
     const btn = card.querySelector('.tour-toggle');
     const details = card.querySelector('.tour-details');
@@ -90,9 +102,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const isOpen = card.classList.contains('is-open');
       card.classList.toggle('is-open', !isOpen);
       btn.setAttribute('aria-expanded', String(!isOpen));
-      btn.innerHTML = !isOpen
-        ? 'Ver menos <i class="bi bi-chevron-down"></i>'
-        : 'Ver detalles <i class="bi bi-chevron-down"></i>';
+      setTourToggleLabel(btn, !isOpen);
+    });
+  });
+
+  document.addEventListener('languagechange', () => {
+    document.querySelectorAll('.tour-card').forEach(card => {
+      const btn = card.querySelector('.tour-toggle');
+      if (btn) setTourToggleLabel(btn, card.classList.contains('is-open'));
     });
   });
 
