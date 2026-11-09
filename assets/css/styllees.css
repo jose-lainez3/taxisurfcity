@@ -1787,3 +1787,116 @@ body::before, body::after { display: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
+
+/* Surf City Christmas: warm coastal lights and suspended ornaments. */
+:root {
+  --obsidian-card: linear-gradient(145deg, #152a21, #0b1712 65%, #201719);
+  --obsidian-card-hover: linear-gradient(145deg, #1c392b, #102219 65%, #321c22);
+}
+.hero { isolation: isolate; }
+.hero::before, .hero::after,
+.navbar::before, .navbar-brand::after,
+.wa-float::after, .hero .btn-lime::before,
+.hero-collage-wrap .hero-overlay::after { display: none; }
+.festive-scene {
+  position: absolute; inset: 0; z-index: 1;
+  overflow: hidden; pointer-events: none;
+  contain: layout paint;
+}
+.festive-scene::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 10% 0%, rgba(15, 98, 66, .5), transparent 45%),
+    radial-gradient(ellipse at 90% 0%, rgba(151, 37, 56, .4), transparent 42%);
+}
+.festive-scene::after {
+  content: ''; position: absolute; top: 12px; left: -5%; width: 110%; height: 55px;
+  border-bottom: 1px solid rgba(242, 210, 139, .55);
+  border-radius: 0 0 50% 50%;
+  background:
+    radial-gradient(ellipse at center, #fff1bf 0 18%, rgba(242, 210, 139, .25) 30%, transparent 65%) 0 28px / 52px 18px repeat-x;
+  animation: christmas-lights 5s ease-in-out infinite;
+}
+.festive-bauble {
+  position: absolute; top: 0; width: 56px; height: 140px;
+  transform-origin: 50% 0;
+  animation: christmas-sway 7s ease-in-out infinite;
+}
+.festive-bauble::before {
+  content: ''; position: absolute; top: 0; bottom: 44px; left: 50%;
+  width: 1px; background: #d9bc7e;
+}
+.festive-bauble::after {
+  content: ''; position: absolute; bottom: 0; width: 56px; height: 56px;
+  border: 1px solid #e9cb8c; border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 25%, rgba(255,255,255,.65), transparent 22%),
+    repeating-linear-gradient(35deg, transparent 0 13px, rgba(242,210,139,.7) 14px 16px, transparent 17px 28px),
+    radial-gradient(circle at 35% 30%, #e15c70, #912337 65%, #471426);
+  box-shadow: inset -5px -7px 12px rgba(0,0,0,.25);
+}
+.festive-bauble:nth-child(1) { left: 7%; }
+.festive-bauble:nth-child(2) { right: 9%; height: 185px; animation-delay: -3s; }
+.festive-bauble:nth-child(2)::after {
+  background:
+    radial-gradient(circle at 30% 25%, #fff8dc, transparent 26%),
+    repeating-linear-gradient(90deg, transparent 0 10px, rgba(255,255,255,.18) 11px 12px),
+    radial-gradient(circle at 35% 30%, #f6dca0, #b5873d 70%, #6c461b);
+}
+.festive-sparkles {
+  position: absolute; inset: 80px 5% 14%;
+  background:
+    radial-gradient(circle, #ffe8b3 0 1.5px, transparent 2.5px) 12% 20% / 149px 173px,
+    radial-gradient(circle, #fff9e7 0 1px, transparent 2px) 70% 60% / 227px 211px;
+  opacity: .4;
+  animation: christmas-drift 15s ease-in-out infinite alternate;
+}
+.christmas-greeting { position: relative; overflow: hidden; }
+.christmas-greeting::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(110deg, transparent 35%, rgba(255,239,192,.16) 50%, transparent 65%);
+  transform: translateX(-110%);
+  animation: christmas-shimmer 9s ease-in-out infinite;
+}
+.christmas-greeting > span { animation: christmas-lights 4s ease-in-out infinite; }
+.navbar::after { animation: christmas-lights 5s ease-in-out infinite; }
+.liquid-bg::before, .liquid-bg::after { display: none; }
+.tour-card-media::before {
+  content: '\2726' !important;
+  color: #f2d28b; background: #102b20;
+  border: 1px solid rgba(242,210,139,.5);
+}
+.card:hover::after, .tour-card:hover::after { animation: none; }
+#cotiza-tu-tour > .container::before { animation: christmas-sway 7s ease-in-out infinite; }
+#preguntas > .container::before { content: '\2727'; color: #f2d28b; animation: none; }
+@keyframes christmas-sway {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+@keyframes christmas-lights {
+  0%, 100% { opacity: .6; }
+  50% { opacity: 1; }
+}
+@keyframes christmas-drift {
+  from { transform: translate3d(0, -8px, 0); opacity: .3; }
+  to { transform: translate3d(8px, 10px, 0); opacity: .6; }
+}
+@keyframes christmas-shimmer {
+  0%, 65% { transform: translateX(-110%); }
+  90%, 100% { transform: translateX(110%); }
+}
+@media (max-width: 767px) {
+  .festive-bauble { width: 34px; height: 95px; }
+  .festive-bauble::after { width: 34px; height: 34px; }
+  .festive-bauble::before { bottom: 28px; }
+  .festive-bauble:nth-child(1) { left: 4%; }
+  .festive-bauble:nth-child(2) { right: 4%; height: 112px; animation: none; }
+  .festive-sparkles { animation: none; opacity: .35; }
+  .festive-scene::after { background-size: 38px 14px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .festive-scene *, .festive-scene::after,
+  .christmas-greeting::after, .christmas-greeting > span,
+  .navbar::after, #cotiza-tu-tour > .container::before { animation: none !important; }
+  .christmas-greeting::after { display: none; }
+}
