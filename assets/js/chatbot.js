@@ -528,7 +528,10 @@
               addWhatsappCta("Hola, necesito información sobre: " + text);
               return;
             }
-            addMsg("Gemini no pudo responder: " + String(error.message || "Error de API") + ". Estoy utilizando información básica local.", "bot", true);
+            var statusText = error.status ? " (HTTP " + error.status + ")" : "";
+            addMsg("No pude obtener respuesta de Gemini" + statusText + ": " + String(error.message || "Error de conexión") + ". No voy a presentar respuestas locales como si fueran resultados de IA. Puedes reintentar con ↻ o contactar al equipo.", "bot", true);
+            addWhatsappCta("Hola, necesito ayuda con: " + text);
+            return;
           }
         } else {
           hideTyping();
