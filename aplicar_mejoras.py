@@ -38,6 +38,7 @@ FILES = (
     "assets/js/assistant-config.js",
     "api/assistant.mjs",
     "AI_AGENT_SETUP.md",
+    "vercel.json",
     "sitemap.xml",
 )
 TOUR_IDS = (
@@ -78,6 +79,8 @@ def validate_snapshot(files: dict[str, bytes]) -> list[str]:
         "Asistente: configuración separada": 'TAXISURFCITY_AI_ENDPOINT' in files["assets/js/assistant-config.js"].decode("utf-8"),
         "Asistente: API serverless": 'google_search' in files["api/assistant.mjs"].decode("utf-8"),
         "Asistente: documentación": b'GEMINI_API_KEY' in files["AI_AGENT_SETUP.md"],
+        "Enlaces tours Vercel": b'/tours.html' in files["vercel.json"],
+        "Catálogo en IA": b'OFFICIAL_TOUR_CONTEXT' in files["api/assistant.mjs"],
         "Sitemap: ruta canónica": "https://taxistuncoelsalvador.com/tours" in sitemap,
     }
     for name, success in checks.items():
