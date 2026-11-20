@@ -37,7 +37,7 @@ IMPORTANTE: GitHub Pages NO ejecuta funciones api/*.mjs. Si el sitio actual sigu
 ## 3. Conectar el frontend
 Si el sitio completo y la función usan el mismo dominio Vercel, la ruta /api/assistant ya está configurada.
 
-Si el sitio estático permanece en otro hosting, edita assets/js/assistant-config.js para dejar la URL absoluta de la función:
+El sitio ya apunta a https://taxisurfcity.vercel.app/api/assistant. Solo cambia assets/js/assistant-config.js si en el futuro migra a otra URL.
 
     window.TAXISURFCITY_AI_ENDPOINT = "https://TU-PROYECTO.vercel.app/api/assistant";
 
