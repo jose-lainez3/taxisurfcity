@@ -6,7 +6,8 @@
  */
 const DEFAULT_ORIGINS = [
   "https://taxistuncoelsalvador.com",
-  "https://www.taxistuncoelsalvador.com"
+  "https://www.taxistuncoelsalvador.com",
+  "https://taxisurfcity.vercel.app"
 ];
 const MAX_REQUEST_BYTES = 16000;
 const MAX_MESSAGE_LENGTH = 1400;
