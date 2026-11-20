@@ -458,11 +458,63 @@
     }
 
 
-    function addMsg(text, who) {
+    // Renderiza Markdown mínimo de Gemini sin insertar HTML no confiable.
+    // Texto, negritas, saltos de línea, enlaces Markdown y enlaces https.
+    function renderAIText(container, raw) {
+      var text = String(raw || "");
+      var pattern = /(\*\*[^*\n]{1,200}\*\*|\[[^\]\n]{1,120}\]\(https:\/\/[^)\s]+\)|https:\/\/[^\s<)]+|\n)/g;
+      var index = 0;
+      var hit;
+
+      function addSafeLink(address, label) {
+        try {
+          var url = new URL(address);
+          if (url.protocol !== "https:") {
+            container.appendChild(document.createTextNode(label));
+            return;
+          }
+          var link = document.createElement("a");
+          link.href = url.href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = label;
+          container.appendChild(link);
+        } catch (error) {
+          container.appendChild(document.createTextNode(label));
+        }
+      }
+
+      while ((hit = pattern.exec(text)) !== null) {
+        if (hit.index > index) {
+          container.appendChild(document.createTextNode(text.slice(index, hit.index)));
+        }
+        var token = hit[0];
+        if (token === "\n") {
+          container.appendChild(document.createElement("br"));
+        } else if (token.slice(0, 2) === "**") {
+          var strong = document.createElement("strong");
+          strong.textContent = token.slice(2, -2);
+          container.appendChild(strong);
+        } else if (token.charAt(0) === "[") {
+          var split = token.match(/^\[([^\]]+)\]\((https:\/\/[^)]+)\)$/);
+          if (split) addSafeLink(split[2], split[1]);
+          else container.appendChild(document.createTextNode(token));
+        } else {
+          addSafeLink(token, token);
+        }
+        index = hit.index + token.length;
+      }
+      if (index < text.length) {
+        container.appendChild(document.createTextNode(text.slice(index)));
+      }
+    }
+
+    function addMsg(text, who, fromAI) {
       var div = document.createElement("div");
       div.className = "cb-msg " + who;
-      if (who === "user" || arguments[2] === true) div.textContent = text;
-      else div.innerHTML = text; // Solo textos estáticos confiables del sitio.
+      if (fromAI) renderAIText(div, text);
+      else if (who === "user") div.textContent = text;
+      else div.innerHTML = text; // Únicamente respuestas estáticas conocidas del sitio.
       body.appendChild(div);
       body.scrollTop = body.scrollHeight;
       return div;
