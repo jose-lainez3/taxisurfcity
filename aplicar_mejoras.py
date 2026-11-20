@@ -98,12 +98,15 @@ def validate_snapshot(files: dict[str, bytes]) -> list[str]:
     return errors
 
 
-def read_local(root: Path) -> dict[str, bytes]:
+def read_local(root: Path, allow_missing: bool = False) -> dict[str, bytes]:
     files = {}
     for name in FILES:
         target = root / name
         if not target.is_file():
-            raise FileNotFoundError("No se encuentra " + str(target))
+            if not allow_missing:
+                raise FileNotFoundError("No se encuentra " + str(target))
+            files[name] = b""
+            continue
         files[name] = target.read_bytes()
     return files
 
@@ -123,7 +126,7 @@ def fetch_remote() -> dict[str, bytes]:
 
 
 def synchronize(root: Path, incoming: dict[str, bytes], dry_run: bool) -> int:
-    local = read_local(root)
+    local = read_local(root, allow_missing=True)
     changed = [name for name in FILES if local[name] != incoming[name]]
     if not changed:
         print("Todos los archivos ya coinciden con la versión optimizada de GitHub.")
@@ -140,13 +143,15 @@ def synchronize(root: Path, incoming: dict[str, bytes], dry_run: bool) -> int:
     backup = root / ".taxisurfcity-backups" / stamp
     for name in changed:
         source = root / name
-        target_backup = backup / name
-        target_backup.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, target_backup)
+        if source.is_file():
+            target_backup = backup / name
+            target_backup.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source, target_backup)
 
     try:
         for name in changed:
             target = root / name
+            target.parent.mkdir(parents=True, exist_ok=True)
             with tempfile.NamedTemporaryFile(
                 mode="wb", dir=target.parent, prefix=".taxisurfcity-", delete=False
             ) as temp:
