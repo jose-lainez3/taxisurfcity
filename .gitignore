@@ -1,0 +1,6 @@
+# Copias creadas por aplicar_mejoras.py
+/.taxisurfcity-backups/
+
+# Archivos temporales de Python
+__pycache__/
+*.py[cod]
