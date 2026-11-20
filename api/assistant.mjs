@@ -51,6 +51,13 @@ function isTourCatalogQuestion(message) {
   const siteExistence = /\b(tienen|tiene|hay|existe|do you have|is there|have)\b.*\b(pagina|web|sitio|catalogo|website|catalog)\b/.test(q);
   return (tourTopic && catalogTopic) || explicitList || siteExistence;
 }
+// Acciones públicas verificadas para botones en el asistente. Sin datos privados.
+function officialCatalogLinks() {
+  return [
+    {label:"Ver catálogo de tours", url:OFFICIAL_TOURS_URL},
+    {label:"Consultar por WhatsApp", url:"https://wa.me/50376401181"}
+  ];
+}
 function knownCatalogAnswer(message) {
   const english = /\b(what|which|where|show|view|see|available|website|online|photos|pictures|your tours)\b/i.test(message) &&
     !/\b(que|cuales|pagina|catalogo|donde|excursiones|tienen)\b/i.test(plainSearchText(message));
@@ -213,6 +220,7 @@ export async function POST(request) {
       sources:[],
       searchedWeb:false,
       knowledgeSource:"official-site",
+      links:officialCatalogLinks(),
       webSearchEnabled:enableWebSearch,
       model:null
     },200,origin);
@@ -300,6 +308,7 @@ export async function POST(request) {
     }
     return responseJSON({
       answer:safeAnswer,
+      links:isTourRelated ? officialCatalogLinks() : [],
       sources:safeSources(candidate),
       searchedWeb: enableWebSearch && Boolean(candidate?.groundingMetadata?.webSearchQueries?.length),
       webSearchEnabled: enableWebSearch,
