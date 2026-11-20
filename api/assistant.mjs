@@ -153,41 +153,57 @@ export async function POST(request) {
   const contents = cleanHistory(payload?.history);
   contents.push({role:"user",parts:[{text:message}]});
   const abort = new AbortController();
-  const timeout = setTimeout(()=>abort.abort(), 20000);
+  const timeout = setTimeout(()=>abort.abort(), 24000);
   try {
-    const upstream = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(model) + ":generateContent",
-      {
-        method:"POST",
-        signal:abort.signal,
-        headers:{
-          "Content-Type":"application/json",
-          "x-goog-api-key":process.env.GEMINI_API_KEY
-        },
-        body:JSON.stringify({
-          systemInstruction:{parts:[{text:SYSTEM_PROMPT}]},
-          contents,
-          ...(enableWebSearch ? {tools:[{google_search:{}}]} : {}),
-          generationConfig:{temperature:0.35,maxOutputTokens:1400}
-        })
-      }
-    );
+    // Hasta 3 intentos ante fallas transitorias del proveedor (503 UNAVAILABLE,
+    // 500/502/504/408). No reintentar cuotas, credenciales ni modelos inválidos.
+    const requestOptions = {
+      method:"POST",
+      signal:abort.signal,
+      headers:{
+        "Content-Type":"application/json",
+        "x-goog-api-key":process.env.GEMINI_API_KEY
+      },
+      body:JSON.stringify({
+        systemInstruction:{parts:[{text:SYSTEM_PROMPT}]},
+        contents,
+        ...(enableWebSearch ? {tools:[{google_search:{}}]} : {}),
+        generationConfig:{temperature:0.35,maxOutputTokens:1400}
+      })
+    };
+    const endpoint = "https://generativelanguage.googleapis.com/v1beta/models/" +
+      encodeURIComponent(model) + ":generateContent";
+    let upstream;
+    let attemptsMade = 0;
+    const transientStatuses = new Set([408,500,502,503,504]);
+    const backoffsMs = [500,1200];
+    for (let attempt = 0; attempt < 3; attempt++) {
+      attemptsMade++;
+      upstream = await fetch(endpoint,requestOptions);
+      if (upstream.ok || !transientStatuses.has(upstream.status) || attempt === 2) break;
+      // Consumir/cerrar la respuesta antes de una nueva solicitud.
+      try { await upstream.body?.cancel(); } catch { /* Respuesta vacía */ }
+      await new Promise(resolve => setTimeout(resolve,backoffsMs[attempt]));
+      if (abort.signal.aborted) break;
+    }
     if (!upstream.ok) {
-      // Solo registrar el código y la categoría, jamás claves ni el texto privado.
+      // Solo registrar estado/categoría; nunca guardar clave ni consulta privada.
       let providerStatus = "";
       try {
         const detail = await upstream.json();
         providerStatus = String(detail?.error?.status || "").slice(0,60);
       } catch { /* Respuesta externa no JSON */ }
       console.error("Gemini upstream failure",{
-        status:upstream.status, providerStatus, model, searchEnabled:enableWebSearch
+        status:upstream.status, providerStatus, model,
+        searchEnabled:enableWebSearch, attempts:attemptsMade
       });
       const mappings = {
         400:["MODEL_REQUEST_ERROR","Gemini rechazó la solicitud. Revisa compatibilidad del modelo y opciones de búsqueda.",502],
         401:["KEY_UNAUTHORIZED","Gemini rechazó la autorización de la clave. Revisa Google AI Studio.",502],
         403:["KEY_OR_PROJECT_RESTRICTED","La clave o el proyecto de Google no tiene permisos para generar respuestas.",502],
         404:["MODEL_UNAVAILABLE","El modelo de Gemini configurado no está disponible para esta clave. Cambia GEMINI_MODEL.",502],
-        429:["QUOTA_REACHED","Gemini alcanzó un límite de uso o no permite búsqueda web en el nivel actual.",429]
+        429:["QUOTA_REACHED","Gemini alcanzó un límite de uso o no permite búsqueda web en el nivel actual.",429],
+        503:["PROVIDER_UNAVAILABLE","Gemini está temporalmente saturado. Se intentó 3 veces sin éxito; vuelve a consultar en un momento.",503]
       };
       const mapping = mappings[upstream.status] || [
         "PROVIDER_ERROR",
