@@ -22,7 +22,7 @@ Estado actual: CODIGO INTEGRADO; PENDIENTE DE CONFIGURAR UNA CLAVE PRIVADA Y DES
 2. NUNCA guardes la clave en el código HTML, en JavaScript público ni en GitHub.
 3. En Vercel → Project → Settings → Environment Variables, define:
    GEMINI_API_KEY = tu_clave_privada
-4. Opcional: GEMINI_MODEL = gemini-2.5-flash-lite (modelo predeterminado).
+4. Opcional: GEMINI_MODEL = gemini-3.5-flash-lite (modelo predeterminado, opcional).
 5. Vuelve a desplegar el proyecto.
 
 ## 2. Desplegar en Vercel
@@ -57,8 +57,16 @@ Los orígenes https://taxistuncoelsalvador.com y https://www.taxistuncoelsalvado
 - El código de Taxi SurfCity no guarda automáticamente historiales en base de datos, aunque el proveedor puede tratar las solicitudes según sus términos.
 - Se limita el tamaño de cada pregunta y se hace una limitación básica por IP. En alojamiento serverless esta limitación es por instancia, NO es una protección definitiva contra abusos ni cargos.
 - Para un servicio público de alto tráfico conviene configurar rate limiting persistente, anti-bots y cuotas del proveedor.
-- Según la documentación vigente el 20/11/2026, Gemini 2.5 Flash-Lite permite Grounding con Google Search en el nivel gratuito hasta 500 solicitudes/día, sujeto a cuotas de modelo y región; los límites pueden cambiar.
+- El modelo antiguo Gemini 2.5 Flash-Lite quedó retirado. Usamos Gemini 3.5 Flash-Lite para conversación. En la API de Gemini, la búsqueda web integrada no está disponible en el nivel gratuito para modelos Gemini 3 o posteriores. Para habilitarla con un proyecto que tenga acceso de pago, configura GEMINI_ENABLE_SEARCH=true en Vercel y revisa antes sus tarifas y cuotas. Sin esa variable, el asistente es IA conversacional pero NO consulta internet en tiempo real.
 - Una consulta respondida por IA no implica reserva, precio garantizado, acceso directo a WhatsApp ni información privada.
 
 ## Siguientes mejoras posibles
 Cotizador inteligente, recomendaciones personalizadas y registro CRM, solo con una fuente real de tarifas/disponibilidad, autorización y confirmación humana antes de ejecutar operaciones.
+
+
+## Corrección por HTTP 502 (20/11/2026)
+- El modelo por defecto `gemini-2.5-flash-lite` ya no era adecuado. Se actualizó a `gemini-3.5-flash-lite`.
+- Gemini 3/3.5 requiere acceso correspondiente para usar grounding de Google Search; el código ahora solo envía `google_search` si `GEMINI_ENABLE_SEARCH=true`.
+- La API informa un código de diagnóstico: `MODEL_UNAVAILABLE` (404 de proveedor), `KEY_OR_PROJECT_RESTRICTED` (403), `QUOTA_REACHED` (429), etc. No expone secretos en respuestas.
+- `GET /api/assistant` muestra `ready`, `model`, `webSearch`. `ready:true` solo significa que existe la clave; para verificar la generación hay que hacer una petición POST.
+- Se evita presentar noticias o clima no verificados como información actualizada si no hay búsqueda web real.
