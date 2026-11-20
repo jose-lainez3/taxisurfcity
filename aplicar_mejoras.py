@@ -4,7 +4,7 @@
 Taxi SurfCity Lainez - sincronizar y validar mejoras SEO/Navidad de Tours.
 
 Uso (Windows, desde la carpeta principal del proyecto):
-    py aplicar_mejoras.py             # descarga los archivos optimizados de main
+    py aplicar_mejoras.py             # sincroniza los archivos del diseño de main
     py aplicar_mejoras.py --dry-run   # muestra cambios sin tocar archivos
     py aplicar_mejoras.py --check     # valida la copia local, sin internet
 
@@ -28,8 +28,11 @@ from urllib.request import Request, urlopen
 REPO = "jose-lainez3/taxisurfcity"
 RAW_BASE = "https://raw.githubusercontent.com/" + REPO + "/main/"
 FILES = (
+    "index.html",
     "tours.html",
+    "404.html",
     "assets/css/styllees.css",
+    "assets/css/christmas-unified.css",
     "assets/js/i18n.js",
     "sitemap.xml",
 )
@@ -64,6 +67,9 @@ def validate_snapshot(files: dict[str, bytes]) -> list[str]:
         "Diseño: sección para elegir tour": 'id="elegir-tour"' in html,
         "Estilos CSS adaptados a tours": "body.tours-page" in css,
         "Traducciones y metadatos": '"t.guide.title"' in js,
+        "Portada: tema compartido": 'site-christmas home-page' in files["index.html"].decode("utf-8"),
+        "404: tema compartido": 'site-christmas not-found-page' in files["404.html"].decode("utf-8"),
+        "CSS: tema compartido": 'body.site-christmas' in files["assets/css/christmas-unified.css"].decode("utf-8"),
         "Sitemap: ruta canónica": "https://taxistuncoelsalvador.com/tours" in sitemap,
     }
     for name, success in checks.items():
@@ -181,7 +187,7 @@ def main() -> int:
             for error in errors:
                 print(" -", error)
             return 1
-        print("Correcto: SEO, enlaces, analítica, JSON-LD y diseño encontrados.")
+        print("Correcto: SEO, analítica, JSON-LD y diseño navideño unificado encontrados.")
         return 0
 
     try:
