@@ -93,9 +93,28 @@
 
     /* ===== Página de Tours ===== */
     "t.hero.badge": "Private tourist transport · Excursions and trips in El Salvador",
-    "t.hero.title": 'Tours in El Salvador &amp; Private Trips <br><span class="text-lime-gradient">from Surf City, El Tunco &amp; the Airport.</span>',
+    "t.hero.title": 'Private Tours in El Salvador<br><span class="text-lime-gradient">Ruta de las Flores, Volcanoes &amp; Surf City</span>',
     "t.hero.lead": "Explore El Salvador's most impressive destinations with a local driver and an exclusive vehicle. Custom routes to the Ruta de las Flores, volcano hikes, lakes, colonial architecture and surf beaches, with complete safety and comfort.",
-    "t.hero.cta": "Build my Custom Tour",
+    "t.hero.cta": "Get a tour quote on WhatsApp",
+    "t.hero.explore": "Explore destinations",
+    "t.quick.label": "Explore the destinations",
+    "t.quick.flores": "Ruta de las Flores",
+    "t.quick.volcan": "Volcano & Coatepeque",
+    "t.quick.suchitoto": "Suchitoto",
+    "t.quick.ceren": "Joya de Cerén",
+    "t.quick.boqueron": "El Boquerón",
+    "t.quick.playas": "Surf City beaches",
+    "t.guide.eyebrow": "Find your experience",
+    "t.guide.title": "Which private tour should you choose in El Salvador?",
+    "t.guide.intro": "First time visiting El Salvador? Find an excursion that fits your interests and time available.",
+    "t.guide.a.title": "Volcanoes & scenery",
+    "t.guide.a.text": 'For hiking and nature views, explore <a href="#volcan-coatepeque">Santa Ana Volcano & Lake Coatepeque</a>. For a calmer outing, try <a href="#boqueron">El Boquerón</a>.',
+    "t.guide.b.title": "Towns, coffee & history",
+    "t.guide.b.text": 'Enjoy coffee, food and the towns along <a href="#ruta-de-las-flores">Ruta de las Flores</a>. You can also visit <a href="#suchitoto">Suchitoto</a> or <a href="#joya-de-ceren">Joya de Cerén</a>.',
+    "t.guide.c.title": "Beaches & sunsets",
+    "t.guide.c.text": 'Explore El Tunco, El Zonte and Mizata on a <a href="#surf-city">Surf City coastal tour</a> with stops and schedules tailored to your group.',
+    "t.guide.note": "Confirm the rate, availability, entrance fees, meals and need for specialized guides on WhatsApp before booking.",
+
 
     "t.ben.1.title": "100% Private Transport",
     "t.ben.1.desc": "Air-conditioned vehicles exclusively for you and your group.",
@@ -105,8 +124,8 @@
     "t.ben.3.desc": "Drivers with deep knowledge of the country's best routes and destinations.",
 
     "t.cat.eyebrow": "Excursion catalog",
-    "t.cat.title": "The Best Guided Tours and Excursions in El Salvador",
-    "t.cat.desc": "Discover the natural, archaeological and cultural wonders of El Salvador, departing from your accommodation in El Tunco, El Zonte, Surf City or the airport. Choose your excursion and book via WhatsApp.",
+    "t.cat.title": "6 Private Tours from Surf City and El Tunco",
+    "t.cat.desc": "Depart from El Tunco, El Zonte, Surf City, San Salvador or the airport. Compare destinations, approximate tour lengths and itineraries, then request a quote on WhatsApp.",
 
     "t.toggle": "View details",
     "t.reserve": "Book",
@@ -230,12 +249,12 @@
     },
     tours: {
       es: {
-        title: 'Tours en El Salvador y Viajes Privados | Surf City y El Tunco',
-        description: 'Descubre los mejores tours y viajes por El Salvador con transporte privado. Excursiones a Ruta de las Flores, Volcán de Santa Ana, Suchitoto y playas. ¡Cotiza!'
+        title: 'Tours privados en El Salvador | Ruta de las Flores y volcanes',
+        description: 'Tours privados desde Surf City, El Tunco o San Salvador: Ruta de las Flores, Volcán de Santa Ana, Lago de Coatepeque y más. Cotiza por WhatsApp.'
       },
       en: {
-        title: 'Tours in El Salvador & Private Trips | Surf City & El Tunco',
-        description: 'Discover the best tours and trips in El Salvador with private transport. Excursions to Ruta de las Flores, Santa Ana Volcano, Suchitoto and beaches. Get a quote!'
+        title: 'Private Tours in El Salvador | Ruta de las Flores & Volcanoes',
+        description: 'Private tours from Surf City, El Tunco or San Salvador: Ruta de las Flores, Santa Ana Volcano, Lake Coatepeque and more. Get a quote on WhatsApp.'
       }
     }
   };
