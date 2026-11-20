@@ -288,6 +288,12 @@
     + ".cb-msg.bot,.cb-typing{background:#153528;color:#f6f1e8;border-color:rgba(242,208,149,.16);}"
     + ".cb-msg.bot{white-space:pre-wrap;}"
     + ".cb-msg.bot a{color:#f2d095;}"
+    + ".cb-msg.bot a.cb-inline-link{display:inline;cursor:pointer;pointer-events:auto;text-decoration:underline;text-underline-offset:3px;overflow-wrap:anywhere;}"
+    + ".cb-msg.bot a.cb-inline-link:hover,.cb-msg.bot a.cb-inline-link:focus-visible{color:#fff2d7;text-decoration-thickness:2px;}"
+    + ".cb-official-links{align-self:flex-start;display:flex;flex-wrap:wrap;gap:7px;max-width:95%;margin-top:0;}"
+    + ".cb-official-link{display:inline-flex;align-items:center;gap:6px;max-width:100%;font-size:12px;font-weight:700;text-decoration:none;padding:9px 12px;border-radius:11px;background:#204632;color:#fce4b3;border:1px solid rgba(242,208,149,.52);cursor:pointer;pointer-events:auto;overflow-wrap:anywhere;}"
+    + ".cb-official-link:hover,.cb-official-link:focus-visible{background:#335b40;color:white;border-color:#ffe4a4;outline-offset:2px;}"
+
     + ".cb-inputrow{background:#102c20;border-top-color:rgba(242,208,149,.22);}"
     + ".cb-input{background:#071c13;color:#fff6e8;border-color:rgba(242,208,149,.3);min-width:0;}"
     + ".cb-input:focus{border-color:#f2d095;}"
@@ -412,6 +418,33 @@
       checkAI(true);
     });
 
+    // Acciones oficiales del catálogo: enlaces clicables incluso si Gemini
+    // devuelve un formato de Markdown inconsistente.
+    function addOfficialLinks(links) {
+      if (!Array.isArray(links) || !links.length) return;
+      var group = document.createElement("div");
+      group.className = "cb-official-links";
+      links.slice(0, 8).forEach(function(item) {
+        if (!item || typeof item.url !== "string") return;
+        try {
+          var address = new URL(item.url);
+          if (address.protocol !== "https:") return;
+          if (!["taxistuncoelsalvador.com", "www.taxistuncoelsalvador.com", "wa.me"].includes(address.hostname)) return;
+          var button = document.createElement("a");
+          button.href = address.href;
+          button.target = "_blank";
+          button.rel = "noopener noreferrer";
+          button.className = "cb-official-link";
+          button.textContent = String(item.label || "Abrir enlace").slice(0, 65) + " ↗";
+          group.appendChild(button);
+        } catch (_) { /* URL no válida. */ }
+      });
+      if (group.children.length) {
+        body.appendChild(group);
+        body.scrollTop = body.scrollHeight;
+      }
+    }
+
     function addSources(sources) {
       if (!Array.isArray(sources) || !sources.length) return;
       var holder = document.createElement("div");
@@ -458,19 +491,17 @@
     }
 
 
-    // Renderiza Markdown mínimo de Gemini sin insertar HTML no confiable.
-    // Texto, negritas, saltos de línea, enlaces Markdown y enlaces https.
+    // Markdown seguro: transforma URLs, links [texto](https://...) y enlaces
+    // anidados dentro de negritas en <a> reales; nunca interpreta HTML remoto.
     function renderAIText(container, raw) {
-      var text = String(raw || "");
-      var pattern = /(\*\*[^*\n]{1,200}\*\*|\[[^\]\n]{1,120}\]\(https:\/\/[^)\s]+\)|https:\/\/[^\s<)]+|\n)/g;
-      var index = 0;
-      var hit;
+      var input = String(raw || "").replace(/\r\n?/g, "\n");
 
-      function addSafeLink(address, label) {
+      function addSafeLink(target, rawUrl, label) {
         try {
-          var url = new URL(address);
-          if (url.protocol !== "https:") {
-            container.appendChild(document.createTextNode(label));
+          var sanitized = String(rawUrl).replace(/[.,!?;:]+$/, "");
+          var url = new URL(sanitized);
+          if (url.protocol !== "https:" && url.protocol !== "http:") {
+            target.appendChild(document.createTextNode(label));
             return;
           }
           var link = document.createElement("a");
@@ -478,35 +509,48 @@
           link.target = "_blank";
           link.rel = "noopener noreferrer";
           link.textContent = label;
-          container.appendChild(link);
-        } catch (error) {
-          container.appendChild(document.createTextNode(label));
+          link.className = "cb-inline-link";
+          link.setAttribute("aria-label", "Abrir " + label);
+          target.appendChild(link);
+          var tail = String(rawUrl).slice(sanitized.length);
+          if (tail) target.appendChild(document.createTextNode(tail));
+        } catch (_) {
+          target.appendChild(document.createTextNode(label));
         }
       }
 
-      while ((hit = pattern.exec(text)) !== null) {
-        if (hit.index > index) {
-          container.appendChild(document.createTextNode(text.slice(index, hit.index)));
+      function appendFormatted(target, text, depth) {
+        if (depth > 3) {
+          target.appendChild(document.createTextNode(text));
+          return;
         }
-        var token = hit[0];
-        if (token === "\n") {
-          container.appendChild(document.createElement("br"));
-        } else if (token.slice(0, 2) === "**") {
-          var strong = document.createElement("strong");
-          strong.textContent = token.slice(2, -2);
-          container.appendChild(strong);
-        } else if (token.charAt(0) === "[") {
-          var split = token.match(/^\[([^\]]+)\]\((https:\/\/[^)]+)\)$/);
-          if (split) addSafeLink(split[2], split[1]);
-          else container.appendChild(document.createTextNode(token));
-        } else {
-          addSafeLink(token, token);
+        // Primero <strong> recursivo: su contenido puede incluir enlaces Markdown.
+        var pattern = /(\*\*([^\n]*?)\*\*|\[([^\]\n]{1,180})\]\((https?:\/\/[^)\s]+)\)|https?:\/\/[^\s<>"']+|\n)/g;
+        var start = 0;
+        var match;
+        while ((match = pattern.exec(text)) !== null) {
+          if (match.index > start) {
+            target.appendChild(document.createTextNode(text.slice(start, match.index)));
+          }
+          var token = match[0];
+          if (token === "\n") {
+            target.appendChild(document.createElement("br"));
+          } else if (match[2] !== undefined) {
+            var strong = document.createElement("strong");
+            appendFormatted(strong, match[2], depth + 1);
+            target.appendChild(strong);
+          } else if (match[3] !== undefined && match[4]) {
+            addSafeLink(target, match[4], match[3]);
+          } else {
+            addSafeLink(target, token, token.replace(/[.,!?;:]+$/, ""));
+          }
+          start = match.index + token.length;
         }
-        index = hit.index + token.length;
+        if (start < text.length) {
+          target.appendChild(document.createTextNode(text.slice(start)));
+        }
       }
-      if (index < text.length) {
-        container.appendChild(document.createTextNode(text.slice(index)));
-      }
+      appendFormatted(container, input, 0);
     }
 
     function addMsg(text, who, fromAI) {
@@ -571,6 +615,7 @@
             var result = await askAI(text);
             hideTyping();
             addMsg(result.answer, "bot", true);
+            addOfficialLinks(result.links);
             addSources(result.sources);
             if (!result.searchedWeb && /\b(hoy|mañana|esta semana|últimas|recientes?|noticias?|clima|pronóstico|actualmente|today|tomorrow|latest|news|weather|forecast)\b/i.test(text)) {
               addMsg("Nota: esta respuesta se generó sin consultar fuentes actuales de internet. Verifica la información antes de organizar el viaje.", "bot", true);
