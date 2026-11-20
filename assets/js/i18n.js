@@ -22,6 +22,7 @@
     "hero.index.title": 'Taxis in El Salvador 24/7: Airport Transfers, <br><span class="text-lime-gradient">Surf City, San Salvador &amp; Tours.</span>',
     "hero.index.lead": 'Your leading <strong>taxi and private transport service in El Salvador</strong>. Ride with <strong>Taxi Surfcity Lainez</strong>: transfers from <strong>El Salvador International Airport (SAL)</strong> to San Salvador, El Tunco, El Zonte, hotels and tourist routes 24/7.',
     "hero.index.cta": "Book my Taxi Now",
+    "hero.index.toursCta": "Explore our tours",
 
     "servicios.eyebrow": "Our 24/7 services",
     "servicios.title": "Taxi Service in El Salvador, Airport & VIP Transport",
