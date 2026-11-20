@@ -1,0 +1,330 @@
+/* Taxi SurfCity Lainez — Navidad unificada 2026
+   Capa estacional independiente: Inicio, Tours y 404.
+   Se carga después de styllees.css para no alterar las funciones del sitio.
+*/
+body.site-christmas {
+  --holiday-forest: #081b14;
+  --holiday-pine: #102c22;
+  --holiday-gold: #f2d095;
+  --holiday-cream: #fff6e8;
+  --holiday-muted: #c9d7cd;
+  --holiday-line: rgba(242, 208, 149, .26);
+  --bg-black: #081b14;
+  --bg-alt: #0c241b;
+  --bg-footer: #061710;
+  --text-grey: #c9d7cd;
+  --border-specular: rgba(242, 208, 149, .23);
+  --border-soft: rgba(242, 208, 149, .19);
+  background: var(--holiday-forest);
+  color: var(--holiday-cream);
+}
+body.site-christmas .liquid-bg {
+  background:
+    radial-gradient(circle at 12% 15%, rgba(40, 115, 73, .11), transparent 38%),
+    radial-gradient(circle at 88% 28%, rgba(141, 105, 43, .07), transparent 42%),
+    #081b14;
+}
+body.site-christmas .navbar {
+  background: linear-gradient(115deg, #0b281e 0%, #102f23 68%, #1b2b22 100%);
+  border-bottom: 1px solid rgba(242,208,149,.28);
+  box-shadow: 0 8px 26px rgba(0,0,0,.30);
+  padding: 13px 0;
+}
+body.site-christmas .navbar::after {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #deb66d 18%, #f8dfa7 50%, #deb66d 82%, transparent);
+  box-shadow: 0 2px 8px rgba(242,208,149,.15);
+  animation: none;
+}
+body.site-christmas .navbar-brand {
+  color: var(--holiday-cream);
+  letter-spacing: -.035em;
+}
+body.site-christmas .navbar-brand img {
+  border-color: rgba(242,208,149,.43);
+  box-shadow: 0 4px 13px rgba(0,0,0,.24);
+}
+body.site-christmas .navbar-brand::after { display: none; }
+body.site-christmas .nav-links a:not(.btn-whatsapp) { color: #e7eee6; }
+body.site-christmas .nav-links a.active,
+body.site-christmas .nav-links a:not(.btn-whatsapp):hover,
+body.site-christmas .nav-links a:not(.btn-whatsapp):focus-visible {
+  color: var(--holiday-gold);
+}
+body.site-christmas .nav-links .btn-whatsapp {
+  background: linear-gradient(110deg, #24d76b, #17ae51);
+  border-color: transparent;
+  color: #082116 !important;
+  box-shadow: 0 5px 17px rgba(6, 98, 42, .28);
+}
+body.site-christmas .lang-btn {
+  background: rgba(8, 30, 22, .82);
+  border-color: rgba(242, 208, 149, .36);
+  color: #fff0d8;
+}
+body.site-christmas .lang-btn:hover,
+body.site-christmas .lang-btn:focus-visible { border-color: var(--holiday-gold); color: var(--holiday-gold); }
+body.site-christmas .nav-toggle { color: var(--holiday-gold); }
+body.site-christmas .trust-bar {
+  background: linear-gradient(90deg, #092319, #123225, #10261e);
+  border-bottom-color: var(--holiday-line);
+}
+body.site-christmas .trust-bar span { color: #e2e9de; }
+body.site-christmas .trust-bar .dot,
+body.site-christmas .trust-bar .container>span:nth-child(2) .dot {
+  color: var(--holiday-gold);
+  text-shadow: none;
+}
+body.site-christmas .hero { isolation: isolate; }
+body.site-christmas .hero h1 {
+  color: var(--holiday-cream);
+  line-height: 1.15;
+  letter-spacing: -.035em;
+  text-wrap: balance;
+}
+body.site-christmas .hero .lead {
+  color: #f1f0e8;
+  font-weight: 400;
+  line-height: 1.72;
+}
+body.site-christmas .hero .lead strong { color: #f6d99e; }
+body.site-christmas .text-lime-gradient {
+  background: linear-gradient(105deg, #f3d39a, #fff7e3 53%, #bce0b6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+body.site-christmas .text-lime { color: #bce6b2 !important; }
+body.site-christmas .christmas-greeting {
+  background: rgba(11, 38, 28, .9);
+  color: #f7dfb4;
+  border-color: rgba(242,208,149,.51);
+  box-shadow: 0 7px 22px rgba(0,0,0,.15);
+}
+body.site-christmas .festive-scene { opacity: .7; }
+body.site-christmas .festive-scene::after,
+body.site-christmas .festive-bauble,
+body.site-christmas .festive-sparkles { animation: none; }
+body.site-christmas .hero .btn-lime {
+  border: 1px solid #f9e3bd;
+  background: linear-gradient(115deg, #f3d79c, #e6bc78);
+  color: #153020;
+  font-weight: 800;
+  box-shadow: 0 12px 30px rgba(0,0,0,.24);
+}
+body.site-christmas .hero .btn-lime:hover { background: #ffe6ad; }
+body.site-christmas .btn-outline {
+  border-color: rgba(242,208,149,.55);
+  color: #fff1d6;
+  background: rgba(17,46,34,.7);
+}
+body.site-christmas .btn-outline:hover,
+body.site-christmas .btn-outline:focus-visible {
+  background: #214735;
+  border-color: var(--holiday-gold);
+  color: #fff7e7;
+}
+body.site-christmas .eyebrow,
+body.site-christmas .badge-tour {
+  background: rgba(22,58,42,.66);
+  border-color: rgba(242,208,149,.38);
+  box-shadow: none;
+  color: var(--holiday-gold);
+}
+body.site-christmas .eyebrow::before {
+  content: '✦';
+  font-size: 1rem;
+  color: var(--holiday-gold);
+  animation: none;
+}
+body.site-christmas .eyebrow::after { content: none; }
+body.site-christmas .section {
+  scroll-margin-top: 90px;
+}
+body.site-christmas .section-alt {
+  background: linear-gradient(155deg, #102b21, #0c241b 72%, #1b2620);
+  border-color: rgba(242,208,149,.13);
+}
+body.site-christmas .section-head { max-width: 800px; }
+body.site-christmas .section-head h2 {
+  color: var(--holiday-cream);
+  text-wrap: balance;
+  line-height: 1.23;
+}
+body.site-christmas .section-head p { color: var(--holiday-muted); }
+body.site-christmas .card,
+body.site-christmas .reviews-widget-card,
+body.site-christmas .reviews-cta-card,
+body.site-christmas .quote-box,
+body.site-christmas .faq-item {
+  background: linear-gradient(150deg, #173b2b, #102920 67%, #1b2922);
+  border: 1px solid rgba(242,208,149,.25);
+  box-shadow: 0 13px 37px rgba(0,0,0,.27);
+  border-radius: 20px;
+}
+body.site-christmas .card { border-top: 1px solid rgba(242,208,149,.3); }
+body.site-christmas .card::before {
+  background: linear-gradient(90deg, transparent, #e8c482 50%, transparent);
+  height: 2px;
+}
+body.site-christmas .card::after,
+body.site-christmas .reviews-cta-card::after,
+body.site-christmas .quote-box::after {
+  opacity: .35;
+}
+body.site-christmas .card:hover {
+  background: linear-gradient(150deg, #1b4631, #123225 75%);
+  border-color: rgba(242,208,149,.6);
+  box-shadow: 0 20px 42px rgba(0,0,0,.30);
+  transform: translateY(-5px);
+}
+body.site-christmas .card img { border-bottom-color: rgba(242,208,149,.26); }
+body.site-christmas .card-body h3 { color: #fff8ea; line-height: 1.4; }
+body.site-christmas .card-body p { color: #cad9cf; }
+body.site-christmas .card-link { color: #f3d69d; }
+body.site-christmas .card-link:hover { color: #fff1cb; }
+body.site-christmas #tours-destacados .card-body>.bi {
+  width: 54px;
+  height: 54px;
+  padding: 13px;
+  border: 1px solid rgba(242,208,149,.38);
+  border-radius: 15px;
+  background: rgba(242,208,149,.08);
+  color: var(--holiday-gold) !important;
+  font-size: 1.6rem !important;
+}
+body.site-christmas .reviews-cta-card i {
+  color: #f2d095;
+  filter: none;
+}
+body.site-christmas .reviews-cta-card .btn-lime,
+body.site-christmas .quote-submit {
+  background: linear-gradient(115deg,#f3d99f,#e3bb78);
+  color: #132c20;
+  box-shadow: 0 6px 22px rgba(0,0,0,.15);
+}
+body.site-christmas .quote-field input,
+body.site-christmas .quote-field select {
+  background: #0a2219;
+  color: #fff6e7;
+  border: 1px solid rgba(242,208,149,.28);
+}
+body.site-christmas .quote-field input::placeholder { color: #b4c4b8; }
+body.site-christmas .quote-field label i,
+body.site-christmas .faq-question .chevron { color: var(--holiday-gold); }
+body.site-christmas .faq-item.open { border-color: rgba(242,208,149,.65); }
+body.site-christmas .map-wrap {
+  background: linear-gradient(145deg, #1b4532, #0c241b);
+  border: 1px solid rgba(242,208,149,.34);
+  box-shadow: 0 16px 40px rgba(0,0,0,.25);
+}
+body.site-christmas footer {
+  background: linear-gradient(165deg, #06170f, #0a231a);
+  border-top: 1px solid rgba(242,208,149,.36);
+}
+body.site-christmas footer::after { opacity: .36; }
+body.site-christmas .footer-grid h4 { color: var(--holiday-cream); }
+body.site-christmas .footer-link { color: #c5d7ca; }
+body.site-christmas .footer-link:hover { color: #f1d399; }
+body.site-christmas .footer-bottom { border-color: rgba(242,208,149,.16); }
+body.site-christmas .social-btn {
+  background: #123225;
+  color: var(--holiday-gold);
+  border-color: rgba(242,208,149,.34);
+}
+body.site-christmas .social-btn:hover { background: #23583e; color: #fff6e6; }
+body.site-christmas .wa-float {
+  background: linear-gradient(130deg, #26d569, #1cb95b);
+  color: #092718;
+  border: 2px solid rgba(242,208,149,.78);
+  box-shadow: 0 9px 27px rgba(0,0,0,.24);
+}
+body.site-christmas .wa-float::after { display: none; }
+
+/* Inicio: misma narrativa visual que el encabezado de Tours. */
+body.site-christmas.home-page #inicio.hero {
+  min-height: 665px;
+  padding: 146px 0 99px;
+  background:
+    linear-gradient(180deg, rgba(5,23,16,.62), rgba(6,25,18,.83) 66%, #081b14),
+    radial-gradient(ellipse at 12% 16%, rgba(29,86,55,.27), transparent 44%),
+    url('../img/1-hero.webp') center/cover no-repeat;
+}
+body.site-christmas.home-page #inicio .container { max-width: 1150px; }
+body.site-christmas.home-page #inicio h1 {
+  font-size: clamp(2.2rem, 4.8vw, 4.15rem);
+  max-width: 940px;
+}
+body.site-christmas.home-page #inicio .lead { max-width: 790px; }
+body.site-christmas .home-hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 13px;
+  flex-wrap: wrap;
+}
+body.site-christmas .home-hero-actions .btn {
+  min-height: 49px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+body.site-christmas .home-hero-actions .btn-outline { background: rgba(8,34,25,.75); }
+body.site-christmas.home-page #cobertura .grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)) !important;
+}
+
+/* Tours: mantener sus tarjetas especializadas sin perder coherencia. */
+body.site-christmas.tours-page .tour-guide-item,
+body.site-christmas.tours-page .tour-explore-nav { border-color: rgba(242,208,149,.28); }
+body.site-christmas.tours-page .tour-guide-item h3 { color: #fff8e9; }
+body.site-christmas.tours-page .tour-guide-item a { color: #f3d59a; }
+
+/* Página no encontrada. */
+body.site-christmas.not-found-page .not-found-section {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  padding: 145px 0 95px;
+  background: radial-gradient(ellipse at 50% 15%, rgba(34,93,57,.22), transparent 60%);
+}
+body.site-christmas.not-found-page .not-found-section h1 { color: var(--holiday-cream); }
+body.site-christmas.not-found-page .not-found-section .lead { margin-inline: auto; }
+
+/* Celular y accesibilidad. */
+@media (max-width: 991px) {
+  body.site-christmas .navbar .container { gap: 9px; }
+  body.site-christmas .navbar-brand { font-size: 1rem; }
+  body.site-christmas .nav-links { gap: 16px; }
+}
+@media (max-width: 767px) {
+  body.site-christmas .nav-links {
+    background: #102b20;
+    border: 1px solid rgba(242,208,149,.39);
+    box-shadow: 0 16px 30px rgba(0,0,0,.38);
+  }
+  body.site-christmas.home-page #inicio.hero {
+    min-height: 0;
+    padding: 115px 0 70px;
+  }
+  body.site-christmas.home-page #inicio h1 { font-size: clamp(2rem, 8vw, 2.75rem); }
+  body.site-christmas .hero .lead { font-size: 1rem; line-height: 1.65; }
+  body.site-christmas .festive-bauble { opacity: .43; }
+  body.site-christmas .home-hero-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  body.site-christmas .home-hero-actions .btn { width: 100%; }
+  body.site-christmas .section { padding-top: 65px; padding-bottom: 65px; }
+  body.site-christmas .reviews-cta-card { padding: 28px 23px; }
+  body.site-christmas .map-wrap iframe { height: 300px; }
+  body.site-christmas .wa-float { width: 54px; height: 54px; right: 17px; bottom: 18px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  body.site-christmas *,
+  body.site-christmas *::before,
+  body.site-christmas *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}
