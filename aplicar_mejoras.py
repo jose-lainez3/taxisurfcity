@@ -34,6 +34,10 @@ FILES = (
     "assets/css/styllees.css",
     "assets/css/christmas-unified.css",
     "assets/js/i18n.js",
+    "assets/js/chatbot.js",
+    "assets/js/assistant-config.js",
+    "api/assistant.mjs",
+    "AI_AGENT_SETUP.md",
     "sitemap.xml",
 )
 TOUR_IDS = (
@@ -70,6 +74,10 @@ def validate_snapshot(files: dict[str, bytes]) -> list[str]:
         "Portada: tema compartido": 'site-christmas home-page' in files["index.html"].decode("utf-8"),
         "404: tema compartido": 'site-christmas not-found-page' in files["404.html"].decode("utf-8"),
         "CSS: tema compartido": 'body.site-christmas' in files["assets/css/christmas-unified.css"].decode("utf-8"),
+        "Asistente: cliente con IA": 'async function askAI' in files["assets/js/chatbot.js"].decode("utf-8"),
+        "Asistente: configuración separada": 'TAXISURFCITY_AI_ENDPOINT' in files["assets/js/assistant-config.js"].decode("utf-8"),
+        "Asistente: API serverless": 'google_search' in files["api/assistant.mjs"].decode("utf-8"),
+        "Asistente: documentación": b'GEMINI_API_KEY' in files["AI_AGENT_SETUP.md"],
         "Sitemap: ruta canónica": "https://taxistuncoelsalvador.com/tours" in sitemap,
     }
     for name, success in checks.items():
