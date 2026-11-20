@@ -278,6 +278,28 @@
     + "color:#050505;background:linear-gradient(135deg,#25D366,#1ebe57);padding:7px 12px;border-radius:999px;text-decoration:none;font-weight:600;}"
     + "@media (max-width:480px){.cb-window{right:12px;bottom:150px;width:calc(100vw - 24px);}.cb-launcher{right:14px;bottom:86px;}}";
 
+
+  /* Integración IA: colores acordes al tema navideño; fuentes verificables. */
+  css += ".cb-window{background:#0b2118;border:1px solid rgba(242,208,149,.35);box-shadow:0 20px 50px rgba(0,0,0,.48);}"
+    + ".cb-header{background:linear-gradient(130deg,#143a29,#1b4531);color:#fff4e1;border-bottom:1px solid rgba(242,208,149,.3);}"
+    + ".cb-header-dot{background:#f2d095;box-shadow:0 0 9px rgba(242,208,149,.3);}"
+    + ".cb-close{color:#f7e7ce;}"
+    + ".cb-body,.cb-chips{background:#0a2118;}"
+    + ".cb-msg.bot,.cb-typing{background:#153528;color:#f6f1e8;border-color:rgba(242,208,149,.16);}"
+    + ".cb-msg.bot{white-space:pre-wrap;}"
+    + ".cb-msg.bot a{color:#f2d095;}"
+    + ".cb-inputrow{background:#102c20;border-top-color:rgba(242,208,149,.22);}"
+    + ".cb-input{background:#071c13;color:#fff6e8;border-color:rgba(242,208,149,.3);min-width:0;}"
+    + ".cb-input:focus{border-color:#f2d095;}"
+    + ".cb-chip{background:#163729;color:#f5d9a8;border-color:rgba(242,208,149,.24);}"
+    + ".cb-chip:hover{border-color:#f2d095;}"
+    + ".cb-sources{align-self:flex-start;max-width:92%;display:flex;gap:5px;flex-wrap:wrap;font-size:11px;margin-top:-2px;}"
+    + ".cb-sources-label{width:100%;color:#ddcfaf;font-weight:650;}"
+    + ".cb-source{display:inline-flex;padding:5px 8px;border:1px solid rgba(242,208,149,.32);border-radius:9px;color:#f7dfad;text-decoration:none;max-width:100%;word-break:break-word;}"
+    + ".cb-disclosure{font-size:10px;padding:0 12px 9px;color:#c1d2c6;background:#102c20;line-height:1.4;}"
+    + ".cb-send:disabled{opacity:.55;cursor:wait;}"
+    + "@media(prefers-reduced-motion:reduce){.cb-launcher,.cb-typing span{animation:none!important;}}";
+
   var styleTag = document.createElement("style");
   styleTag.textContent = css;
   document.head.appendChild(styleTag);
@@ -291,7 +313,7 @@
   win.className = "cb-window";
   win.innerHTML =
     '<div class="cb-header">' +
-      '<div class="cb-header-title"><span class="cb-header-dot"></span><span>Asistente Taxi Surfcity<span class="cb-header-sub">Responde con la info del sitio</span></span></div>' +
+      '<div class="cb-header-title"><span class="cb-header-dot"></span><span>Asistente Taxi SurfCity<span class="cb-header-sub" id="cbMode">Comprobando conexión IA...</span></span></div>' +
       '<button class="cb-close" aria-label="Cerrar chat">&times;</button>' +
     '</div>' +
     '<div class="cb-body" id="cbBody"></div>' +
@@ -299,7 +321,8 @@
     '<div class="cb-inputrow">' +
       '<input type="text" class="cb-input" id="cbInput" placeholder="Pregúntame lo que quieras..." autocomplete="off">' +
       '<button class="cb-send" id="cbSend" aria-label="Enviar"><i class="bi bi-send-fill"></i></button>' +
-    '</div>';
+    '</div>' +
+    '<div class="cb-disclosure">Asistente virtual. No compartas información sensible. La IA puede consultar Google.</div>';
 
   document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(win);
@@ -309,11 +332,90 @@
     var chips = document.getElementById("cbChips");
     var input = document.getElementById("cbInput");
     var sendBtn = document.getElementById("cbSend");
+    var modeEl = document.getElementById("cbMode");
+    var aiEndpoint = typeof window.TAXISURFCITY_AI_ENDPOINT === "string" &&
+      /^https:\/\//.test(window.TAXISURFCITY_AI_ENDPOINT)
+        ? window.TAXISURFCITY_AI_ENDPOINT : "/api/assistant";
+    var aiReady = false;
+    var aiChecked = false;
+    var aiChecking = null;
+    var conversation = [];
+    var pending = false;
+    var offlineNoticeShown = false;
+
+    async function checkAI() {
+      if (aiChecked) return aiReady;
+      if (aiChecking) return aiChecking;
+      aiChecking = (async function() {
+        try {
+          var response = await fetch(aiEndpoint, {method:"GET",cache:"no-store"});
+          if (response.ok && (response.headers.get("content-type") || "").includes("application/json")) {
+            var status = await response.json();
+            aiReady = Boolean(status.ready);
+          }
+        } catch (error) {
+          aiReady = false;
+        } finally {
+          aiChecked = true;
+          aiChecking = null;
+          modeEl.textContent = aiReady ? "IA conectada · búsqueda web" : "Modo local · IA pendiente";
+        }
+        return aiReady;
+      })();
+      return aiChecking;
+    }
+
+    function addSources(sources) {
+      if (!Array.isArray(sources) || !sources.length) return;
+      var holder = document.createElement("div");
+      holder.className = "cb-sources";
+      var title = document.createElement("span");
+      title.className = "cb-sources-label";
+      title.textContent = "Fuentes consultadas:";
+      holder.appendChild(title);
+      sources.slice(0, 5).forEach(function(source) {
+        try {
+          var address = new URL(source.url);
+          if (address.protocol !== "https:") return;
+          var link = document.createElement("a");
+          link.href = address.href;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.className = "cb-source";
+          link.textContent = String(source.title || address.hostname).slice(0, 60);
+          holder.appendChild(link);
+        } catch (_) { /* Enlace no válido. */ }
+      });
+      if (holder.querySelector("a")) {
+        body.appendChild(holder);
+        body.scrollTop = body.scrollHeight;
+      }
+    }
+
+    async function askAI(message) {
+      var response = await fetch(aiEndpoint, {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({message: message, history: conversation.slice(-10)})
+      });
+      var payload = await response.json();
+      if (!response.ok) {
+        var error = new Error(payload.error || "El servicio no respondió.");
+        error.status = response.status;
+        throw error;
+      }
+      if (!payload.answer || typeof payload.answer !== "string") {
+        throw new Error("La IA no devolvió una respuesta.");
+      }
+      return payload;
+    }
+
 
     function addMsg(text, who) {
       var div = document.createElement("div");
       div.className = "cb-msg " + who;
-      div.innerHTML = text;
+      if (who === "user" || arguments[2] === true) div.textContent = text;
+      else div.innerHTML = text; // Solo textos estáticos confiables del sitio.
       body.appendChild(div);
       body.scrollTop = body.scrollHeight;
       return div;
@@ -344,7 +446,7 @@
       body.scrollTop = body.scrollHeight;
     }
 
-    var suggestions = ["Precios", "Traslado aeropuerto", "Tours disponibles", "Zonas que cubren", "Reservar", "Instagram", "TikTok"];
+    var suggestions = ["Tours disponibles", "Traslado aeropuerto", "¿Qué clima hace en Surf City?", "¿Qué puedo visitar en El Salvador?", "Cotizar taxi"];
     suggestions.forEach(function (s) {
       var chip = document.createElement("button");
       chip.className = "cb-chip";
@@ -354,33 +456,61 @@
       chips.appendChild(chip);
     });
 
-    function handleUserMessage(text) {
-      if (!text || !text.trim()) return;
+
+    async function handleUserMessage(text) {
+      if (pending || !text || !text.trim()) return;
+      text = text.trim().slice(0, 1400);
+      pending = true;
+      sendBtn.disabled = true;
       addMsg(text, "user");
       input.value = "";
       showTyping();
-
-      var delay = 450 + Math.random() * 400;
-      setTimeout(function () {
-        hideTyping();
-
-        if (isGreeting(text)) {
-          addMsg(pick(GREETING_REPLIES), "bot");
-          return;
-        }
-        if (isThanks(text)) {
-          addMsg(pick(THANKS_REPLIES), "bot");
-          return;
-        }
-
-        var answer = findAnswer(text);
-        if (answer) {
-          addMsg(answer, "bot");
+      try {
+        var enabled = await checkAI();
+        if (enabled) {
+          try {
+            var result = await askAI(text);
+            hideTyping();
+            addMsg(result.answer, "bot", true);
+            addSources(result.sources);
+            conversation.push({role:"user",text:text},{role:"assistant",text:result.answer.slice(0,1400)});
+            conversation = conversation.slice(-10);
+            return;
+          } catch(error) {
+            hideTyping();
+            if (error.status === 429) {
+              addMsg("El servicio de IA alcanzó su límite temporal de consultas. Puedes contactar al equipo por WhatsApp.", "bot", true);
+              addWhatsappCta("Hola, necesito información sobre: " + text);
+              return;
+            }
+            addMsg("La búsqueda con IA no está disponible en este momento. Puedo darte información básica del sitio.", "bot", true);
+          }
         } else {
-          addMsg(pick(FALLBACK_REPLIES), "bot");
-          addWhatsappCta("Hola, tengo una pregunta: " + text);
+          hideTyping();
+          if (!offlineNoticeShown) {
+            addMsg("Actualmente estoy en modo local, sin acceso a internet. La IA se activará cuando se conecte el servidor.", "bot", true);
+            offlineNoticeShown = true;
+          }
         }
-      }, delay);
+        if (isGreeting(text)) addMsg(pick(GREETING_REPLIES), "bot");
+        else if (isThanks(text)) addMsg(pick(THANKS_REPLIES), "bot");
+        else {
+          var answer = findAnswer(text);
+          if (answer) addMsg(answer, "bot");
+          else {
+            addMsg(pick(FALLBACK_REPLIES), "bot");
+            addWhatsappCta("Hola, tengo una consulta: " + text);
+          }
+        }
+      } catch(error) {
+        hideTyping();
+        addMsg("Ocurrió un problema con el asistente. Puedes escribirnos por WhatsApp.", "bot", true);
+        addWhatsappCta("Hola, tengo una consulta: " + text);
+      } finally {
+        pending = false;
+        sendBtn.disabled = false;
+        input.focus();
+      }
     }
 
     sendBtn.addEventListener("click", function () { handleUserMessage(input.value); });
@@ -391,9 +521,12 @@
     launcher.addEventListener("click", function () {
       win.classList.toggle("cb-open");
       if (win.classList.contains("cb-open") && body.children.length === 0) {
-        addMsg(pick(GREETING_REPLIES), "bot");
+        addMsg("¡Hola! Soy el asistente de Taxi SurfCity Lainez. Puedo ayudarte con taxis, tours y preguntas generales. Cuando la IA está conectada, también puedo consultar información actualizada en internet.", "bot", true);
       }
-      if (win.classList.contains("cb-open")) input.focus();
+      if (win.classList.contains("cb-open")) {
+        checkAI();
+        input.focus();
+      }
     });
     win.querySelector(".cb-close").addEventListener("click", function () {
       win.classList.remove("cb-open");
