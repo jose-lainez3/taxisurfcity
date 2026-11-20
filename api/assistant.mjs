@@ -195,3 +195,15 @@ export async function POST(request) {
     clearTimeout(timeout);
   }
 }
+
+export default {
+  async fetch(request) {
+    switch (request.method.toUpperCase()) {
+      case "GET": return GET(request);
+      case "POST": return POST(request);
+      case "OPTIONS": return OPTIONS(request);
+      default:
+        return responseJSON({error:"Método no permitido."},405,request.headers.get("origin") || "",{"Allow":"GET, POST, OPTIONS"});
+    }
+  }
+};
