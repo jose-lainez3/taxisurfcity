@@ -27,3 +27,12 @@ py aplicar_mejoras.py
 `--check` comprueba el proyecto local sin internet; `--dry-run` compara con GitHub sin sobrescribir; sin argumentos actualiza archivos y conserva respaldos. Si la página ya coincide con `main`, no cambia nada.
 
 Los cambios de este paquete **ya están en la rama `main`**; no es necesario ejecutar el script para activarlos en GitHub. El despliegue del sitio depende del hosting.
+
+
+## Diseño de Navidad unificado — Inicio, Tours y 404
+- Las tres páginas usan la clase `site-christmas` y cargan `assets/css/christmas-unified.css` **después** de `assets/css/styllees.css`.
+- La hoja adicional define los acabados verde pino/dorado/crema, botones, tarjetas, reseñas, FAQ, formularios, mapa y pie de página. Las personalizaciones específicas de Tours se conservan.
+- La portada incorpora un acceso directo a Tours, traducido en `assets/js/i18n.js`.
+- El script `aplicar_mejoras.py` ya incluye `index.html`, `404.html` y la nueva hoja de estilos, además de los archivos previos. Admite copiar la nueva hoja de estilos incluso si no existía antes en el proyecto local.
+- Conserva los enlaces a WhatsApp, los recorridos, el CMS existente y los estilos para pantallas pequeñas.
+- Verificación después del despliegue: abrir `/`, `/tours` y una ruta inexistente en escritorio y móvil, comprobar que se descarga `assets/css/christmas-unified.css?v=20261120-sitewide-1` y forzar recarga con Ctrl+Shift+R si el navegador usa caché.
