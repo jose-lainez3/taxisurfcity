@@ -329,7 +329,7 @@
       '<input type="text" class="cb-input" id="cbInput" placeholder="Pregúntame lo que quieras..." autocomplete="off">' +
       '<button class="cb-send" id="cbSend" aria-label="Enviar"><i class="bi bi-send-fill"></i></button>' +
     '</div>' +
-    '<div class="cb-disclosure">Asistente virtual. No compartas información sensible. La IA puede consultar Google.</div>';
+    '<div class="cb-disclosure">Asistente virtual. No compartas información sensible. Las noticias y el clima en tiempo real requieren búsqueda web habilitada.</div>';
 
   document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(win);
@@ -344,6 +344,7 @@
       /^https:\/\//.test(window.TAXISURFCITY_AI_ENDPOINT)
         ? window.TAXISURFCITY_AI_ENDPOINT : "/api/assistant";
     var aiReady = false;
+    var aiSearchEnabled = false;
     var aiCheckedAt = 0;
     var aiChecking = null;
     var aiDetail = "Verificando servicio Gemini...";
@@ -355,7 +356,7 @@
 
     function updateAIStatus(message) {
       aiDetail = message || "";
-      modeEl.textContent = aiReady ? "IA conectada · búsqueda web" : "Modo local · sin conexión IA";
+      modeEl.textContent = aiReady ? (aiSearchEnabled ? "IA conectada · búsqueda web" : "IA conectada · consultas generales") : "Modo local · sin conexión IA";
       modeDetail.hidden = aiReady;
       modeDetail.textContent = aiReady ? "" : aiDetail + " Pulsa ↻ para volver a comprobar.";
     }
@@ -385,6 +386,7 @@
           } else {
             var result = await response.json();
             aiReady = result.ready === true;
+            aiSearchEnabled = result.webSearch === true;
             aiDetail = aiReady
               ? ""
               : "La API responde, pero GEMINI_API_KEY no está configurada. Añádela a Vercel (Production) y vuelve a desplegar.";
@@ -518,6 +520,9 @@
             hideTyping();
             addMsg(result.answer, "bot", true);
             addSources(result.sources);
+            if (!result.searchedWeb && /\b(hoy|mañana|esta semana|últimas|recientes?|noticias?|clima|pronóstico|actualmente|today|tomorrow|latest|news|weather|forecast)\b/i.test(text)) {
+              addMsg("Nota: esta respuesta se generó sin consultar fuentes actuales de internet. Verifica la información antes de organizar el viaje.", "bot", true);
+            }
             conversation.push({role:"user",text:text},{role:"assistant",text:result.answer.slice(0,1400)});
             conversation = conversation.slice(-10);
             return;
@@ -569,7 +574,7 @@
     launcher.addEventListener("click", function () {
       win.classList.toggle("cb-open");
       if (win.classList.contains("cb-open") && body.children.length === 0) {
-        addMsg("¡Hola! Soy el asistente de Taxi SurfCity Lainez. Puedo ayudarte con taxis, tours y preguntas generales. Cuando la IA está conectada, también puedo consultar información actualizada en internet.", "bot", true);
+        addMsg("¡Hola! Soy el asistente de Taxi SurfCity Lainez. Puedo ayudarte con taxis, tours y preguntas generales. Las consultas de internet se habilitan cuando la búsqueda web esté disponible.", "bot", true);
       }
       if (win.classList.contains("cb-open")) {
         checkAI(false);
