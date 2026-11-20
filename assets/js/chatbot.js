@@ -297,6 +297,12 @@
     + ".cb-sources-label{width:100%;color:#ddcfaf;font-weight:650;}"
     + ".cb-source{display:inline-flex;padding:5px 8px;border:1px solid rgba(242,208,149,.32);border-radius:9px;color:#f7dfad;text-decoration:none;max-width:100%;word-break:break-word;}"
     + ".cb-disclosure{font-size:10px;padding:0 12px 9px;color:#c1d2c6;background:#102c20;line-height:1.4;}"
+    + ".cb-header-actions{display:flex;align-items:center;gap:10px;}"
+    + ".cb-retry,.cb-close{background:none;border:1px solid rgba(242,208,149,.28);color:#f7e7ce;border-radius:8px;cursor:pointer;min-height:28px;}"
+    + ".cb-retry{font-size:13px;padding:2px 8px;}"
+    + ".cb-retry:disabled{opacity:.5;cursor:wait;}"
+    + ".cb-mode-detail{font-size:11px;line-height:1.4;color:#ffe7bc;background:#183529;padding:8px 13px;border-bottom:1px solid rgba(242,208,149,.18);}"
+    + ".cb-mode-detail[hidden]{display:none!important;}"
     + ".cb-send:disabled{opacity:.55;cursor:wait;}"
     + "@media(prefers-reduced-motion:reduce){.cb-launcher,.cb-typing span{animation:none!important;}}";
 
@@ -314,8 +320,9 @@
   win.innerHTML =
     '<div class="cb-header">' +
       '<div class="cb-header-title"><span class="cb-header-dot"></span><span>Asistente Taxi SurfCity<span class="cb-header-sub" id="cbMode">Comprobando conexión IA...</span></span></div>' +
-      '<button class="cb-close" aria-label="Cerrar chat">&times;</button>' +
+      '<div class="cb-header-actions"><button class="cb-retry" type="button" aria-label="Reintentar conexión de IA" title="Reintentar conexión IA">↻</button><button class="cb-close" aria-label="Cerrar chat">&times;</button></div>' +
     '</div>' +
+    '<div class="cb-mode-detail" id="cbModeDetail" role="status" aria-live="polite" hidden></div>' +
     '<div class="cb-body" id="cbBody"></div>' +
     '<div class="cb-chips" id="cbChips"></div>' +
     '<div class="cb-inputrow">' +
@@ -337,33 +344,71 @@
       /^https:\/\//.test(window.TAXISURFCITY_AI_ENDPOINT)
         ? window.TAXISURFCITY_AI_ENDPOINT : "/api/assistant";
     var aiReady = false;
-    var aiChecked = false;
+    var aiCheckedAt = 0;
     var aiChecking = null;
+    var aiDetail = "Verificando servicio Gemini...";
+    var modeDetail = document.getElementById("cbModeDetail");
+    var retryButton = win.querySelector(".cb-retry");
     var conversation = [];
     var pending = false;
     var offlineNoticeShown = false;
 
-    async function checkAI() {
-      if (aiChecked) return aiReady;
+    function updateAIStatus(message) {
+      aiDetail = message || "";
+      modeEl.textContent = aiReady ? "IA conectada · búsqueda web" : "Modo local · sin conexión IA";
+      modeDetail.hidden = aiReady;
+      modeDetail.textContent = aiReady ? "" : aiDetail + " Pulsa ↻ para volver a comprobar.";
+    }
+
+    async function checkAI(force) {
       if (aiChecking) return aiChecking;
+      // Renovar el diagnóstico cada 30 segundos; no dejar cacheado un fallo para siempre.
+      if (!force && aiCheckedAt && Date.now() - aiCheckedAt < 30000) return aiReady;
       aiChecking = (async function() {
+        retryButton.disabled = true;
+        modeEl.textContent = "Comprobando Gemini...";
+        var controller = new AbortController();
+        var timeout = setTimeout(function() { controller.abort(); }, 10000);
         try {
-          var response = await fetch(aiEndpoint, {method:"GET",cache:"no-store"});
-          if (response.ok && (response.headers.get("content-type") || "").includes("application/json")) {
-            var status = await response.json();
-            aiReady = Boolean(status.ready);
+          var response = await fetch(aiEndpoint, {
+            method: "GET", cache: "no-store", signal: controller.signal
+          });
+          aiReady = false;
+          if (response.status === 401 || response.status === 403) {
+            aiDetail = "El servidor bloquea el acceso (HTTP " + response.status + "). Revisa Deployment Protection y permisos de Vercel.";
+          } else if (response.status === 404) {
+            aiDetail = "La función /api/assistant no está publicada (HTTP 404). Revisa Root Directory y Deployments en Vercel.";
+          } else if (!response.ok) {
+            aiDetail = "El servidor respondió con HTTP " + response.status + ". Revisa los logs de Vercel.";
+          } else if (!(response.headers.get("content-type") || "").includes("application/json")) {
+            aiDetail = "La dirección devuelve una página HTML en vez de la API JSON. Revisa el proyecto y sus rutas en Vercel.";
+          } else {
+            var result = await response.json();
+            aiReady = result.ready === true;
+            aiDetail = aiReady
+              ? ""
+              : "La API responde, pero GEMINI_API_KEY no está configurada. Añádela a Vercel (Production) y vuelve a desplegar.";
           }
         } catch (error) {
           aiReady = false;
+          aiDetail = error && error.name === "AbortError"
+            ? "La API tardó demasiado en responder. Revisa que el despliegue esté en Ready."
+            : "No se pudo contactar la API. Comprueba la dirección y que Vercel permita llamadas CORS desde este dominio.";
         } finally {
-          aiChecked = true;
+          clearTimeout(timeout);
+          aiCheckedAt = Date.now();
           aiChecking = null;
-          modeEl.textContent = aiReady ? "IA conectada · búsqueda web" : "Modo local · IA pendiente";
+          retryButton.disabled = false;
+          updateAIStatus(aiDetail);
         }
         return aiReady;
       })();
       return aiChecking;
     }
+
+    retryButton.addEventListener("click", function() {
+      checkAI(true);
+    });
 
     function addSources(sources) {
       if (!Array.isArray(sources) || !sources.length) return;
@@ -466,7 +511,7 @@
       input.value = "";
       showTyping();
       try {
-        var enabled = await checkAI();
+        var enabled = await checkAI(false);
         if (enabled) {
           try {
             var result = await askAI(text);
@@ -483,12 +528,12 @@
               addWhatsappCta("Hola, necesito información sobre: " + text);
               return;
             }
-            addMsg("La búsqueda con IA no está disponible en este momento. Puedo darte información básica del sitio.", "bot", true);
+            addMsg("Gemini no pudo responder: " + String(error.message || "Error de API") + ". Estoy utilizando información básica local.", "bot", true);
           }
         } else {
           hideTyping();
           if (!offlineNoticeShown) {
-            addMsg("Actualmente estoy en modo local, sin acceso a internet. La IA se activará cuando se conecte el servidor.", "bot", true);
+            addMsg("Estoy usando respuestas locales porque Gemini no está disponible: " + aiDetail + " Puedes volver a probar con el botón ↻ del encabezado.", "bot", true);
             offlineNoticeShown = true;
           }
         }
@@ -524,7 +569,7 @@
         addMsg("¡Hola! Soy el asistente de Taxi SurfCity Lainez. Puedo ayudarte con taxis, tours y preguntas generales. Cuando la IA está conectada, también puedo consultar información actualizada en internet.", "bot", true);
       }
       if (win.classList.contains("cb-open")) {
-        checkAI();
+        checkAI(false);
         input.focus();
       }
     });
