@@ -71,7 +71,7 @@ async function checkNavInteractions(page,label) {
   await page.locator(".hero h1").click({force:true});
   assert.equal(await toggle.getAttribute("aria-expanded"),"false",label+" outside click did not close");
   await toggle.click();
-  await nav.locator("a").first().click();
+  await nav.locator("a[href^=\"#\"]").first().click();
   assert.equal(await toggle.getAttribute("aria-expanded"),"false",label+" nav selection did not close");
 }
 
