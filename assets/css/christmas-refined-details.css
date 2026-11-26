@@ -1,0 +1,99 @@
+/* Taxi SurfCity — refined Christmas details, 2026.
+   Static vectors and transforms-free ornaments; no additional paint loop.
+   Loaded last so mobile/desktop layouts stay owned by mobile-layout-2026.css. */
+body.site-christmas{--holiday-champagne:#e9cd98;--holiday-pine:#86ad94;}
+
+/* Existing warm lights stay in the navbar; the evergreen sprigs only frame it. */
+body.site-christmas .navbar{isolation:isolate;}
+body.site-christmas .holiday-navbar-sprigs{
+  position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden;
+}
+body.site-christmas .holiday-navbar-sprigs::before,
+body.site-christmas .holiday-navbar-sprigs::after{
+  content:"";position:absolute;top:-9px;
+  width:clamp(105px,10.5vw,165px);height:93px;
+  background:url("../img/christmas-refined-sprig.svg") left top/contain no-repeat;
+  opacity:.74;
+  pointer-events:none;
+}
+body.site-christmas .holiday-navbar-sprigs::before{left:-7px;}
+body.site-christmas .holiday-navbar-sprigs::after{
+  right:-7px;transform:scaleX(-1);
+}
+/* The title and photos retain priority; two static hanging ornaments sit outside copy. */
+body.site-christmas .holiday-hero-hangers{
+  position:absolute;inset:0;z-index:2;pointer-events:none;
+}
+body.site-christmas .holiday-hero-hanger{
+  position:absolute;top:0;width:40px;height:112px;
+}
+body.site-christmas .holiday-hero-hanger::before{
+  content:"";position:absolute;top:0;left:50%;width:1px;height:61px;
+  background:linear-gradient(180deg,rgba(250,232,189,.25),rgba(250,232,189,.82));
+}
+body.site-christmas .holiday-hero-hanger::after{
+  content:"";position:absolute;top:59px;left:6px;width:29px;height:29px;
+  border-radius:50%;border:1px solid rgba(255,240,196,.72);
+  background:radial-gradient(circle at 29% 25%,#fff5d6 0 6%,#e3c58a 19%,#bd9364 51%,#6b5948 95%);
+  box-shadow:inset -4px -5px 8px rgba(36,35,27,.22),0 4px 11px rgba(0,0,0,.18);
+}
+body.site-christmas .holiday-hero-hanger:first-child{left:4.6%;}
+body.site-christmas .holiday-hero-hanger:last-child{right:5%;top:-13px;}
+body.site-christmas .holiday-hero-hanger:last-child::after{
+  width:25px;height:25px;
+  background:radial-gradient(circle at 28% 25%,#d5e9cf 0 8%,#7fa792 23%,#356b53 63%,#183d30 96%);
+  border-color:rgba(216,238,217,.65);
+}
+
+/* One small, reusable divider instead of glow or snow layered on each card. */
+body.site-christmas .section-head h2::after{
+  content:"";display:block;width:clamp(150px,22vw,240px);height:25px;
+  margin:12px auto 0;border:0;border-radius:0;
+  background:url("../img/christmas-refined-divider.svg") center/contain no-repeat;
+  box-shadow:none;transform:none;opacity:.85;
+}
+body.site-christmas .quote-box .section-head h2::after{margin-left:0;}
+body.site-christmas .section-head .eyebrow{
+  box-shadow:none;
+  border-color:rgba(227,203,147,.55);
+}
+/* Footer: calm pine details instead of a repeated snowy strip. */
+body.site-christmas footer{
+  position:relative;isolation:isolate;overflow:hidden;
+  border-top:1px solid rgba(232,201,142,.34);
+}
+body.site-christmas footer::before,
+body.site-christmas footer::after{
+  content:"";display:block;position:absolute;top:0;bottom:auto;inset-inline:auto;
+  width:clamp(95px,13vw,168px);height:117px;
+  background:url("../img/christmas-refined-sprig.svg") top left/contain no-repeat;
+  opacity:.60;z-index:0;pointer-events:none;
+}
+body.site-christmas footer::before{left:-15px;}
+body.site-christmas footer::after{right:-15px;left:auto;transform:scaleX(-1);}
+body.site-christmas footer>.container{position:relative;z-index:1;}
+body.site-christmas .footer-bottom{
+  position:relative;border-color:rgba(233,205,152,.23);
+  padding-top:26px;
+}
+body.site-christmas .footer-bottom::before{
+  content:"";position:absolute;top:-13px;left:50%;width:120px;height:23px;
+  transform:translateX(-50%);
+  background:url("../img/christmas-refined-divider.svg") center/contain no-repeat;
+  pointer-events:none;opacity:.62;
+}
+/* Keep all cards pristine as requested: no added snow, masks or frosting. */
+@media(max-width:1199px){
+  body.site-christmas .holiday-navbar-sprigs{display:none;}
+  body.site-christmas .holiday-hero-hangers{display:none;}
+}
+@media(max-width:767px){
+  body.site-christmas .section-head h2::after{width:170px;height:21px;margin-top:11px;}
+  body.site-christmas footer::before,
+  body.site-christmas footer::after{width:78px;height:67px;opacity:.29;}
+  body.site-christmas .footer-bottom::before{width:102px;}
+}
+@media(prefers-reduced-motion:reduce){
+  body.site-christmas .holiday-hero-hangers,
+  body.site-christmas .holiday-navbar-sprigs{animation:none!important;}
+}

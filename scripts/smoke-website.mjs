@@ -152,6 +152,10 @@ async function inspect(page,route,label) {
     snowflakes:document.querySelectorAll(".christmas-snowflake").length,
     snowTypes:[...new Set([...document.querySelectorAll(".christmas-snowflake")].map(x=>x.className))],
     hasAudio:!!document.getElementById("christmas-original-audio"),
+    holidaySprigs:!!document.querySelector(".holiday-navbar-sprigs"),
+    holidayHangers:document.querySelectorAll(".holiday-hero-hanger").length,
+    refinedStyles:[...document.styleSheets].some(x=>x.href?.includes("christmas-refined-details.css")),
+
     hasSnow:!!document.getElementById("christmas-snow-overlay"),
     hasWhatsApp:!!document.querySelector('a[href*="wa.me/50376401181"]'),
     heroBg:getComputedStyle(document.querySelector(".hero")).backgroundImage,
@@ -169,6 +173,9 @@ async function inspect(page,route,label) {
     cardMask:[...document.querySelectorAll("#servicios .card > img, .tour-guide-item .premium-guide-photo")].map(img=>(getComputedStyle(img).maskImage || "none"))
   }));
   assert.ok(snapshot.hasAudio && snapshot.hasWhatsApp && snapshot.styles,label+" missing primary UI");
+  assert.ok(snapshot.refinedStyles&&snapshot.holidaySprigs&&snapshot.holidayHangers===2,
+    label+" Christmas details are missing");
+
   const phone = page.viewportSize().width < 768;
   const expectedHero = label.startsWith("home")
     ? /christmas-beach-new.webp/
