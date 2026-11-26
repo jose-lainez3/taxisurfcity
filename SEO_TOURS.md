@@ -41,7 +41,7 @@ Los cambios de este paquete **ya están en la rama `main`**; no es necesario eje
 ## Nieve y melodía navideña original — 26/11/2026
 - Las páginas Inicio (`index.html`) y Tours (`tours.html`) ahora cargan `assets/css/christmas-experience.css` y `assets/js/christmas-experience.js`.
 - El efecto de nieve es visual y no bloquea clics; limita el número de copos en móvil, se pausa al cambiar de pestaña y se elimina con `prefers-reduced-motion`.
-- La música es una melodía instrumental original sintetizada con Web Audio API (sin MP3 externos, sin uso de canciones comerciales). Tiene volumen ambiental reducido y botón fijo abajo a la izquierda.
+- La música es una composición original más festiva, **«Campanitas sobre Surf City»** (124 BPM), con campanas, glockenspiel, bajo suave y ritmo de cascabeles, generada con Web Audio API (sin MP3 externos ni canciones comerciales). Conserva el control de silencio abajo a la izquierda y el volumen ambiental.
 - La página intenta reproducir al cargar. **Los navegadores pueden bloquear el audio automático**; si eso ocurre, se activa en la primera interacción del visitante o con el botón visible «Activar música navideña».
 - El botón permite silenciar o reanudar; la preferencia se recuerda mediante `localStorage` al ir de Inicio a Tours. La música se detiene al ocultar/salir de la página.
 - La interfaz del control está en español o inglés según el selector del sitio.
