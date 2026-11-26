@@ -177,7 +177,7 @@ export function whatsappConsultation(question, responseText) {
   return "https://wa.me/50376401181?text=" + encodeURIComponent(line);
 }
 export function travelQuestion(question) {
-  return /\b(taxis?|transport\w*|traslados?|hoteles?|playas?|tours?|viajes?|viajar|vacac\w*|visitar|atraccion\w*|restaurantes?|turismo|surf|aeropuerto|destinos?|lugares?|paseos?|shuttle|travel|trip|beach|airport|visit|recommend\w*)\b/i.test(normalize(question));
+  return /\b(taxis?|transport\w*|traslados?|hoteles?|playas?|tours?|viajes?|viajar|vacac\w*|visitar|atraccion\w*|restaurantes?|turismo|surf|aeropuerto|destinos?|lugares?|sitios?|pueblos?|experiencias?|paseos?|recomiend\w*|recomend\w*|suger\w*|shuttle|travel|trip|beach|airport|visit|recommend\w*)\b/i.test(normalize(question));
 }
 export function researchFallbackAnswer(research, language = "es") {
   if (!research.sources.length) return null;
