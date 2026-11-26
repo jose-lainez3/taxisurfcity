@@ -647,18 +647,20 @@ body.site-christmas .mobile-scenic-panel {display:none;}
     display:block;
     position:relative;
     box-sizing:border-box;
-    width:calc(100% - 28px);
-    max-width:580px;
-    height:clamp(222px,59vw,280px);
-    margin:18px auto 0;
-    border:1px solid rgba(243,220,167,.32);
-    border-radius:19px;
+    width:100%;
+    max-width:none;
+    height:clamp(238px,66vw,320px);
+    margin:14px auto 0;
+    border:0;
+    border-radius:0;
     overflow:hidden;
     background-color:#0c3a2f;
     background-repeat:no-repeat;
-    background-position:72% bottom;
-    background-size:auto clamp(485px,138vw,660px);
-    box-shadow:0 12px 28px rgba(1,18,12,.26);
+    /* The former 485–660px background height zoomed in 2x and cut off
+       the Christmas sign and coastline in the phone screenshot. */
+    background-position:center 52%;
+    background-size:cover;
+    box-shadow:none;
     isolation:isolate;
   }
   body.site-christmas.home-page #inicio .mobile-scenic-panel {
@@ -673,9 +675,9 @@ body.site-christmas .mobile-scenic-panel {display:none;}
     position:absolute;
     inset:0;
     pointer-events:none;
-    border-radius:inherit;
-    box-shadow:inset 0 1px rgba(255,245,209,.32);
-    background:linear-gradient(180deg,rgba(4,31,23,.28),transparent 32%,transparent 85%,rgba(4,30,22,.16));
+    border-radius:0;
+    box-shadow:none;
+    background:linear-gradient(180deg,#07291f 0%,rgba(7,41,31,.14) 15%,transparent 35%,transparent 80%,#07291f 100%);
   }
   body.site-christmas.home-page main>.premium-benefits:first-of-type {
     margin:13px auto 18px!important;
@@ -692,9 +694,9 @@ body.site-christmas .mobile-scenic-panel {display:none;}
   }
   body.site-christmas.home-page #inicio .mobile-scenic-panel,
   body.site-christmas.tours-page .hero-collage-wrap>.mobile-scenic-panel {
-    width:calc(100% - 22px);
-    height:215px;
-    background-size:auto 485px;
+    width:100%;
+    height:232px;
+    background-size:cover;
   }
 }
 @media (min-width:768px) {
@@ -702,4 +704,45 @@ body.site-christmas .mobile-scenic-panel {display:none;}
 }
 @media (prefers-reduced-motion:reduce) {
   body.site-christmas .mobile-scenic-panel {animation:none!important;}
+}
+
+
+/* Mobile quick actions: one low-profile row instead of chat and WhatsApp
+   stacked over the benefits. Four buttons remain accessible. */
+@media (max-width:767px) {
+  body.site-christmas .cb-launcher {
+    bottom:max(14px,env(safe-area-inset-bottom))!important;
+    right:77px!important;
+    width:48px!important;
+    height:48px!important;
+    z-index:1198;
+  }
+  body.site-christmas .wa-float {
+    right:12px!important;
+    bottom:max(14px,env(safe-area-inset-bottom))!important;
+    width:48px!important;
+    height:48px!important;
+  }
+  body.site-christmas .christmas-controls {
+    bottom:max(17px,calc(env(safe-area-inset-bottom) + 3px))!important;
+    left:12px!important;
+    gap:6px;
+  }
+  body.site-christmas .christmas-controls .christmas-music-toggle,
+  body.site-christmas .christmas-controls .christmas-snow-toggle {
+    width:40px!important;
+    min-width:40px!important;
+    height:40px!important;
+    min-height:40px!important;
+    border-color:rgba(247,221,173,.43);
+    box-shadow:0 3px 12px rgba(0,0,0,.21);
+  }
+  body.site-christmas .cb-window {
+    bottom:max(76px,calc(env(safe-area-inset-bottom) + 76px))!important;
+    max-height:calc(100dvh - 94px)!important;
+  }
+  /* Space at the end of either page to reach every link above the dock. */
+  body.site-christmas footer {
+    padding-bottom:calc(78px + env(safe-area-inset-bottom));
+  }
 }
