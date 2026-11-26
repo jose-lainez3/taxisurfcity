@@ -77,7 +77,7 @@ async function checkCompactLayout(page, label) {
     assert.ok(metrics.heroPosition.includes("%"),label+" scenic background needs its mobile focal point");
     if (label.startsWith("tours")) {
       const photoPosition=metrics.heroPosition.split(",").at(-1).trim();
-      assert.ok(/^(100%|right)(?:\\s|$)/.test(photoPosition),
+      assert.ok(/^(100%|right)(?:\s|$)/.test(photoPosition),
         label+" mobile tours photo is cropped at the wrong focal point: "+photoPosition);
     }
     assert.ok(!metrics.heroAttachment.includes("fixed"),label+" costly fixed parallax enabled on mobile");
