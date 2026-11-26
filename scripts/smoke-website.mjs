@@ -234,7 +234,7 @@ try {
   await toursMobile.close();
 
   // Fluid layout regression sweep: narrow phones, modern phones and tablets.
-  for (const width of [280,320,360,375,430,540,600,767,768,820,1023]) {
+  for (const width of [280,320,360,375,430,540,600,767,768,820,1023,1024,1199]) {
     const isPhone = width < 768;
     const page = await browser.newPage({
       viewport:{width,height:isPhone?720:1000},
@@ -246,6 +246,31 @@ try {
       await checkCompactLayout(page,(route===TOURS_ROUTE?"tours":"home")+"-"+width);
       await checkNavInteractions(page,(route===TOURS_ROUTE?"tours":"home")+"-"+width);
       if(route===TOURS_ROUTE) await checkTourCards(page,"tours-"+width);
+    }
+    await page.close();
+  }
+
+  // Desktop should keep its full navigation and fluid multi-column content.
+  for (const width of [1200,1280,1440,1920]) {
+    const page = await browser.newPage({viewport:{width,height:900}});
+    for (const route of ["/",TOURS_ROUTE]) {
+      const response = await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:45000});
+      assert.equal(response?.status(),200,"Desktop "+width+" HTTP");
+      const layout = await page.evaluate(() => {
+        const nav=document.querySelector(".nav-links"),toggle=document.querySelector(".nav-toggle");
+        const rect=nav.getBoundingClientRect();
+        return {
+          overflow:Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth,
+          toggle:getComputedStyle(toggle).display,
+          links:getComputedStyle(nav).display,
+          navRight:rect.right,
+          heroBg:getComputedStyle(document.querySelector(".hero")).backgroundImage
+        };
+      });
+      assert.ok(layout.overflow<=2,"Desktop "+width+" horizontal overflow");
+      assert.ok(layout.navRight<=width+2,"Desktop "+width+" menu exceeds viewport");
+      assert.notEqual(layout.links,"none","Desktop "+width+" navigation hidden");
+      console.log("DESKTOP LAYOUT "+JSON.stringify({width,route,...layout}));
     }
     await page.close();
   }
