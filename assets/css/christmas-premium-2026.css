@@ -1065,3 +1065,36 @@ body.site-christmas .hero .btn{font-size:.9rem;padding:12px 20px}
  body.site-christmas.home-page #inicio h1,body.site-christmas.tours-page .hero h1{font-size:clamp(1.8rem,7vw,2.5rem)}
  body.site-christmas.home-page main>.premium-benefits:first-of-type,body.site-christmas.tours-page .tour-explore-nav{margin-top:10px}
 }
+
+/* Snow detail without animated filters: reusable static vector and layered ice. */
+body.site-christmas {
+ --snow-cap:url("../img/christmas-premium-snowcap.svg?v=20261126-snow9");
+ --frost-edge:inset 0 0 0 1px #efffff75,inset 0 0 12px #d4f8ed45,inset 0 -2px 6px #ffe5b36b,0 0 5px #f6fff68c,0 4px 12px #001c1680;
+}
+body.site-christmas.home-page .card::before,
+body.site-christmas.tours-page .tour-card::before,
+body.site-christmas.tours-page .tour-guide-item::before,
+body.site-christmas .premium-benefits::before,
+body.site-christmas.tours-page .tour-benefits-band>.container>.grid::before,
+body.site-christmas.tours-page .tour-explore-inner::before,
+body.site-christmas.tours-page .premium-custom-tour::before,
+body.site-christmas.tours-page .tour-explore-links a::after {
+ top:-2px;height:29px;background:var(--snow-cap) center top/auto 100% repeat-x;filter:none;opacity:1;
+}
+body.site-christmas.tours-page .tour-explore-links a::after {height:23px}
+body.site-christmas .cb-header::before{background:var(--snow-cap) center top/auto 100% repeat-x;height:17px;filter:none}
+body.site-christmas footer::after{background:var(--snow-cap) center bottom/auto 100% repeat-x;height:38px}
+body.site-christmas.home-page .card::after,
+body.site-christmas.tours-page .tour-card::after,
+body.site-christmas.tours-page .tour-guide-item::after {
+ background:radial-gradient(ellipse at 0 0,#ebffff85,transparent 19%),radial-gradient(ellipse at 100% 0,#efffff66,transparent 17%),radial-gradient(ellipse at 0 100%,#e7ffff55,transparent 16%),radial-gradient(ellipse at 100% 100%,#edffff70,transparent 20%);
+ box-shadow:inset 0 0 8px #e5fff050;opacity:.85;
+}
+body.site-christmas .christmas-snowflake {background:radial-gradient(circle,#fff 0 32%,#e7f8ffad 52%,transparent 73%);box-shadow:none;will-change:auto}
+body.site-christmas .christmas-snowflake:nth-child(6n) {background:radial-gradient(circle,#fff9e3 0 28%,#e9fbff88 49%,transparent 74%);box-shadow:none}
+body.site-christmas .christmas-snowflake:nth-child(9n+1){background:radial-gradient(circle,#fff 0 13%,#e3f5ffb0 30%,#d3ecff3b 53%,transparent 75%)}
+@media(max-width:767px),(prefers-reduced-motion:reduce){
+ body.site-christmas.home-page .card::before,body.site-christmas.tours-page .tour-card::before,body.site-christmas.tours-page .tour-guide-item::before{height:23px}
+ body.site-christmas .premium-benefits::before,body.site-christmas.tours-page .tour-benefits-band>.container>.grid::before{height:18px}
+ body.site-christmas .premium-benefits,body.site-christmas.tours-page .tour-benefits-band>.container>.grid,body.site-christmas.tours-page .tour-explore-inner,body.site-christmas .christmas-music-toggle{backdrop-filter:none;-webkit-backdrop-filter:none}
+}
