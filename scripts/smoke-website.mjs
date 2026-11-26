@@ -120,7 +120,8 @@ async function checkNavInteractions(page,label) {
   await page.keyboard.press("Escape");
   assert.equal(await toggle.getAttribute("aria-expanded"),"false",label+" Escape did not close");
   await toggle.click();
-  await page.locator(".hero h1").click({force:true});
+  // Click outside the open dropdown at x=2 rather than force-clicking through it.
+  await page.mouse.click(2, Math.min(vp.height-150, 190));
   assert.equal(await toggle.getAttribute("aria-expanded"),"false",label+" outside click did not close");
   await toggle.click();
   await nav.locator("a[href^=\"#\"]").first().click();
