@@ -1,0 +1,30 @@
+name: Verify original Surf City Christmas background
+on:
+  push:
+    paths:
+      - 'scripts/repair_christmas_hero.py'
+      - '.github/workflows/repair-christmas-hero.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify and restore exact original WebP
+        run: python scripts/repair_christmas_hero.py
+      - name: Commit verified image
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add assets/img/christmas-beach-new.webp
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: publish verified original Christmas coast background"
+            git push origin HEAD:main
+          else
+            echo "Image already verified."
+          fi
