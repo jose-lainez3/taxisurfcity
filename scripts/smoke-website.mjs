@@ -103,8 +103,10 @@ async function inspect(page,route,label) {
     cardMask:[...document.querySelectorAll("#servicios .card > img, .tour-guide-item .premium-guide-photo")].map(img=>(getComputedStyle(img).maskImage || "none"))
   }));
   assert.ok(snapshot.hasAudio && snapshot.hasWhatsApp && snapshot.styles,label+" missing primary UI");
-  if(label.startsWith("home"))assert.match(snapshot.heroBg,/christmas-beach-new.webp/,label+" hero background lost");
-  else assert.match(snapshot.heroBg,/volcan-coatepeque-hero-bg.webp/,label+" tour background lost");
+  const expectedHero = label.startsWith("home")
+    ? (page.viewportSize().width < 768 ? /mockup-home-scene.webp/ : /christmas-beach-new.webp/)
+    : (page.viewportSize().width < 768 ? /mockup-tours-scene.webp/ : /volcan-coatepeque-hero-bg.webp/);
+  assert.match(snapshot.heroBg, expectedHero, label+" hero background lost");
   assert.ok(snapshot.snowflakes >= 6 && snapshot.snowflakes <= 40,label+" wrong snowfall density");
   assert.ok(snapshot.snowTypes.length>=3,label+" snow variety insufficient");
   assert.ok(snapshot.xOverflow <= 2,label+" unexpected horizontal overflow "+snapshot.xOverflow);
