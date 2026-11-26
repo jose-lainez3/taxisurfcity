@@ -62,25 +62,31 @@
     let timer = null;
     let playing = false;
     let nextLoopTime = 0;
-    const beatDuration = 60 / 94;
-    const phraseBeats = 32;
+    let sleighBuffer = null;
+    let sleighFilter = null;
 
-    // Composición propia, "Luces sobre Surf City", 8 compases en do mayor.
+    // "Campanitas sobre Surf City" — jingle ORIGINAL en do mayor, 124 BPM,
+    // campanillas brillantes, tintineo de cascabeles y bajo ligero.
+    // No reproduce una canción comercial ni descarga música externa.
+    const beatDuration = 60 / 124;
+    const phraseBeats = 32;
     const melody = [
-      ["E5",0,.78],["G5",1,.78],["A5",2,.86],["G5",3,.81],
-      ["E5",4,.58],["D5",4.75,.55],["C5",5.5,1.12],["D5",7,.70],
-      ["E5",8,.72],["G5",9,.67],["B5",10,.76],["A5",11,.78],
-      ["G5",12,.94],["E5",13,.57],["D5",13.75,.52],["E5",14.5,1.13],
-      ["C5",16,.73],["E5",17,.70],["G5",18,.77],["A5",19,.79],
-      ["B5",20,.78],["A5",21,.56],["G5",21.75,.56],["E5",22.5,1.1],
-      ["D5",24,.71],["E5",25,.70],["G5",26,.75],["E5",27,.69],
-      ["D5",28,.78],["C5",29,.59],["D5",30,.53],["C5",31,.92]
+      ["E5",0,.5],["G5",.75,.48],["A5",1.5,.52],["G5",2,.50],["E5",2.5,.47],["C5",3,.80],
+      ["D5",4,.48],["E5",4.5,.48],["G5",5,.47],["A5",5.5,.48],["G5",6,.84],["E5",7,.82],
+      ["F5",8,.48],["A5",8.75,.48],["C6",9.5,.7],["A5",10.5,.46],["G5",11,.47],["F5",11.5,.48],
+      ["E5",12,.48],["G5",12.5,.46],["D5",13,.48],["G5",13.5,.45],["E5",14,.48],["C5",14.75,.96],
+      ["G5",16,.48],["B5",16.75,.5],["D6",17.5,.5],["B5",18.25,.49],["G5",19,.82],
+      ["A5",20,.49],["C6",20.75,.5],["E6",21.5,.5],["C6",22.25,.47],["A5",23,.84],
+      ["F5",24,.48],["A5",24.75,.45],["C6",25.5,.55],["A5",26.25,.48],["G5",27,.45],["F5",27.5,.48],
+      ["E5",28,.48],["D5",28.5,.48],["C5",29,.72],["E5",30,.4],["D5",30.5,.4],["C5",31,.90]
     ];
     const chords = [
-      ["C4","E4","G4"],["A3","C4","E4"],["F3","A3","C4"],["G3","B3","D4"],
-      ["C4","E4","G4"],["A3","C4","E4"],["F3","A3","C4"],["G3","B3","D4"]
+      ["C4","E4","G4"],["G3","B3","D4"],["A3","C4","E4"],["F3","A3","C4"],
+      ["C4","E4","G4"],["A3","C4","E4"],["F3","A3","C4"],["C4","E4","G4"]
     ];
+    const bass = ["C3","G2","A2","F2","C3","A2","F2","C3"];
     const semitones = {C:0,D:2,E:4,F:5,G:7,A:9,B:11};
+
     function frequency(note) {
       const match = /^([A-G])(#?)(\d)$/.exec(note);
       if (!match) return 440;
@@ -95,7 +101,7 @@
       if (isOn) {
         label.textContent = english() ? "Mute Christmas music" : "Silenciar música";
         button.setAttribute("aria-label", label.textContent);
-        button.title = english() ? "Original Christmas melody — mute" : "Melodía navideña original — silenciar";
+        button.title = english() ? "Christmas jingle — mute" : "Jingle navideño — silenciar";
         icon.className = "bi bi-volume-up-fill";
       } else {
         label.textContent = english() ? "Play Christmas music" : "Activar música navideña";
@@ -111,43 +117,111 @@
 
     function bell(note, at, duration, loudness) {
       if (!context || !output) return;
-      const amp = context.createGain();
-      const stopAt = at + Math.max(.25, duration) + .34;
-      amp.gain.setValueAtTime(.0001, at);
-      amp.gain.exponentialRampToValueAtTime(Math.max(.0003, loudness), at + .018);
-      amp.gain.exponentialRampToValueAtTime(.0001, stopAt);
-      amp.connect(output);
       const fundamental = frequency(note);
-      const base = context.createOscillator();
-      base.type = "sine";
-      base.frequency.setValueAtTime(fundamental, at);
-      base.connect(amp);
-      const shimmer = context.createOscillator();
-      shimmer.type = "triangle";
-      shimmer.frequency.setValueAtTime(fundamental * 2, at);
-      const shimmerGain = context.createGain();
-      shimmerGain.gain.value = .12;
-      shimmer.connect(shimmerGain);
-      shimmerGain.connect(amp);
-      base.start(at); shimmer.start(at);
-      base.stop(stopAt + .02); shimmer.stop(stopAt + .02);
-      shimmer.onended = function () {
-        shimmer.disconnect();
-        shimmerGain.disconnect();
-        base.disconnect();
+      const end = at + Math.max(.20,duration) + .15;
+      const amp = context.createGain();
+      amp.gain.setValueAtTime(.0001,at);
+      amp.gain.exponentialRampToValueAtTime(loudness,at + .009);
+      amp.gain.exponentialRampToValueAtTime(.0001,end);
+      amp.connect(output);
+
+      // Tres parciales producen un timbre de campanilla/glóckenspiel.
+      const partials = [
+        {ratio:1,gain:.72,type:"sine"},
+        {ratio:2.01,gain:.18,type:"sine"},
+        {ratio:3.92,gain:.10,type:"triangle"}
+      ];
+      const oscillators = [];
+      const partialGains = [];
+      partials.forEach(function(part) {
+        const voice = context.createOscillator();
+        const gain = context.createGain();
+        voice.type = part.type;
+        voice.frequency.setValueAtTime(fundamental * part.ratio,at);
+        gain.gain.value = part.gain;
+        voice.connect(gain);
+        gain.connect(amp);
+        voice.start(at);
+        voice.stop(end + .02);
+        oscillators.push(voice);
+        partialGains.push(gain);
+      });
+      oscillators[0].onended = function() {
+        oscillators.forEach(function(v) { v.disconnect(); });
+        partialGains.forEach(function(g) { g.disconnect(); });
         amp.disconnect();
       };
     }
 
-    function schedulePhrase(startAt) {
-      for (const [note, beat, duration] of melody) {
-        bell(note, startAt + beat * beatDuration, duration * beatDuration, .13);
+    function pluck(note,at,volume) {
+      if (!context || !output) return;
+      const oscillator = context.createOscillator();
+      const amp = context.createGain();
+      const end = at + .32;
+      oscillator.type = "triangle";
+      oscillator.frequency.setValueAtTime(frequency(note),at);
+      amp.gain.setValueAtTime(.0001,at);
+      amp.gain.exponentialRampToValueAtTime(volume,at + .008);
+      amp.gain.exponentialRampToValueAtTime(.0001,end);
+      oscillator.connect(amp);
+      amp.connect(output);
+      oscillator.start(at);
+      oscillator.stop(end + .02);
+      oscillator.onended = function() { oscillator.disconnect(); amp.disconnect(); };
+    }
+
+    function setupSleighBells() {
+      if (!context || sleighBuffer) return;
+      const length = Math.floor(context.sampleRate * .095);
+      sleighBuffer = context.createBuffer(1,length,context.sampleRate);
+      const samples = sleighBuffer.getChannelData(0);
+      let seed = 614223;
+      for (let i = 0; i < samples.length; i++) {
+        seed = (1664525 * seed + 1013904223) >>> 0;
+        samples[i] = (seed / 2147483648 - 1) * Math.exp(-31 * i / samples.length);
       }
-      // Acompañamiento discreto tipo caja musical, sin batería ni audio externo.
+      sleighFilter = context.createBiquadFilter();
+      sleighFilter.type = "highpass";
+      sleighFilter.frequency.value = 4400;
+      sleighFilter.connect(output);
+    }
+
+    function sleigh(at,accent) {
+      if (!context || !sleighBuffer || !sleighFilter) return;
+      const source = context.createBufferSource();
+      source.buffer = sleighBuffer;
+      const amp = context.createGain();
+      amp.gain.value = accent ? .088 : .058;
+      source.connect(amp);
+      amp.connect(sleighFilter);
+      source.start(at);
+      source.onended = function() { source.disconnect(); amp.disconnect(); };
+    }
+
+    function schedulePhrase(startAt) {
+      // Cascabeles en cada corchea, acentos en 1 y 3: ritmo reconocible navideño.
+      for (let half = 0; half < phraseBeats * 2; half++) {
+        const beat = half / 2;
+        sleigh(startAt + beat * beatDuration,half % 8 === 0 || half % 8 === 4);
+      }
+      // Lead de campanillas brillante con repiques breves.
+      for (const [note,beat,duration] of melody) {
+        const at = startAt + beat * beatDuration;
+        bell(note,at,duration * beatDuration,.17);
+        if (beat % 4 === 0) {
+          bell(note,at + .13,.20,.033);
+        }
+      }
+      // Acompañamiento suavemente arpegiado: bajo y acordes.
       for (let i = 0; i < chords.length; i++) {
         const at = startAt + i * 4 * beatDuration;
-        for (const note of chords[i]) {
-          bell(note, at, 3.45 * beatDuration, .012);
+        pluck(bass[i],at,.055);
+        pluck(bass[i],at + 2 * beatDuration,.035);
+        for (let j = 0; j < chords[i].length; j++) {
+          bell(chords[i][j],at + (.35 + j * .45) * beatDuration,.48,.027);
+          if (j === 0) {
+            bell(chords[i][j],at + 2.8 * beatDuration,.38,.020);
+          }
         }
       }
     }
@@ -179,8 +253,9 @@
         if (!context || context.state === "closed") {
           context = new AudioConstructor();
           output = context.createGain();
-          output.gain.value = .24; // Volumen ambiental bajo.
+          output.gain.value = .28; // Volumen moderado de fondo.
           output.connect(context.destination);
+          setupSleighBells();
         }
         const ref = context;
         if (ref.state === "running") {
@@ -203,6 +278,8 @@
       const previous = context;
       context = null;
       output = null;
+      sleighBuffer = null;
+      sleighFilter = null;
       if (previous && previous.state !== "closed") {
         try { previous.close().catch(function () {}); } catch (_) { /* navegador */ }
       }
