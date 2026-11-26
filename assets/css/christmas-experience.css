@@ -46,9 +46,9 @@ body.site-christmas .christmas-snowflake.is-near {
   will-change: transform;
 }
 @keyframes christmas-snow-drift {
-  0%   {transform:translate3d(calc(var(--snow-drift,0px) * -.25),-16vh,0) rotate(0deg)}
-  29%  {transform:translate3d(calc(var(--snow-drift,0px) * .34 + var(--snow-sway,0px)),25vh,0) rotate(calc(var(--snow-spin,0deg) * .25))}
-  66%  {transform:translate3d(calc(var(--snow-drift,0px) * .60 - var(--snow-sway,0px)),72vh,0) rotate(calc(var(--snow-spin,0deg) * .7))}
+  0%   {transform:translate3d(var(--snow-x-start,0px),-16vh,0) rotate(0deg)}
+  29%  {transform:translate3d(var(--snow-x-mid1,15px),25vh,0) rotate(var(--snow-spin-mid1,0deg))}
+  66%  {transform:translate3d(var(--snow-x-mid2,-10px),72vh,0) rotate(var(--snow-spin-mid2,0deg))}
   100% {transform:translate3d(var(--snow-drift,0px),116vh,0) rotate(var(--snow-spin,0deg))}
 }
 html.fx-paused body.site-christmas .christmas-snowflake,
