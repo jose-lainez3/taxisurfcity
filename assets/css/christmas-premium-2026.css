@@ -743,3 +743,33 @@ body.site-christmas.home-page #inicio .festive-scene { opacity:.43; }
   body.site-christmas.home-page #inicio .container {padding-right:16px;}
   body.site-christmas.home-page #inicio h1 {font-size:clamp(2rem,7.7vw,2.85rem);}
 }
+
+/* Mockup refinement: photo-led composition, luminous snow and champagne gold. */
+body.site-christmas.home-page #inicio.hero {
+ background:linear-gradient(90deg,#052e23 0%,rgba(5,46,35,.94) 32%,rgba(5,46,35,.15) 72%,transparent),url("../img/mockup-home-scene.webp") right center/auto 100% no-repeat,url("../img/christmas-beach-new.webp") center/cover no-repeat;
+}
+body.site-christmas.tours-page .hero-collage-wrap {
+ background:linear-gradient(90deg,#052e23 0%,rgba(5,46,35,.94) 32%,rgba(5,46,35,.15) 72%,transparent),url("../img/mockup-tours-scene.webp") right center/auto 100% no-repeat,url("../img/volcan-coatepeque-hero-bg.webp") center/cover no-repeat;
+}
+body.site-christmas .hero .holiday-hero-sign {display:none}
+body.site-christmas .hero .festive-scene {opacity:.22}
+body.site-christmas .hero h1 .text-lime-gradient {background:linear-gradient(180deg,#fff0c5,#e7b653);background-clip:text;-webkit-background-clip:text;color:transparent}
+body.site-christmas .hero .btn-lime,body.site-christmas.home-page #servicios .card-link,body.site-christmas.tours-page .premium-custom-tour .btn {background:linear-gradient(180deg,#fff6d2,#f7d47b 48%,#e5ac4f 72%,#fff1be);box-shadow:0 0 16px #eec77988,inset 0 0 7px #fff9df;color:#09291d;border:1px solid #fff8dc}
+body.site-christmas .hero .btn-outline,body.site-christmas.tours-page .tour-hero-secondary {box-shadow:0 0 12px #f7d78d88,inset 0 0 12px #6ce5a244;border-color:#ffdfa0}
+body.site-christmas.home-page .card,body.site-christmas.tours-page .tour-card,body.site-christmas.tours-page .tour-guide-item,body.site-christmas.tours-page .tour-explore-inner,body.site-christmas .premium-benefits,body.site-christmas.tours-page .tour-benefits-band > .container > .grid,body.site-christmas.tours-page .premium-custom-tour {position:relative;border:1.5px solid #e8fff3;box-shadow:0 0 9px #f6dda4a0,0 12px 28px #001a14aa,inset 0 0 24px #d8ffee35;background:linear-gradient(145deg,#30745c,#083b2b 70%,#18583f)}
+body.site-christmas .premium-benefits::before,body.site-christmas.tours-page .tour-benefits-band > .container > .grid::before,body.site-christmas.tours-page .tour-explore-inner::before,body.site-christmas.tours-page .tour-guide-item::before,body.site-christmas.tours-page .premium-custom-tour::before {content:"";position:absolute;inset:-2px -1px auto;height:19px;background:url("../img/christmas-premium-snowcap.svg") center/100% 100% no-repeat;pointer-events:none;z-index:5}
+body.site-christmas.tours-page .tour-explore-links a {box-shadow:0 0 8px #ffdfaaa0,inset 0 -4px 12px #e9fff344}
+body.site-christmas.tours-page .tour-explore-links a::before {background:linear-gradient(180deg,transparent 45%,#063c2bbb 72%,#063c2b 100%)}
+body.site-christmas .cb-window {border:2px solid #eafff3!important;box-shadow:0 0 14px #f8d68a77,0 12px 30px #001c15aa!important}
+body.site-christmas .cb-header {background:linear-gradient(120deg,#175f43,#073c2b)!important}
+@media(min-width:1081px){
+body.site-christmas.home-page #inicio.hero,body.site-christmas.tours-page .hero-collage-wrap {min-height:520px;padding:66px 0 90px}
+body.site-christmas.home-page #inicio .container,body.site-christmas.tours-page .hero-collage-wrap > .container {padding-right:40%;text-align:left}
+body.site-christmas.home-page #inicio h1,body.site-christmas.tours-page .hero h1 {font-size:clamp(2.4rem,3.5vw,3.8rem);line-height:1.12}
+body.site-christmas.home-page #inicio .lead,body.site-christmas.tours-page .hero .lead {font-size:1rem;line-height:1.55}
+body.site-christmas.tours-page .tour-explore-links a {height:180px}
+}
+@media(max-width:767px){
+body.site-christmas.home-page #inicio.hero,body.site-christmas.tours-page .hero-collage-wrap {background-position:center,right center,center;background-size:cover,auto 100%,cover}
+body.site-christmas.home-page #inicio.hero::before,body.site-christmas.tours-page .hero-collage-wrap::before {background:#032b20;opacity:.55}
+}
