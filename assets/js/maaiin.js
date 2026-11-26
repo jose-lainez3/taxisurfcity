@@ -45,17 +45,39 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  /* 1. Menú móvil */
+  /* 1. Menú móvil y tablet: estado accesible, cierre completo y limpio. */
   const toggle = document.querySelector('.nav-toggle');
   const links = document.querySelector('.nav-links');
   if (toggle && links) {
-    toggle.addEventListener('click', () => {
-      links.classList.toggle('open');
-      toggle.setAttribute('aria-expanded', links.classList.contains('open'));
-    });
+    const nav = toggle.closest('.navbar');
+    if (!links.id) links.id = 'mobile-site-nav';
+    toggle.setAttribute('aria-controls', links.id);
+    function setMenuOpen(open) {
+      links.classList.toggle('open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+      toggle.textContent = open ? '✕' : '☰';
+    }
+    toggle.addEventListener('click', () => setMenuOpen(!links.classList.contains('open')));
     links.querySelectorAll('a').forEach(a => {
-      a.addEventListener('click', () => links.classList.remove('open'));
+      a.addEventListener('click', () => setMenuOpen(false));
     });
+    document.addEventListener('click', event => {
+      if (links.classList.contains('open') && nav && !nav.contains(event.target)) setMenuOpen(false);
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && links.classList.contains('open')) {
+        setMenuOpen(false);
+        toggle.focus();
+      }
+    });
+    if (window.matchMedia) {
+      const desktopMenu = window.matchMedia('(min-width: 1024px)');
+      const closeOnDesktop = event => { if (event.matches) setMenuOpen(false); };
+      if (desktopMenu.addEventListener) desktopMenu.addEventListener('change', closeOnDesktop);
+      else if (desktopMenu.addListener) desktopMenu.addListener(closeOnDesktop);
+    }
+    setMenuOpen(false);
   }
 
   /* 2. Reveal on scroll (reemplazo ligero de AOS, respeta prefers-reduced-motion) */
