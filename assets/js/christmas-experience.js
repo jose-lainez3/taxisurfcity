@@ -27,13 +27,15 @@
         seed = (1664525 * seed + 1013904223) >>> 0;
         return seed / 4294967296;
       }
-      const count = window.matchMedia && window.matchMedia("(max-width:767px)").matches ? 14 : 34;
+      const compact = window.matchMedia && window.matchMedia("(max-width:767px)").matches;
+      const constrained = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.connection && navigator.connection.saveData);
+      const count = constrained ? 10 : compact ? 14 : 32;
       const fragment = document.createDocumentFragment();
       for (let i = 0; i < count; i++) {
         const flake = document.createElement("span");
         flake.className = "christmas-snowflake";
-        const duration = 11 + random() * 12;
-        const size = 2.5 + random() * 4;
+        const duration = 15 + random() * 16;
+        const size = i % 9 === 0 ? 6 + random() * 3 : 1.5 + random() * 3.5;
         flake.style.setProperty("--snow-left", (random() * 99).toFixed(1) + "%");
         flake.style.setProperty("--snow-size", size.toFixed(1) + "px");
         flake.style.setProperty("--snow-opacity", (0.25 + random() * 0.46).toFixed(2));
