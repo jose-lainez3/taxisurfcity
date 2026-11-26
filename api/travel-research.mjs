@@ -57,7 +57,7 @@ export function needsPublicResearch(input) {
   if (!text || /^(hola|hello|hi|gracias|thanks|ok|vale|buenas|adios|goodbye)[!.\s]*$/.test(text)) return false;
   if (/\b(cotiz|reserv|precio de nuestro|cuanto cuesta nuestro|mi pedido|disponibilidad de taxi)\b/.test(text) &&
       !/\b(recomend|buscar|encontrar|investig|lugares|que visitar|where)\b/.test(text)) return false;
-  return /\b(recomend|busca|buscar|encuentra|encontrar|investig|visitar|conocer|hacer|lugares?|atracciones?|destinos?|playas?|restaurantes?|hoteles?|volcanes?|ciudades?|historia|noticias?|hoy|esta semana|actual|recient|turismo|rutas?|viajes?|vacaciones|tours?|pueblos?|museos?|donde|where|what|best|nearby|visit|travel|recommend|search|weather|clima)\b/.test(text) ||
+  return /\b(recomiend\w*|recomend\w*|busca\w*|encuentra\w*|investig\w*|visitar|conocer|hacer|lugares?|atracciones?|destinos?|playas?|restaurantes?|hoteles?|volcanes?|ciudades?|historia|noticias?|hoy|esta semana|actual\w*|recient\w*|turismo|rutas?|viajes?|vacaciones|tours?|pueblos?|museos?|donde|where|what|best|nearby|visit|travel|recommend\w*|search|weather|clima)\b/.test(text) ||
     /[?¿]/.test(text) && /\b(el salvador|surf city|el tunco|el zonte|san salvador|santa ana|coatepeque|suchitoto|ruta de las flores)\b/.test(text);
 }
 
@@ -177,7 +177,7 @@ export function whatsappConsultation(question, responseText) {
   return "https://wa.me/50376401181?text=" + encodeURIComponent(line);
 }
 export function travelQuestion(question) {
-  return /\b(taxi|transporte|traslado|hotel|playa|tour|viaje|viajar|vacac|visitar|atraccion|restaurante|turismo|surf|aeropuerto|destino|lugares?|paseo|shuttle|travel|trip|beach|airport|visit|recommend|transport)\b/i.test(normalize(question));
+  return /\b(taxis?|transport\w*|traslados?|hoteles?|playas?|tours?|viajes?|viajar|vacac\w*|visitar|atraccion\w*|restaurantes?|turismo|surf|aeropuerto|destinos?|lugares?|paseos?|shuttle|travel|trip|beach|airport|visit|recommend\w*)\b/i.test(normalize(question));
 }
 export function researchFallbackAnswer(research, language = "es") {
   if (!research.sources.length) return null;
