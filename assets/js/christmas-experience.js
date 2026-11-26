@@ -18,6 +18,7 @@
     const lowPower = Boolean((navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
       (navigator.deviceMemory && navigator.deviceMemory <= 3) ||
       (conn && (conn.saveData || /2g/.test(conn.effectiveType || ""))));
+    document.body.classList.toggle("christmas-low-power", lowPower);
     let wantsMusic = true;
     let snowPaused = false;
     let snowOverlay = null;
