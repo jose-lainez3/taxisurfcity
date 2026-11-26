@@ -1,0 +1,43 @@
+name: Validate latest mobile source without deploying
+on:
+  push:
+    paths:
+      - 'assets/css/mobile-layout-2026.css'
+      - 'assets/js/christmas-experience.js'
+      - 'assets/js/maaiin.js'
+      - 'assets/img/mockup-home-scene.webp'
+      - 'assets/img/mockup-tours-scene.webp'
+      - 'index.html'
+      - 'tours.html'
+      - 'scripts/smoke-website.mjs'
+      - '.github/workflows/mobile-source-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install browser
+        run: |
+          npm install --no-save playwright@1.56.1
+          npx playwright install chromium
+      - name: Serve checked-out source and test real mobile layouts
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 > /tmp/taxi-preview.log 2>&1 &
+          WEB_PID=$!
+          trap "kill $WEB_PID 2>/dev/null || true" EXIT
+          sleep 2
+          WEBSITE_ORIGIN=http://127.0.0.1:4173 WEBSITE_SKIP_CUSTOM_CHECK=1 node scripts/smoke-website.mjs
+      - name: Upload mobile browser screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-source-visual-check
+          path: website-smoke/
+          retention-days: 5
