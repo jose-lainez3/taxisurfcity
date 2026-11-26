@@ -42,6 +42,11 @@ async function checkCompactLayout(page, label) {
         ? getComputedStyle(document.querySelector(".tour-explore-links")).gridTemplateColumns : null,
       heroPadding:getComputedStyle(hero).padding,
       xOverflow:Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth,
+      servicesColumns:document.body.classList.contains("home-page")
+        ? getComputedStyle(document.querySelector(".mockup-service-grid")).gridTemplateColumns : null,
+      tourTiles:document.body.classList.contains("tours-page")
+        ? document.querySelectorAll(".tour-explore-links a").length : 0,
+      holidayMusic:!!document.getElementById("christmas-original-audio"),
       overlapButtons:overlap(get(".christmas-controls"),get(".wa-float")) ||
         overlap(get(".christmas-controls"),get(".cb-launcher")) ||
         overlap(get(".wa-float"),get(".cb-launcher"))
@@ -57,6 +62,11 @@ async function checkCompactLayout(page, label) {
   assert.ok(metrics.menu.x >= 0 && metrics.menu.x + metrics.menu.w <= viewport.width+1,label+" mobile toggle spills");
   assert.ok(metrics.lang.x >= 0 && metrics.lang.x + metrics.lang.w <= viewport.width+1,label+" language toggle spills");
   assert.ok(metrics.firstCard.w < viewport.width, label+" card occupies entire viewport without margins");
+  assert.equal(metrics.holidayMusic,true,label+" Christmas audio absent");
+  if (label.startsWith("tours")) assert.equal(metrics.tourTiles,6,label+" destinations missing");
+  if (viewport.width <= 540 && label.startsWith("home")) {
+    assert.equal(metrics.servicesColumns.trim().split(/\s+/).length,1,label+" services must stack on narrow screens");
+  }
   assert.equal(metrics.separateSceneCount,0,label+" photo must be hero background, not a second card");
   if (viewport.width < 768) {
     assert.match(metrics.heroBg,
@@ -223,8 +233,8 @@ try {
   await checkTourCards(toursMobile,"tours-mobile");
   await toursMobile.close();
 
-  // Narrow phones and tablets have their own deliberately tested layout.
-  for (const width of [320,375,430,820]) {
+  // Fluid layout regression sweep: narrow phones, modern phones and tablets.
+  for (const width of [280,320,360,375,430,540,600,767,768,820,1023]) {
     const isPhone = width < 768;
     const page = await browser.newPage({
       viewport:{width,height:isPhone?720:1000},
