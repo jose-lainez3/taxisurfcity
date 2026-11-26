@@ -3,6 +3,19 @@
 
   /* ---------- Diccionario en inglés ---------- */
   const EN = {
+    "premium.home.greeting": "Christmas in Surf City · Travel, Explore and Share",
+    "premium.tours.greeting": "Christmas Tours in El Salvador",
+    "premium.dest.subtitle": "Choose a tour or combine destinations to create your perfect experience in El Salvador.",
+    "premium.guide.nature": "Explore nature",
+    "premium.guide.culture": "Explore culture",
+    "premium.guide.coast": "Explore coast",
+    "premium.guide.tag1": "01 — NATURE",
+    "premium.guide.tag2": "02 — CULTURE",
+    "premium.guide.tag3": "03 — COAST",
+    "premium.strip.hours": "24/7 availability",
+    "premium.strip.air": "Air-conditioned vehicles",
+    "premium.strip.groups": "Individuals, families and groups",
+    "premium.strip.booking": "Flexible booking",
     /* ===== Navegación ===== */
     "nav.inicio": "Home",
     "nav.servicios": "Services",
@@ -36,14 +49,13 @@
     "trust.disponibilidad": "24/7 availability across El Salvador",
 
     /* ===== Index ===== */
-    "hero.index.title": 'Taxis in El Salvador 24/7: Airport Transfers, <br><span class="text-lime-gradient">Surf City, San Salvador &amp; Tours.</span>',
-    "hero.index.lead": 'Your leading <strong>taxi and private transport service in El Salvador</strong>. Ride with <strong>Taxi Surfcity Lainez</strong>: transfers from <strong>El Salvador International Airport (SAL)</strong> to San Salvador, El Tunco, El Zonte, hotels and tourist routes 24/7.',
+    "hero.index.title": "Taxis in El Salvador 24/7:<br><span class=\"text-lime-gradient\">Airport Transfers,</span><br>Surf City, Tours and More.",
+    "hero.index.lead": "Your trusted taxi and private transport service in El Salvador. Travel with <strong>Taxi SurfCity Lainez</strong> from El Salvador International Airport (SAL) to Surf City, San Salvador, beaches, hotels and customized tours 24/7.",
     "hero.index.cta": "Book my Taxi Now",
     "hero.index.toursCta": "Explore our tours",
-
-    "servicios.eyebrow": "Our 24/7 services",
-    "servicios.title": "Taxi Service in El Salvador, Airport & VIP Transport",
-    "servicios.subtitle": "Nationwide coverage with modern, air-conditioned vehicles and professional drivers across the country.",
+    "servicios.eyebrow": "Our services & tours",
+    "servicios.title": "Transportation and Tours <span class=\"text-lime-gradient\">in El Salvador</span>",
+    "servicios.subtitle": "Airport transfers, local routes and unforgettable tours throughout the country.",
 
     "servicio.aeropuerto.title": "El Salvador Airport Taxis (SAL)",
     "servicio.aeropuerto.desc": "Punctual pickup at El Salvador International Airport (Comalapa). We take you directly and safely to San Salvador, Surf City, El Tunco, Costa del Sol or anywhere in the country, 24 hours a day.",
@@ -111,9 +123,9 @@
 
     /* ===== Página de Tours ===== */
     "t.hero.badge": "Private tourist transport · Excursions and trips in El Salvador",
-    "t.hero.title": 'Private Tours in El Salvador<br><span class="text-lime-gradient">Ruta de las Flores, Volcanoes &amp; Surf City</span>',
-    "t.hero.lead": "Explore El Salvador's most impressive destinations with a local driver and an exclusive vehicle. Custom routes to the Ruta de las Flores, volcano hikes, lakes, colonial architecture and surf beaches, with complete safety and comfort.",
-    "t.hero.cta": "Get a tour quote on WhatsApp",
+    "t.hero.title": "Discover El Salvador<br><span class=\"text-lime-gradient\">with Our Tours</span>",
+    "t.hero.lead": "Explore volcanoes, lakes, colonial towns, beaches and unique cultural experiences with safe, comfortable, personalized service.",
+    "t.hero.cta": "Build my custom tour",
     "t.hero.explore": "Explore destinations",
     "t.quick.label": "Explore the destinations",
     "t.quick.flores": "Ruta de las Flores",
@@ -122,7 +134,7 @@
     "t.quick.ceren": "Joya de Cerén",
     "t.quick.boqueron": "El Boquerón",
     "t.quick.playas": "Surf City beaches",
-    "t.guide.eyebrow": "Find your experience",
+    "t.guide.eyebrow": "Tour experiences by theme",
     "t.guide.title": "Which private tour should you choose in El Salvador?",
     "t.guide.intro": "First time visiting El Salvador? Find an excursion that fits your interests and time available.",
     "t.guide.a.title": "Volcanoes & scenery",
