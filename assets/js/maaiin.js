@@ -10,6 +10,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // Los spans del fondo están ocultos por CSS: se eliminan del DOM
   document.querySelectorAll('.liquid-bg span').forEach(s => s.remove());
 
+  /* Opiniones: el proveedor externo solo se descarga al acercarse al bloque.
+     Evita competir con la portada, los tours y el asistente durante el inicio. */
+  const reviewsWidget = document.querySelector('.elfsight-app-abbe46b9-a098-481f-b5ac-bb715f6aa488');
+  if (reviewsWidget) {
+    let reviewScriptLoaded = false;
+    const loadReviews = () => {
+      if (reviewScriptLoaded) return;
+      reviewScriptLoaded = true;
+      const script = document.createElement('script');
+      script.src = 'https://elfsightcdn.com/platform.js';
+      script.async = true;
+      script.onerror = () => { reviewScriptLoaded = false; };
+      document.head.appendChild(script);
+    };
+    if ('IntersectionObserver' in window) {
+      const reviewsObserver = new IntersectionObserver((entries) => {
+        if (entries.some(entry => entry.isIntersecting)) {
+          reviewsObserver.disconnect();
+          loadReviews();
+        }
+      }, { rootMargin: '350px 0px' });
+      reviewsObserver.observe(reviewsWidget);
+    } else {
+      window.addEventListener('load', loadReviews, { once:true });
+    }
+  }
+
   // Carga diferida de imágenes fuera del hero
   document.querySelectorAll('img').forEach(img => {
     img.decoding = 'async';
