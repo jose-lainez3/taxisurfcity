@@ -1,110 +1,152 @@
-/* Taxi SurfCity Lainez — Navidad 2026: nieve + control de música.
-   Se aplica únicamente en Inicio y Tours; no modifica secciones ni el chat. */
-
+/* Navidad SurfCity — nieve por capas y música. Versión ligera: solo se anima
+   transform (compositor), sin canvas, sin RAF y sin filtros por fotograma. */
 body.site-christmas .christmas-snow-overlay {
   position: fixed;
   inset: 0;
-  z-index: 108;
-  pointer-events: none;
+  z-index: 110;
   overflow: hidden;
+  pointer-events: none;
   contain: layout style paint;
   isolation: isolate;
 }
-
 body.site-christmas .christmas-snowflake {
   position: absolute;
-  top: -9vh;
+  display: block;
+  top: 0;
   left: var(--snow-left, 50%);
   width: var(--snow-size, 5px);
   height: var(--snow-size, 5px);
+  margin: 0;
+  padding: 0;
+  opacity: var(--snow-opacity, .55);
   border-radius: 50%;
-  background: rgba(255, 251, 241, 0.96);
-  box-shadow: 0 0 7px rgba(255, 248, 222, .30);
-  opacity: var(--snow-opacity, .5);
-  transform: translate3d(0, -8vh, 0);
-  animation: christmas-snow-fall var(--snow-duration, 16s) linear infinite;
-  animation-delay: var(--snow-delay, 0s);
+  border: 0;
+  box-shadow: none;
+  background: radial-gradient(circle, #fff 0 35%, #effcff 53%, rgba(231,249,255,.2) 72%, transparent 80%);
+  transform: translate3d(0,-16vh,0);
+  animation: christmas-snow-drift var(--snow-duration, 20s) linear var(--snow-delay, 0s) infinite;
+  pointer-events: none;
+  backface-visibility: hidden;
+}
+body.site-christmas .christmas-snowflake.is-crystal,
+body.site-christmas .christmas-snowflake.is-crystal:nth-child(6n),
+body.site-christmas .christmas-snowflake.is-crystal:nth-child(9n+1) {
+  background: url("../img/christmas-snowflake-crystal.svg") center / contain no-repeat;
+  border-radius: 0;
+  box-shadow: none;
+}
+body.site-christmas .christmas-snowflake.is-soft {
+  background: radial-gradient(circle, #fff 0 16%, rgba(240,252,255,.65) 40%, rgba(240,252,255,.07) 65%, transparent 75%);
+}
+body.site-christmas .christmas-snowflake.is-gold {
+  background: radial-gradient(circle, #fff9e8 0 31%, #ffe9bd99 52%, transparent 78%);
+}
+body.site-christmas .christmas-snowflake.is-near {
+  /* Reserve compositing hints for the small foreground layer only. */
   will-change: transform;
 }
-
-body.site-christmas .christmas-snowflake:nth-child(6n) {
-  background: #ffe8b7;
-  box-shadow: 0 0 9px rgba(241, 205, 149, .25);
+@keyframes christmas-snow-drift {
+  0%   {transform:translate3d(calc(var(--snow-drift,0px) * -.25),-16vh,0) rotate(0deg)}
+  29%  {transform:translate3d(calc(var(--snow-drift,0px) * .34 + var(--snow-sway,0px)),25vh,0) rotate(calc(var(--snow-spin,0deg) * .25))}
+  66%  {transform:translate3d(calc(var(--snow-drift,0px) * .60 - var(--snow-sway,0px)),72vh,0) rotate(calc(var(--snow-spin,0deg) * .7))}
+  100% {transform:translate3d(var(--snow-drift,0px),116vh,0) rotate(var(--snow-spin,0deg))}
 }
-
-@keyframes christmas-snow-fall {
-  from { transform: translate3d(0, -8vh, 0); }
-  to   { transform: translate3d(var(--snow-drift, 20px), 114vh, 0); }
-}
-
-/* Botón discreto que nunca tapa WhatsApp ni la navegación. */
-body.site-christmas .christmas-music-toggle {
-  position: fixed;
-  left: max(16px, env(safe-area-inset-left));
-  bottom: max(18px, env(safe-area-inset-bottom));
-  z-index: 1205;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9px;
-  padding: 10px 15px;
-  max-width: min(290px, calc(100vw - 32px));
-  min-height: 46px;
-  font-family: "Poppins", sans-serif;
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1.25;
-  color: #fff6e5;
-  border: 1px solid rgba(242, 208, 149, .66);
-  border-radius: 999px;
-  background: rgba(9, 40, 29, .94);
-  box-shadow: 0 7px 21px rgba(0, 0, 0, .32);
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: border-color .2s ease, background .2s ease, transform .2s ease;
-}
-
-body.site-christmas .christmas-music-toggle .bi {
-  font-size: 16px;
-  color: #f2d095;
-  flex: none;
-}
-body.site-christmas .christmas-music-toggle:hover {
-  transform: translateY(-2px);
-  background: #174935;
-  border-color: #ffe3ae;
-}
-body.site-christmas .christmas-music-toggle:focus-visible {
-  outline: 3px solid #f2d095;
-  outline-offset: 3px;
-}
-body.site-christmas .christmas-music-toggle[data-playing="true"] {
-  border-color: #b9e6b7;
-}
-body.site-christmas .christmas-music-toggle[data-playing="true"] .bi {
-  color: #b9e6b7;
-}
-
 html.fx-paused body.site-christmas .christmas-snowflake,
-body.site-christmas.christmas-snow-paused .christmas-snowflake {
-  animation-play-state: paused;
+body.site-christmas.christmas-snow-paused .christmas-snowflake,
+body.site-christmas.christmas-snow-user-paused .christmas-snowflake {
+  animation-play-state:paused!important;
 }
+body.site-christmas.christmas-snow-user-paused .christmas-snow-overlay {opacity:.25;}
 
-@media (max-width: 767px) {
-  body.site-christmas .christmas-snowflake:nth-child(n + 15) {
-    display: none;
-  }
-  body.site-christmas .christmas-music-toggle {
-    left: 12px;
-    bottom: max(12px, env(safe-area-inset-bottom));
-    padding: 9px 12px;
-    font-size: 11px;
-    min-height: 42px;
-  }
+/* A compact, accessible group rather than two separate floating surfaces. */
+body.site-christmas .christmas-controls {
+  position:fixed;
+  bottom:max(14px,env(safe-area-inset-bottom));
+  left:max(16px,env(safe-area-inset-left));
+  z-index:1205;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  max-width:calc(100vw - 92px);
+  pointer-events:auto;
 }
-@media (prefers-reduced-motion: reduce) {
-  body.site-christmas .christmas-snow-overlay { display: none; }
-  body.site-christmas .christmas-snowflake { animation: none !important; }
-  body.site-christmas .christmas-music-toggle { transition: none; }
+body.site-christmas .christmas-controls .christmas-music-toggle,
+body.site-christmas .christmas-controls .christmas-snow-toggle {
+  position:relative;
+  inset:auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  flex-shrink:0;
+  min-height:43px;
+  padding:9px 13px;
+  margin:0;
+  font-family:"Poppins",sans-serif;
+  font-size:12px;
+  line-height:1.24;
+  font-weight:700;
+  color:#fff7e6;
+  border:1px solid rgba(253,233,193,.68);
+  border-radius:999px;
+  background:rgba(6,46,33,.96);
+  box-shadow:0 5px 19px rgba(0,0,0,.27);
+  cursor:pointer;
+  transition:background .18s ease,border-color .18s ease;
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
+}
+body.site-christmas .christmas-controls .christmas-music-toggle:hover,
+body.site-christmas .christmas-controls .christmas-snow-toggle:hover {
+  background:#1d6045;
+  border-color:#fff0c7;
+}
+body.site-christmas .christmas-controls button:focus-visible {
+  outline:3px solid #f3d398;
+  outline-offset:3px;
+}
+body.site-christmas .christmas-controls .bi {font-size:16px;color:#f3d398;}
+body.site-christmas .christmas-controls .christmas-music-toggle[data-playing="true"] {
+  border-color:#bde9c8;
+}
+body.site-christmas .christmas-controls .christmas-music-toggle[data-playing="true"] .bi {
+  color:#bde9c8;
+}
+body.site-christmas .christmas-controls .christmas-snow-toggle[data-paused="true"] {
+  border-color:rgba(230,238,231,.44);
+  color:#e4efe6;
+}
+body.site-christmas .christmas-controls .christmas-snow-toggle[data-paused="true"] .bi {
+  color:#d7ece0;
+}
+@media (max-width:767px) {
+  body.site-christmas .christmas-snowflake:nth-child(n+21) {display:none}
+  body.site-christmas .christmas-controls {
+    left:12px;
+    bottom:max(12px,env(safe-area-inset-bottom));
+    gap:6px;
+  }
+  body.site-christmas .christmas-controls .christmas-music-toggle {
+    padding:8px 10px;
+    font-size:11px;
+    min-height:40px;
+    max-width:190px;
+  }
+  body.site-christmas .christmas-controls .christmas-snow-toggle {
+    padding:8px 10px;
+    min-height:40px;
+    min-width:40px;
+  }
+  body.site-christmas .christmas-controls .christmas-snow-toggle span {display:none;}
+  body.site-christmas .christmas-snowflake:not(.is-near) {will-change:auto;}
+}
+@media (max-width:390px) {
+  body.site-christmas .christmas-snowflake:nth-child(n+15) {display:none}
+  body.site-christmas .christmas-controls .christmas-music-toggle {max-width:160px;}
+}
+@media (prefers-reduced-motion:reduce) {
+  body.site-christmas .christmas-snow-overlay,
+  body.site-christmas .christmas-snow-toggle {display:none!important}
+  body.site-christmas .christmas-snowflake {animation:none!important}
+  body.site-christmas .christmas-controls button {transition:none!important}
 }
