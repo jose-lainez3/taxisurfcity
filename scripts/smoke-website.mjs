@@ -34,6 +34,9 @@ async function checkCompactLayout(page, label) {
       scene:get(".mobile-scenic-panel"),
       sceneBg:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundImage,
       sceneDisplay:getComputedStyle(document.querySelector(".mobile-scenic-panel")).display,
+      sceneSize:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundSize,
+      scenePosition:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundPosition,
+      sceneBorder:getComputedStyle(document.querySelector(".mobile-scenic-panel")).borderTopWidth,
       firstCard:get(document.body.classList.contains("home-page") ? "#servicios .card" : ".tour-card"),
       tourGrid:document.body.classList.contains("tours-page")
         ? getComputedStyle(document.querySelector(".tour-explore-links")).gridTemplateColumns : null,
@@ -63,6 +66,12 @@ async function checkCompactLayout(page, label) {
     assert.match(metrics.sceneBg,
       label.startsWith("home")?/mockup-home-scene.webp/:/mockup-tours-scene.webp/,
       label+" mobile scenic background missing");
+    assert.equal(metrics.sceneSize,"cover",label+" mobile photo improperly zoomed");
+    assert.equal(metrics.sceneBorder,"0px",label+" unnecessary photo frame");
+    assert.ok(Math.abs(metrics.chat.y-metrics.wa.y) <= 3,
+      label+" WhatsApp and chat are vertically stacked over content");
+    assert.ok(Math.abs((metrics.music.y+metrics.music.h/2)-(metrics.wa.y+metrics.wa.h/2)) <= 6,
+      label+" music and snow buttons are not aligned with contact actions");
   } else {
     assert.equal(metrics.sceneDisplay,"none",label+" mobile photo should not duplicate desktop background");
   }
