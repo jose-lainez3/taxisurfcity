@@ -351,6 +351,7 @@
         ? window.TAXISURFCITY_AI_ENDPOINT : "/api/assistant";
     var aiReady = false;
     var aiSearchEnabled = false;
+    var aiPublicResearch = false;
     var aiCheckedAt = 0;
     var aiChecking = null;
     var aiDetail = "Verificando servicio Gemini...";
@@ -362,7 +363,10 @@
 
     function updateAIStatus(message) {
       aiDetail = message || "";
-      modeEl.textContent = aiReady ? (aiSearchEnabled ? "IA conectada · búsqueda web" : "IA conectada · consultas generales") : "Modo local · sin conexión IA";
+      modeEl.textContent = aiReady
+        ? (aiSearchEnabled ? "IA conectada · búsqueda web" :
+           (aiPublicResearch ? "IA conectada · fuentes públicas" : "IA conectada · consultas generales"))
+        : "Modo local · sin conexión IA";
       modeDetail.hidden = aiReady;
       modeDetail.textContent = aiReady ? "" : aiDetail + " Pulsa ↻ para volver a comprobar.";
     }
@@ -393,6 +397,7 @@
             var result = await response.json();
             aiReady = result.ready === true;
             aiSearchEnabled = result.webSearch === true;
+            aiPublicResearch = result.publicResearch === true;
             aiDetail = aiReady
               ? ""
               : "La API responde, pero GEMINI_API_KEY no está configurada. Añádela a Vercel (Production) y vuelve a desplegar.";
@@ -589,7 +594,7 @@
       body.scrollTop = body.scrollHeight;
     }
 
-    var suggestions = ["Tours disponibles", "Traslado aeropuerto", "¿Qué clima hace en Surf City?", "¿Qué puedo visitar en El Salvador?", "Cotizar taxi"];
+    var suggestions = ["Tours disponibles", "Traslado aeropuerto", "Recomiéndame lugares cerca de Surf City", "¿Qué visitar en El Salvador?", "Cotizar taxi"];
     suggestions.forEach(function (s) {
       var chip = document.createElement("button");
       chip.className = "cb-chip";
@@ -617,8 +622,15 @@
             addMsg(result.answer, "bot", true);
             addOfficialLinks(result.links);
             addSources(result.sources);
+            if (result.aiGenerated === false) {
+              addMsg(result.warning ||
+                "Gemini está temporalmente indisponible. Mostré referencias públicas para que las puedas consultar directamente.",
+                "bot", true);
+            }
             if (!result.searchedWeb && /\b(hoy|mañana|esta semana|últimas|recientes?|noticias?|clima|pronóstico|actualmente|today|tomorrow|latest|news|weather|forecast)\b/i.test(text)) {
-              addMsg("Nota: esta respuesta se generó sin consultar fuentes actuales de internet. Verifica la información antes de organizar el viaje.", "bot", true);
+              addMsg(result.researchMode === "reference"
+                ? "Estas referencias de turismo no verifican noticias, clima o precios en tiempo real."
+                : "No pude verificar fuentes actuales de internet para esta consulta. Confirma los datos antes de organizar el viaje.", "bot", true);
             }
             conversation.push({role:"user",text:text},{role:"assistant",text:result.answer.slice(0,1400)});
             conversation = conversation.slice(-10);
