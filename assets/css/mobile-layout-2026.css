@@ -583,39 +583,85 @@
 
 
 
-/* Scenic mobile hero v2 — visual artwork as a real, generous composition,
-   NOT an almost invisible strip behind opaque text. Desktop remains unchanged. */
-body.site-christmas .mobile-scenic-panel {display:none;}
+/* Mobile cinematic backdrop v4. The actual 1672x941 WebP is painted once
+   directly on each hero, not inside a separate panel or a cropped card.
+   A CSS gradient keeps readable text without image masks, blur or JS. */
+body.site-christmas .mobile-scenic-panel {display:none!important;}
 @media (max-width:767px) {
   body.site-christmas.home-page #inicio.hero,
   body.site-christmas.tours-page .hero-collage-wrap {
+    position:relative;
     display:block;
+    box-sizing:border-box;
     min-height:0!important;
-    padding:25px 0 0!important;
-    background-color:#062e23;
+    height:auto!important;
+    padding:clamp(27px,7.5vw,37px) 0 clamp(185px,52vw,244px)!important;
+    overflow:hidden;
+    isolation:isolate;
+    background-color:#092f23!important;
+    background-repeat:no-repeat!important;
+    background-attachment:scroll!important;
+    /* Fit the photo by HEIGHT and keep the original proportions.
+       Slight right focus retains the Christmas sign / coastal landmarks. */
+    background-size:100% 100%,auto clamp(355px,99vw,485px)!important;
+    background-position:center center,72% bottom!important;
+  }
+  body.site-christmas.home-page #inicio.hero {
     background-image:
-      radial-gradient(ellipse at 50% 12%,rgba(38,102,75,.19),transparent 65%),
-      linear-gradient(180deg,#092c22 0%,#07291f 100%)!important;
-    background-position:center;
-    background-size:cover;
-    background-repeat:no-repeat;
+      linear-gradient(180deg,
+        rgba(4,43,31,.96) 0%,
+        rgba(4,41,31,.94) 25%,
+        rgba(4,40,30,.82) 44%,
+        rgba(4,37,28,.58) 61%,
+        rgba(4,37,28,.24) 79%,
+        rgba(4,37,28,.12) 92%,
+        rgba(4,37,28,.38) 100%),
+      url("../img/mockup-home-scene.webp")!important;
+  }
+  body.site-christmas.tours-page .hero-collage-wrap {
+    background-image:
+      linear-gradient(180deg,
+        rgba(4,43,31,.96) 0%,
+        rgba(4,41,31,.93) 23%,
+        rgba(4,40,30,.81) 43%,
+        rgba(4,37,28,.53) 61%,
+        rgba(4,37,28,.22) 80%,
+        rgba(4,37,28,.11) 93%,
+        rgba(4,37,28,.35) 100%),
+      url("../img/mockup-tours-scene.webp")!important;
+  }
+  body.site-christmas.home-page #inicio.hero::before,
+  body.site-christmas.tours-page .hero-collage-wrap::before {
+    display:none!important;
+  }
+  body.site-christmas.tours-page .hero-collage-wrap .hero-overlay {
+    display:none!important;
   }
   body.site-christmas.home-page #inicio .container,
-  body.site-christmas.tours-page .hero-collage-wrap>.container {
+  body.site-christmas.tours-page .hero-collage-wrap > .container {
+    position:relative;
+    z-index:3;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    box-sizing:border-box;
+    width:100%;
     max-width:520px;
     padding:0 20px!important;
+    margin:0 auto;
+    background:none!important;
+    text-align:center;
   }
   body.site-christmas .hero .christmas-greeting {
-    padding:7px 11px;
-    margin-bottom:14px!important;
     max-width:min(100%,390px);
-    border-color:rgba(241,210,144,.56);
+    padding:7px 11px;
+    margin:0 auto 15px!important;
     box-shadow:none;
   }
   body.site-christmas.home-page #inicio h1,
   body.site-christmas.tours-page .hero h1 {
     max-width:370px;
-    margin:0 auto 13px!important;
+    margin:0 auto 14px!important;
     font-size:clamp(1.75rem,6.8vw,2.35rem)!important;
     line-height:1.15;
     text-wrap:balance;
@@ -623,67 +669,38 @@ body.site-christmas .mobile-scenic-panel {display:none;}
   body.site-christmas.home-page #inicio .lead,
   body.site-christmas.tours-page .hero .lead {
     max-width:385px;
-    margin:0 auto 17px!important;
-    font-size:clamp(.79rem,3.3vw,.88rem)!important;
-    line-height:1.59!important;
-    color:#eef5ed;
+    margin:0 auto 18px!important;
+    color:#f1faf2;
+    font-size:clamp(.8rem,3.3vw,.9rem)!important;
+    line-height:1.6!important;
+    text-shadow:0 1px 3px rgba(0,21,16,.28);
   }
   body.site-christmas.home-page .home-hero-actions,
   body.site-christmas.tours-page .tour-hero-actions {
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr);
     width:min(100%,355px);
     gap:9px;
-    margin:0 auto 0;
+    margin:0 auto;
   }
   body.site-christmas .hero .btn,
   body.site-christmas.tours-page .tour-hero-actions .btn {
-    min-height:44px;
-    padding:10px 14px!important;
-    border-radius:12px;
-    font-size:.79rem!important;
-    box-shadow:0 4px 14px rgba(0,0,0,.17);
-  }
-  body.site-christmas.home-page #inicio .mobile-scenic-panel,
-  body.site-christmas.tours-page .hero-collage-wrap>.mobile-scenic-panel {
-    display:block;
-    position:relative;
-    box-sizing:border-box;
+    display:flex!important;
+    justify-content:center;
+    align-items:center;
     width:100%;
-    max-width:none;
-    height:clamp(238px,66vw,320px);
-    margin:14px auto 0;
-    border:0;
-    border-radius:0;
-    overflow:hidden;
-    background-color:#0c3a2f;
-    background-repeat:no-repeat;
-    /* The former 485–660px background height zoomed in 2x and cut off
-       the Christmas sign and coastline in the phone screenshot. */
-    background-position:center 52%;
-    background-size:cover;
-    box-shadow:none;
-    isolation:isolate;
-  }
-  body.site-christmas.home-page #inicio .mobile-scenic-panel {
-    background-image:url("../img/mockup-home-scene.webp");
-  }
-  body.site-christmas.tours-page .hero-collage-wrap>.mobile-scenic-panel {
-    background-image:url("../img/mockup-tours-scene.webp");
-  }
-  /* Soft unobtrusive border highlights; the scenic image remains visible. */
-  body.site-christmas .mobile-scenic-panel::after {
-    content:"";
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    border-radius:0;
-    box-shadow:none;
-    background:linear-gradient(180deg,#07291f 0%,rgba(7,41,31,.14) 15%,transparent 35%,transparent 80%,#07291f 100%);
+    min-height:45px;
+    padding:11px 14px!important;
+    margin:0;
+    border-radius:13px;
+    font-size:.8rem!important;
+    box-shadow:0 5px 14px rgba(0,0,0,.22);
   }
   body.site-christmas.home-page main>.premium-benefits:first-of-type {
-    margin:13px auto 18px!important;
+    margin:12px auto 20px!important;
   }
   body.site-christmas.tours-page .tour-explore-nav {
-    margin-top:0!important;
+    margin:0!important;
     padding-top:17px!important;
   }
 }
@@ -692,20 +709,20 @@ body.site-christmas .mobile-scenic-panel {display:none;}
   body.site-christmas.tours-page .hero-collage-wrap>.container {
     padding-inline:15px!important;
   }
-  body.site-christmas.home-page #inicio .mobile-scenic-panel,
-  body.site-christmas.tours-page .hero-collage-wrap>.mobile-scenic-panel {
-    width:100%;
-    height:232px;
-    background-size:cover;
+  body.site-christmas.home-page #inicio.hero,
+  body.site-christmas.tours-page .hero-collage-wrap {
+    padding-bottom:185px!important;
+    background-size:100% 100%,auto 355px!important;
+    background-position:center center,77% bottom!important;
   }
 }
-@media (min-width:768px) {
-  body.site-christmas .mobile-scenic-panel {display:none!important;}
+@media (min-width:560px) and (max-width:767px) {
+  body.site-christmas.home-page #inicio.hero,
+  body.site-christmas.tours-page .hero-collage-wrap {
+    background-size:100% 100%,auto clamp(465px,73vw,560px)!important;
+    background-position:center center,66% bottom!important;
+  }
 }
-@media (prefers-reduced-motion:reduce) {
-  body.site-christmas .mobile-scenic-panel {animation:none!important;}
-}
-
 
 /* Mobile quick actions: one low-profile row instead of chat and WhatsApp
    stacked over the benefits. Four buttons remain accessible. */
