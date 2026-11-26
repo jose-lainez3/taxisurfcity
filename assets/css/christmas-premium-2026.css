@@ -830,3 +830,55 @@ body.site-christmas .hero .btn {width:100%}
 body.site-christmas .premium-benefits {margin-top:12px}
 body.site-christmas .section {padding-block:34px}
 }
+
+/* Reference layout: compact nav, photographic hero, frosted destination and service panels. */
+body.site-christmas.home-page .navbar,body.site-christmas.tours-page .navbar {border-radius:0 0 22px 22px;border:1px solid #78a78b55;box-shadow:0 4px 20px #001d14aa}
+body.site-christmas.home-page #inicio.hero,body.site-christmas.tours-page .hero-collage-wrap {min-height:clamp(420px,46vw,740px);background-position:center center;padding:54px 0 70px}
+body.site-christmas.home-page #inicio .container,body.site-christmas.tours-page .hero-collage-wrap>.container{padding-right:42%;width:min(90%,1440px)}
+body.site-christmas.home-page #inicio .container{text-align:center}
+body.site-christmas.home-page #inicio h1,body.site-christmas.home-page #inicio .lead{margin-inline:auto}
+body.site-christmas.home-page .home-hero-actions{justify-content:center}
+body.site-christmas .hero .christmas-greeting{display:inline-flex;align-items:center;justify-content:center;gap:9px;border:1px solid #ffe6a4;box-shadow:0 0 12px #fbd68288;padding:8px 18px;border-radius:999px;font-size:clamp(.72rem,1vw,.95rem)}
+body.site-christmas .hero .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px}
+body.site-christmas .hero .btn::before{font-family:bootstrap-icons!important;font-weight:400;font-size:1.2em}
+body.site-christmas.home-page .hero .btn-lime::before{content:"\f7e1"}
+body.site-christmas.tours-page .hero .btn-lime::before{content:"\f3e8"}
+body.site-christmas .hero .btn-outline::before,body.site-christmas .hero .tour-hero-secondary::before{content:"\f6d9"}
+body.site-christmas .hero .btn::after{content:"\2192";font-size:1.2em}
+body.site-christmas.home-page .premium-benefits{grid-template-columns:repeat(3,minmax(0,1fr));margin:14px auto 12px}
+body.site-christmas.home-page .mockup-service-strip{grid-template-columns:repeat(4,minmax(0,1fr));margin:0 auto 22px}
+body.site-christmas.home-page .mockup-service-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;max-width:1100px;margin:auto}
+body.site-christmas.home-page #servicios .card{position:relative;display:flex;flex-direction:column;min-height:340px;isolation:isolate}
+body.site-christmas.home-page #servicios .card>img{width:100%;height:clamp(175px,20vw,260px);object-fit:cover}
+body.site-christmas.home-page #servicios .card-body{flex:1;display:flex;flex-direction:column;padding:20px 24px}
+body.site-christmas.home-page #servicios .card-body h3{font-size:clamp(1.15rem,1.8vw,1.65rem)}
+body.site-christmas.home-page #servicios .card-link{margin-top:auto;align-self:center;text-align:center}
+body.site-christmas.home-page #servicios .premium-service-label{top:clamp(147px,calc(20vw - 28px),232px)}
+body.site-christmas.home-page .mockup-extra-service{padding-block:18px 30px}
+body.site-christmas.home-page .mockup-extra-service .card{max-width:720px;margin:auto;width:100%}
+body.site-christmas .section-head .eyebrow,body.site-christmas.tours-page .tour-explore-label{display:table;margin:0 auto 10px;border:1px solid #f8daa1;border-radius:999px;padding:6px 18px;background:#063a29;box-shadow:0 0 12px #ffdd8a66;text-transform:uppercase;font-weight:800;letter-spacing:.14em;color:#ffe7ac}
+body.site-christmas.tours-page .tour-explore-inner{padding:22px 15px 16px}
+body.site-christmas .mockup-dest-subtitle{text-align:center;margin:8px auto 17px;color:#f1fff5;font-size:.9rem}
+body.site-christmas.tours-page .tour-explore-links a{height:clamp(155px,17vw,240px)}
+body.site-christmas.tours-page .tour-explore-links a span::after{content:" →";color:#ffe4a0}
+body.site-christmas.tours-page .tour-guide-section{padding-block:28px 42px;background:transparent}
+body.site-christmas.tours-page .tour-guide-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+body.site-christmas.tours-page .tour-guide-item{position:relative;display:flex;flex-direction:column;padding:20px}
+body.site-christmas.tours-page .tour-guide-item .premium-guide-photo{width:calc(100% + 40px);height:clamp(155px,19vw,240px);margin:-20px -20px 8px}
+body.site-christmas.tours-page .tour-guide-number{align-self:flex-start;background:#073b29;border:1px solid #ffe1a0;border-radius:999px;padding:5px 12px;box-shadow:0 0 9px #ffdb8555}
+body.site-christmas.tours-page .tour-guide-item p a{display:inline;padding:0;background:none;border:0;border-radius:0;color:#ffe8b8!important;font-weight:inherit}
+body.site-christmas.tours-page .tour-guide-item .mockup-guide-cta{margin-top:auto;justify-content:space-between;gap:8px;color:#062b20!important;align-self:stretch}
+body.site-christmas.tours-page .premium-custom-tour{grid-template-columns:70px 1fr;gap:12px 22px}
+body.site-christmas.tours-page .premium-custom-tour .btn{grid-column:2;justify-self:start}
+body.site-christmas .cb-window{border-radius:20px!important;overflow:hidden}
+body.site-christmas .cb-header{position:relative}
+body.site-christmas .cb-header::before{content:"";position:absolute;inset:0 0 auto;height:9px;background:url("../img/christmas-premium-snowcap.svg") center/100% 100% no-repeat;pointer-events:none}
+@media(max-width:767px){
+body.site-christmas.home-page #inicio.hero,body.site-christmas.tours-page .hero-collage-wrap{min-height:0;padding:36px 0 0;background-position:center,bottom center,center;background-size:100% 100%,100% auto,cover}
+body.site-christmas.home-page #inicio .container,body.site-christmas.tours-page .hero-collage-wrap>.container{width:100%;padding:0 16px clamp(170px,52vw,340px);text-align:center}
+body.site-christmas.home-page .premium-benefits,body.site-christmas.home-page .mockup-service-strip{grid-template-columns:repeat(2,minmax(0,1fr))}
+body.site-christmas.home-page .mockup-service-grid,body.site-christmas.tours-page .tour-guide-grid{grid-template-columns:1fr}
+body.site-christmas.tours-page .premium-custom-tour{grid-template-columns:1fr;text-align:center}
+body.site-christmas.tours-page .premium-custom-tour .btn{grid-column:1;justify-self:stretch}
+body.site-christmas.tours-page .tour-explore-links a{height:155px}
+}
