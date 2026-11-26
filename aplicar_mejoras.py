@@ -35,6 +35,7 @@ FILES = (
     "assets/css/christmas-unified.css",
     "assets/css/christmas-experience.css",
     "assets/js/christmas-experience.js",
+    "assets/audio/navidad-surfcity-original.mp3",
     "assets/js/i18n.js",
     "assets/js/chatbot.js",
     "assets/js/assistant-config.js",
@@ -80,6 +81,7 @@ def validate_snapshot(files: dict[str, bytes]) -> list[str]:
         "Navidad: nieve CSS": b'christmas-snow-fall' in files["assets/css/christmas-experience.css"],
         "Navidad: melodía original": b'function schedulePhrase' in files["assets/js/christmas-experience.js"],
         "Navidad: control de música": b'christmas-music-toggle' in files["assets/js/christmas-experience.js"],
+        "Navidad: pista MP3 original": files["assets/audio/navidad-surfcity-original.mp3"].startswith((b"ID3", b"\xff\xfb", b"\xff\xf3")),
         "Asistente: cliente con IA": 'async function askAI' in files["assets/js/chatbot.js"].decode("utf-8"),
         "Asistente: configuración separada": 'TAXISURFCITY_AI_ENDPOINT' in files["assets/js/assistant-config.js"].decode("utf-8"),
         "Asistente: API serverless": 'google_search' in files["api/assistant.mjs"].decode("utf-8"),
@@ -135,7 +137,7 @@ def fetch_remote() -> dict[str, bytes]:
         req = Request(url, headers={"User-Agent": "TaxiSurfCity-SEO-Updater/1.0"})
         with urlopen(req, timeout=25) as resp:
             data = resp.read()
-        if not data or len(data) > 750_000:
+        if not data or len(data) > (2_000_000 if name.endswith(".mp3") else 750_000):
             raise ValueError("Archivo vacío o demasiado grande: " + name)
         fetched[name] = data
     return fetched
