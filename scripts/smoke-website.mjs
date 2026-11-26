@@ -8,6 +8,73 @@ const screenshots = "website-smoke";
 await mkdir(screenshots,{recursive:true});
 const results = [];
 
+async function checkCompactLayout(page, label) {
+  const viewport = page.viewportSize();
+  const metrics = await page.evaluate(() => {
+    const get = selector => {
+      const el = document.querySelector(selector);
+      if (!el) return null;
+      const rect = el.getBoundingClientRect();
+      return {x:Math.round(rect.x), y:Math.round(rect.y), w:Math.round(rect.width), h:Math.round(rect.height)};
+    };
+    const hero = document.querySelector(".hero");
+    const ctaSelector = document.body.classList.contains("home-page")
+      ? ".home-hero-actions" : ".tour-hero-actions";
+    const nav = get(".navbar"), title = get(".hero h1"), actions = get(ctaSelector);
+    const overlap = (a,b) => a && b &&
+      a.x < b.x + b.w && a.x + a.w > b.x &&
+      a.y < b.y + b.h && a.y + a.h > b.y;
+    return {
+      viewport:innerWidth,
+      nav,title,actions,hero:get(".hero"),
+      brand:get(".navbar-brand"), lang:get(".lang-btn"), menu:get(".nav-toggle"),
+      chat:get(".cb-launcher"), wa:get(".wa-float"),
+      music:get(".christmas-controls"), chatWindow:get(".cb-window"),
+      benefits:get(".premium-benefits"),
+      firstCard:get(document.body.classList.contains("home-page") ? "#servicios .card" : ".tour-card"),
+      tourGrid:document.body.classList.contains("tours-page")
+        ? getComputedStyle(document.querySelector(".tour-explore-links")).gridTemplateColumns : null,
+      heroPadding:getComputedStyle(hero).padding,
+      xOverflow:Math.max(document.documentElement.scrollWidth,document.body.scrollWidth)-innerWidth,
+      overlapButtons:overlap(get(".christmas-controls"),get(".wa-float")) ||
+        overlap(get(".christmas-controls"),get(".cb-launcher")) ||
+        overlap(get(".wa-float"),get(".cb-launcher"))
+    };
+  });
+  assert.ok(metrics.nav && metrics.title && metrics.actions, label+" missing page structure");
+  assert.ok(metrics.title.w > 190 && metrics.title.w <= viewport.width, label+" heading width wrong");
+  assert.ok(metrics.actions.x >= -1 && metrics.actions.x + metrics.actions.w <= viewport.width+1,
+    label+" action buttons offscreen");
+  assert.ok(metrics.xOverflow <= 2,label+" horizontal page scroll "+metrics.xOverflow);
+  assert.ok(!metrics.overlapButtons,label+" floating widgets overlap");
+  assert.ok(metrics.brand.x >= 0 && metrics.brand.x + metrics.brand.w <= viewport.width+1,label+" brand spills horizontally");
+  assert.ok(metrics.menu.x >= 0 && metrics.menu.x + metrics.menu.w <= viewport.width+1,label+" mobile toggle spills");
+  assert.ok(metrics.lang.x >= 0 && metrics.lang.x + metrics.lang.w <= viewport.width+1,label+" language toggle spills");
+  assert.ok(metrics.firstCard.w < viewport.width, label+" card occupies entire viewport without margins");
+  if (viewport.width < 768) {
+    assert.ok(metrics.title.y >= metrics.nav.y+metrics.nav.h,label+" title under sticky nav");
+  }
+  console.log("COMPACT LAYOUT "+JSON.stringify({label,...metrics}));
+}
+async function checkNavInteractions(page,label) {
+  const toggle = page.locator(".nav-toggle"), nav = page.locator(".nav-links");
+  assert.equal(await toggle.isVisible(),true,label+" missing mobile menu toggle");
+  await toggle.click();
+  assert.equal(await toggle.getAttribute("aria-expanded"),"true",label+" menu did not open");
+  assert.equal(await nav.evaluate(el=>el.classList.contains("open")),true,label+" nav not visible");
+  const navRect = await nav.boundingBox();
+  const vp = page.viewportSize();
+  assert.ok(navRect && navRect.width <= vp.width && navRect.x>=0,label+" menu overflow");
+  await page.keyboard.press("Escape");
+  assert.equal(await toggle.getAttribute("aria-expanded"),"false",label+" Escape did not close");
+  await toggle.click();
+  await page.locator(".hero h1").click({force:true});
+  assert.equal(await toggle.getAttribute("aria-expanded"),"false",label+" outside click did not close");
+  await toggle.click();
+  await nav.locator("a").first().click();
+  assert.equal(await toggle.getAttribute("aria-expanded"),"false",label+" nav selection did not close");
+}
+
 async function inspect(page,route,label) {
   const failures = [];
   page.on("pageerror",err => failures.push(err.message));
@@ -74,6 +141,8 @@ try {
 
   const mobile = await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   await inspect(mobile,"/","home-mobile");
+  await checkCompactLayout(mobile,"home-390");
+  await checkNavInteractions(mobile,"home-390");
   await mobile.screenshot({path:screenshots+"/home-mobile.png",animations:"disabled"});
   await mobile.close();
 
@@ -88,8 +157,26 @@ try {
   const toursMobile = await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
   await inspect(toursMobile,"/tours","tours-mobile");
   assert.equal(await toursMobile.locator(".tour-card").count(),6,"Mobile tours catalog was altered");
+  await checkCompactLayout(toursMobile,"tours-390");
+  await checkNavInteractions(toursMobile,"tours-390");
   await toursMobile.screenshot({path:screenshots+"/tours-mobile.png",animations:"disabled"});
   await toursMobile.close();
+
+  // Narrow phones and tablets have their own deliberately tested layout.
+  for (const width of [320,375,430,820]) {
+    const isPhone = width < 768;
+    const page = await browser.newPage({
+      viewport:{width,height:isPhone?720:1000},
+      isMobile:isPhone,hasTouch:isPhone
+    });
+    for (const route of ["/","/tours"]) {
+      await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:45000});
+      await page.waitForSelector("#christmas-music-toggle",{timeout:15000});
+      await checkCompactLayout(page,(route==="/tours"?"tours":"home")+"-"+width);
+      await checkNavInteractions(page,(route==="/tours"?"tours":"home")+"-"+width);
+    }
+    await page.close();
+  }
 
   const reduced = await browser.newPage({viewport:{width:1366,height:768},reducedMotion:"reduce"});
   await reduced.goto(ORIGIN+"/",{waitUntil:"domcontentloaded"});
