@@ -1,22 +1,23 @@
-name: Validate holiday website desktop and mobile
+name: Validate deployed website (manual)
+# Production may lag behind GitHub if Vercel quota is reached.
+# Push checks use mobile-source-smoke.yml against the current commit.
+# Run this deployment check manually only once the new version is live.
 on:
-  push:
-    paths:
-      - 'assets/css/christmas-experience.css'
-      - 'assets/css/christmas-premium-2026.css'
-      - 'assets/js/christmas-experience.js'
-      - 'assets/js/maaiin.js'
-      - 'index.html'
-      - 'tours.html'
-      - 'scripts/smoke-website.mjs'
-      - '.github/workflows/website-smoke.yml'
   workflow_dispatch:
+    inputs:
+      origin:
+        description: Public site to check after a successful deployment
+        required: true
+        type: string
+        default: https://taxisurfcity.vercel.app
 permissions:
   contents: read
 jobs:
-  frontend-smoke:
+  deployed-frontend-smoke:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 10
+    env:
+      WEBSITE_ORIGIN: ${{ inputs.origin }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -26,12 +27,12 @@ jobs:
         run: |
           npm install --no-save playwright@1.56.1
           npx playwright install chromium
-      - name: Check desktop, mobile, tours and reduced-motion
+      - name: Check published desktop and mobile layouts
         run: node scripts/smoke-website.mjs
       - name: Save browser screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: holiday-website-smoke
+          name: live-website-smoke
           path: website-smoke/
           retention-days: 5
