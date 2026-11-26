@@ -56,6 +56,33 @@ async function checkCompactLayout(page, label) {
   }
   console.log("COMPACT LAYOUT "+JSON.stringify({label,...metrics}));
 }
+async function checkTourCards(page, label) {
+  const first = page.locator(".tour-card").first();
+  await first.scrollIntoViewIfNeeded();
+  await page.waitForTimeout(140);
+  const bounds = await first.boundingBox();
+  const viewport = page.viewportSize();
+  assert.ok(bounds && bounds.width >= Math.min(viewport.width-50,250),
+    label+" tour card width collapsed");
+  assert.ok(bounds.x >= -1 && bounds.x+bounds.width <= viewport.width+1,
+    label+" tour card clipped at viewport edges");
+  const img = first.locator(".tour-card-media img");
+  await img.scrollIntoViewIfNeeded();
+  await img.evaluate(image => image.decode());
+  assert.ok(await img.evaluate(image => image.naturalWidth > 100),
+    label+" tour photo missing");
+  const toggle = first.locator(".tour-toggle");
+  await toggle.click();
+  assert.equal(await toggle.getAttribute("aria-expanded"),"true",
+    label+" expandable details do not work");
+  assert.ok(await first.evaluate(el=>el.classList.contains("is-open")),
+    label+" tour details class missing");
+  await toggle.click();
+  assert.equal(await toggle.getAttribute("aria-expanded"),"false",
+    label+" tour details fail to close");
+  console.log("TOUR CARD VERIFIED "+JSON.stringify({label,bounds,imageLoaded:true,toggleWorks:true}));
+}
+
 async function checkNavInteractions(page,label) {
   const toggle = page.locator(".nav-toggle"), nav = page.locator(".nav-links");
   assert.equal(await toggle.isVisible(),true,label+" missing mobile menu toggle");
@@ -152,6 +179,7 @@ try {
   await inspect(tours,"/tours","tours-desktop");
   const cards = await tours.locator(".tour-card").count();
   assert.equal(cards,6,"Six tours must remain available");
+  await checkTourCards(tours,"tours-desktop");
   assert.equal(await tours.locator(".hero-collage img").count(),0,"Hidden hero collage still downloads image assets");
   await tours.screenshot({path:screenshots+"/tours-desktop.png",animations:"disabled"});
   await tours.close();
@@ -162,6 +190,7 @@ try {
   await checkCompactLayout(toursMobile,"tours-390");
   await checkNavInteractions(toursMobile,"tours-390");
   await toursMobile.screenshot({path:screenshots+"/tours-mobile.png",animations:"disabled"});
+  await checkTourCards(toursMobile,"tours-mobile");
   await toursMobile.close();
 
   // Narrow phones and tablets have their own deliberately tested layout.
@@ -176,6 +205,7 @@ try {
       await page.waitForSelector("#christmas-music-toggle",{timeout:15000});
       await checkCompactLayout(page,(route==="/tours"?"tours":"home")+"-"+width);
       await checkNavInteractions(page,(route==="/tours"?"tours":"home")+"-"+width);
+      if(route==="/tours") await checkTourCards(page,"tours-"+width);
     }
     await page.close();
   }
