@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import { mkdir } from "node:fs/promises";
 
-const ORIGIN = "https://taxisurfcity.vercel.app";
+const ORIGIN = process.env.WEBSITE_ORIGIN || "https://taxisurfcity.vercel.app";
+const TOURS_ROUTE = ORIGIN.includes("127.0.0.1") ? "/tours.html" : "/tours";
 const browser = await chromium.launch({headless:true,args:["--no-sandbox"]});
 const screenshots = "website-smoke";
 await mkdir(screenshots,{recursive:true});
@@ -208,7 +209,7 @@ try {
   await mobile.close();
 
   const tours = await browser.newPage({viewport:{width:1440,height:900}});
-  await inspect(tours,"/tours","tours-desktop");
+  await inspect(tours,TOURS_ROUTE,"tours-desktop");
   const cards = await tours.locator(".tour-card").count();
   assert.equal(cards,6,"Six tours must remain available");
   await checkTourCards(tours,"tours-desktop");
@@ -217,7 +218,7 @@ try {
   await tours.close();
 
   const toursMobile = await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
-  await inspect(toursMobile,"/tours","tours-mobile");
+  await inspect(toursMobile,TOURS_ROUTE,"tours-mobile");
   assert.equal(await toursMobile.locator(".tour-card").count(),6,"Mobile tours catalog was altered");
   await checkCompactLayout(toursMobile,"tours-390");
   await checkNavInteractions(toursMobile,"tours-390");
@@ -232,12 +233,12 @@ try {
       viewport:{width,height:isPhone?720:1000},
       isMobile:isPhone,hasTouch:isPhone
     });
-    for (const route of ["/","/tours"]) {
+    for (const route of ["/",TOURS_ROUTE]) {
       await page.goto(ORIGIN+route,{waitUntil:"domcontentloaded",timeout:45000});
       await page.waitForSelector("#christmas-music-toggle",{timeout:15000});
-      await checkCompactLayout(page,(route==="/tours"?"tours":"home")+"-"+width);
-      await checkNavInteractions(page,(route==="/tours"?"tours":"home")+"-"+width);
-      if(route==="/tours") await checkTourCards(page,"tours-"+width);
+      await checkCompactLayout(page,(route===TOURS_ROUTE?"tours":"home")+"-"+width);
+      await checkNavInteractions(page,(route===TOURS_ROUTE?"tours":"home")+"-"+width);
+      if(route===TOURS_ROUTE) await checkTourCards(page,"tours-"+width);
     }
     await page.close();
   }
@@ -252,13 +253,14 @@ try {
 
   // The public custom domain may be hosted/cached separately from Vercel.
   // Report its state without hiding a successful Vercel deployment.
+  if (process.env.WEBSITE_SKIP_CUSTOM_CHECK !== "1") {
   const custom = await browser.newPage();
   try {
     for (const route of ["/","/tours"]) {
       const response = await custom.goto("https://taxistuncoelsalvador.com"+route,
         {waitUntil:"domcontentloaded",timeout:30000});
       const state = await custom.evaluate(() => ({
-        mobileV2:!!document.querySelector('link[href*="mobile-scene-v2"]'),
+        mobileV2:!!document.querySelector('link[href*="mobile-scene-v3"]'),
         scenicElement:!!document.querySelector(".mobile-scenic-panel"),
         title:document.title
       }));
@@ -270,6 +272,7 @@ try {
   } catch (err) {
     console.warn("CUSTOM DOMAIN CHECK UNAVAILABLE",err.message);
   } finally {await custom.close();}
+  }
 
   console.log("FRONTEND SMOKE PASSED");
   for(const res of results) console.log(JSON.stringify({label:res.label,flakes:res.snowflakes,types:res.snowTypes.length,resources:res.requests,xOverflow:res.xOverflow}));
