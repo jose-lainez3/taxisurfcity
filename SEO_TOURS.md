@@ -36,3 +36,14 @@ Los cambios de este paquete **ya están en la rama `main`**; no es necesario eje
 - El script `aplicar_mejoras.py` ya incluye `index.html`, `404.html` y la nueva hoja de estilos, además de los archivos previos. Admite copiar la nueva hoja de estilos incluso si no existía antes en el proyecto local.
 - Conserva los enlaces a WhatsApp, los recorridos, el CMS existente y los estilos para pantallas pequeñas.
 - Verificación después del despliegue: abrir `/`, `/tours` y una ruta inexistente en escritorio y móvil, comprobar que se descarga `assets/css/christmas-unified.css?v=20261120-sitewide-1` y forzar recarga con Ctrl+Shift+R si el navegador usa caché.
+
+
+## Nieve y melodía navideña original — 26/11/2026
+- Las páginas Inicio (`index.html`) y Tours (`tours.html`) ahora cargan `assets/css/christmas-experience.css` y `assets/js/christmas-experience.js`.
+- El efecto de nieve es visual y no bloquea clics; limita el número de copos en móvil, se pausa al cambiar de pestaña y se elimina con `prefers-reduced-motion`.
+- La música es una melodía instrumental original sintetizada con Web Audio API (sin MP3 externos, sin uso de canciones comerciales). Tiene volumen ambiental reducido y botón fijo abajo a la izquierda.
+- La página intenta reproducir al cargar. **Los navegadores pueden bloquear el audio automático**; si eso ocurre, se activa en la primera interacción del visitante o con el botón visible «Activar música navideña».
+- El botón permite silenciar o reanudar; la preferencia se recuerda mediante `localStorage` al ir de Inicio a Tours. La música se detiene al ocultar/salir de la página.
+- La interfaz del control está en español o inglés según el selector del sitio.
+- Probar de forma manual en Chrome, Brave, Firefox y Safari móvil: recargar, activar/silenciar, navegar entre páginas y revisar el ajuste «Reducir movimiento».
+- Para retirar la música y la nieve tras la temporada, quitar las dos referencias de las páginas o deshabilitar la carga de `christmas-experience.js`.
