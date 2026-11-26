@@ -31,6 +31,9 @@ async function checkCompactLayout(page, label) {
       chat:get(".cb-launcher"), wa:get(".wa-float"),
       music:get(".christmas-controls"), chatWindow:get(".cb-window"),
       benefits:get(".premium-benefits"),
+      scene:get(".mobile-scenic-panel"),
+      sceneBg:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundImage,
+      sceneDisplay:getComputedStyle(document.querySelector(".mobile-scenic-panel")).display,
       firstCard:get(document.body.classList.contains("home-page") ? "#servicios .card" : ".tour-card"),
       tourGrid:document.body.classList.contains("tours-page")
         ? getComputedStyle(document.querySelector(".tour-explore-links")).gridTemplateColumns : null,
@@ -51,6 +54,18 @@ async function checkCompactLayout(page, label) {
   assert.ok(metrics.menu.x >= 0 && metrics.menu.x + metrics.menu.w <= viewport.width+1,label+" mobile toggle spills");
   assert.ok(metrics.lang.x >= 0 && metrics.lang.x + metrics.lang.w <= viewport.width+1,label+" language toggle spills");
   assert.ok(metrics.firstCard.w < viewport.width, label+" card occupies entire viewport without margins");
+  if (viewport.width < 768) {
+    assert.equal(metrics.sceneDisplay, "block", label+" scenic image hidden on phone");
+    assert.ok(metrics.scene.h >= 210 && metrics.scene.w >= viewport.width*.86,
+      label+" scenic image must be large, not a narrow strip");
+    assert.ok(metrics.scene.y >= metrics.actions.y + metrics.actions.h+8,
+      label+" photo overlaps main call-to-action");
+    assert.match(metrics.sceneBg,
+      label.startsWith("home")?/mockup-home-scene.webp/:/mockup-tours-scene.webp/,
+      label+" mobile scenic background missing");
+  } else {
+    assert.equal(metrics.sceneDisplay,"none",label+" mobile photo should not duplicate desktop background");
+  }
   if (viewport.width < 768) {
     assert.ok(metrics.title.y >= metrics.nav.y+metrics.nav.h,label+" title under sticky nav");
   }
@@ -117,6 +132,7 @@ async function inspect(page,route,label) {
     hasSnow:!!document.getElementById("christmas-snow-overlay"),
     hasWhatsApp:!!document.querySelector('a[href*="wa.me/50376401181"]'),
     heroBg:getComputedStyle(document.querySelector(".hero")).backgroundImage,
+    sceneBg:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundImage,
     xOverflow:document.documentElement.scrollWidth-innerWidth,
     styles:[...document.styleSheets].some(s=>s.href?.includes("christmas-experience.css")),
     requests:performance.getEntriesByType("resource").length,
@@ -130,10 +146,17 @@ async function inspect(page,route,label) {
     cardMask:[...document.querySelectorAll("#servicios .card > img, .tour-guide-item .premium-guide-photo")].map(img=>(getComputedStyle(img).maskImage || "none"))
   }));
   assert.ok(snapshot.hasAudio && snapshot.hasWhatsApp && snapshot.styles,label+" missing primary UI");
+  const phone = page.viewportSize().width < 768;
   const expectedHero = label.startsWith("home")
-    ? (page.viewportSize().width < 768 ? /mockup-home-scene.webp/ : /christmas-beach-new.webp/)
-    : (page.viewportSize().width < 768 ? /mockup-tours-scene.webp/ : /volcan-coatepeque-hero-bg.webp/);
-  assert.match(snapshot.heroBg, expectedHero, label+" hero background lost");
+    ? /christmas-beach-new.webp/
+    : /volcan-coatepeque-hero-bg.webp/;
+  if(phone) {
+    assert.match(snapshot.sceneBg,
+      label.startsWith("home") ? /mockup-home-scene.webp/ : /mockup-tours-scene.webp/,
+      label+" mobile photo missing");
+    assert.doesNotMatch(snapshot.heroBg, /mockup-home-scene.webp|mockup-tours-scene.webp/,
+      label+" hero is downloading redundant background");
+  } else assert.match(snapshot.heroBg, expectedHero, label+" desktop background lost");
   assert.ok(snapshot.snowflakes >= 6 && snapshot.snowflakes <= 40,label+" wrong snowfall density");
   assert.ok(snapshot.snowTypes.length>=3,label+" snow variety insufficient");
   assert.ok(snapshot.xOverflow <= 2,label+" unexpected horizontal overflow "+snapshot.xOverflow);
