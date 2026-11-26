@@ -292,12 +292,26 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
       linear-gradient(180deg,rgba(4,43,31,.88) 0%,rgba(4,40,30,.84) 28%,rgba(4,40,30,.73) 50%,rgba(4,37,28,.36) 76%,rgba(4,37,28,.11) 92%,rgba(4,37,28,.33) 100%),
       url("../img/mockup-home-scene.webp")!important;
   }
+  /* Tours mobile: show the volcano, festive sign and overlook, not just
+     the dark left side of the wide desktop painting. Right-focused cover
+     and softer vertical tint keep both the scenery and labels readable. */
   body.site-christmas.tours-page .hero-collage-wrap{
     background-image:
-      linear-gradient(180deg,rgba(4,43,31,.88) 0%,rgba(4,40,30,.84) 28%,rgba(4,40,30,.73) 50%,rgba(4,37,28,.36) 76%,rgba(4,37,28,.11) 92%,rgba(4,37,28,.33) 100%),
+      linear-gradient(180deg,
+        rgba(3,33,27,.78) 0%,
+        rgba(3,33,27,.72) 27%,
+        rgba(3,33,27,.58) 50%,
+        rgba(3,33,27,.27) 73%,
+        rgba(3,33,27,.10) 91%,
+        rgba(3,33,27,.26) 100%),
       url("../img/mockup-tours-scene.webp")!important;
+    background-position:center center,100% center!important;
+    background-size:100% 100%,cover!important;
   }
-  body.site-christmas.tours-page .hero-collage-wrap{background-position:center center,72% center!important;}
+  body.site-christmas.tours-page .hero h1,
+  body.site-christmas.tours-page .hero .lead {
+    text-shadow:0 2px 9px rgba(0,24,18,.42);
+  }
   body.site-christmas.home-page #inicio .container,
   body.site-christmas.tours-page .hero-collage-wrap>.container{
     position:relative;
@@ -744,6 +758,9 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     padding-bottom:184px!important;
     background-size:100% 100%,cover!important;
     background-position:center center,83% center!important;
+  }
+  body.site-christmas.tours-page .hero-collage-wrap {
+    background-position:center center,100% center!important;
   }
 }
 @media(prefers-reduced-motion:reduce){
