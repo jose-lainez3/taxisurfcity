@@ -40,7 +40,8 @@ body.site-christmas .christmas-snow-overlay {
 /* Premium golden lights and green branches on the existing sticky header. */
 body.site-christmas.home-page .navbar,
 body.site-christmas.tours-page .navbar {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 1000;
   padding: 13px 0 18px;
   background: linear-gradient(105deg, rgba(4, 34, 24, .98), rgba(8, 48, 33, .99));
