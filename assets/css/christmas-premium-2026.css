@@ -110,10 +110,12 @@ body.site-christmas.tours-page .hero-collage-wrap {
 body.site-christmas.home-page #inicio.hero {
   min-height: 650px;
   padding: 105px 0 130px;
+  /* Nueva escena navideña original: playa al atardecer y árbol iluminado.
+     Gradiente solo sobre el lado del texto; derecha luminosa como mockup. */
   background:
-    linear-gradient(90deg, rgba(3, 35, 25, .96) 0%, rgba(5, 46, 33, .83) 36%, rgba(5, 42, 31, .32) 79%, rgba(4, 32, 26, .42)),
-    linear-gradient(0deg, rgba(2, 36, 27, .91), transparent 45%),
-    url("../img/1-hero.webp") right center/cover no-repeat;
+    linear-gradient(90deg, rgba(2, 34, 25, .92) 0%, rgba(3, 40, 30, .79) 37%, rgba(5, 37, 28, .22) 67%, rgba(2, 30, 21, .05) 100%),
+    linear-gradient(0deg, rgba(2, 27, 20, .60) 0%, transparent 45%),
+    url("../img/christmas-beach-new.webp") center 48%/cover no-repeat;
 }
 body.site-christmas.tours-page .hero-collage-wrap {
   min-height: 600px;
@@ -717,4 +719,27 @@ body.site-christmas .quote-submit {
   body.site-christmas.tours-page .tour-card,
   body.site-christmas.tours-page .tour-explore-links a,
   body.site-christmas .premium-custom-tour { transition:none !important; transform:none !important; }
+}
+
+
+/* El fondo ya incorpora un árbol navideño: no cubrirlo con el letrero. */
+body.site-christmas.home-page .holiday-hero-sign { display:none; }
+body.site-christmas.home-page #inicio .container { padding-right:32%; }
+body.site-christmas.home-page #inicio h1 {
+  font-size:clamp(2.2rem,3.55vw,3.65rem);
+  max-width:850px;
+}
+body.site-christmas.home-page #inicio .festive-scene { opacity:.43; }
+@media(max-width:1080px) {
+  body.site-christmas.home-page #inicio .container {padding-right:20px;}
+}
+@media(max-width:767px) {
+  body.site-christmas.home-page #inicio.hero {
+    background:
+      linear-gradient(90deg,rgba(2,33,26,.83),rgba(2,33,26,.61)),
+      linear-gradient(0deg,rgba(3,28,21,.53),transparent 52%),
+      url("../img/christmas-beach-new.webp") 73% 45%/cover no-repeat;
+  }
+  body.site-christmas.home-page #inicio .container {padding-right:16px;}
+  body.site-christmas.home-page #inicio h1 {font-size:clamp(2rem,7.7vw,2.85rem);}
 }
