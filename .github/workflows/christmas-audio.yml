@@ -1,0 +1,40 @@
+name: Build original Christmas soundtrack
+on:
+  push:
+    paths:
+      - 'scripts/create_christmas_track.py'
+      - '.github/workflows/christmas-audio.yml'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install free audio rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y libfluidsynth3 timgm6mb-soundfont ffmpeg
+          python -m pip install --disable-pip-version-check numpy pretty_midi soundfile
+      - name: Render original instrumental
+        run: |
+          python scripts/create_christmas_track.py
+          test -s assets/audio/navidad-surfcity-original.mp3
+          ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1 assets/audio/navidad-surfcity-original.mp3
+      - name: Commit finished audio to main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/audio/navidad-surfcity-original.mp3
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: publish original Christmas instrumental"
+            git push origin HEAD:main
+          else
+            echo "Soundtrack already up to date."
+          fi
