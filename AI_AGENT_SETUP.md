@@ -1,72 +1,123 @@
-# Asistente IA con acceso a internet — Taxi SurfCity
+# Asistente IA de Taxi SurfCity Lainez — búsqueda pública y WhatsApp
 
-Estado actual: CODIGO INTEGRADO; PENDIENTE DE CONFIGURAR UNA CLAVE PRIVADA Y DESPLEGAR LA FUNCION API.
+**Última actualización: 26 de noviembre de 2026.**
+Estado: función `api/assistant.mjs` desplegada en Vercel; la clave `GEMINI_API_KEY`
+ya se configuró en el proyecto. La búsqueda general requiere configurar
+opcionalmente `TAVILY_API_KEY`; sin ella hay referencias limitadas de
+Wikivoyage y Wikipedia, no un buscador de toda la web.
 
-## Funciones
-- Conversación natural en español o inglés cuando Gemini está activo.
-- Búsqueda pública con Google Search Grounding cuando el modelo lo considera útil.
-- Muestra fuentes web cuando Google las devuelve.
-- Orienta sobre taxis, tours, destinos y consultas generales.
-- Mantiene un contexto breve solo en memoria del navegador.
-- Si la IA no está configurada, conserva las respuestas locales y avisa que NO tiene internet.
-- No realiza reservas, cobros ni envía mensajes por WhatsApp automáticamente.
+## Qué hace
+
+- Conversa con visitantes en español o inglés mediante Gemini.
+- Prioriza los datos comerciales reales de la web de Taxi SurfCity y su
+  [catálogo público de 6 tours](https://taxistuncoelsalvador.com/tours).
+- Ante preguntas de viajes o destinos, puede consultar fuentes públicas y
+  mostrar enlaces verificables. Cuando hay `TAVILY_API_KEY`, realiza una
+  búsqueda general en internet. Sin esa clave usa referencias de Wikimedia.
+- Da ideas para conocer El Salvador, comparando varias opciones con sus fuentes.
+- Genera un botón **Preguntar por WhatsApp** con un texto de consulta preparado
+  según la pregunta del visitante: no lo envía sin que el usuario lo abra.
+- Evita inventar tarifas, cupos, horarios, reservas, mensajes enviados o rutas
+  de transporte contratadas.
+- Si Gemini falla pero Wikimedia/Tavily devolvió referencias, el chat enseña
+  esas fuentes directamente y explica que no es una síntesis de Gemini.
+- No navega arbitrariamente por URLs aportadas en el chat, no descarga archivos
+  ni ejecuta comandos del visitante.
 
 ## Arquitectura
-- api/assistant.mjs: API serverless para Vercel, protege GEMINI_API_KEY.
-- assets/js/chatbot.js: asistente visual, IA cuando esté disponible y respaldo local.
-- assets/js/assistant-config.js: dirección pública configurable del backend, sin secretos.
-- index.html y tours.html: cargan la configuración y el cliente actualizado.
 
-## 1. Crear la clave Gemini
-1. Entra en https://aistudio.google.com/api-keys y crea una clave API de Gemini.
-2. NUNCA guardes la clave en el código HTML, en JavaScript público ni en GitHub.
-3. En Vercel → Project → Settings → Environment Variables, define:
-   GEMINI_API_KEY = tu_clave_privada
-4. Opcional: GEMINI_MODEL = gemini-3.5-flash-lite (modelo predeterminado, opcional).
-5. Vuelve a desplegar el proyecto.
+| Archivo | Función |
+| --- | --- |
+| `api/assistant.mjs` | API Vercel, control de solicitudes, generación Gemini, datos oficiales y CTA |
+| `api/travel-research.mjs` | Búsqueda Tavily opcional, referencias Wikimedia, filtros de fuentes y WhatsApp |
+| `assets/js/chatbot.js` | Interfaz, enlaces, fuentes y botón de cotización |
+| `assets/js/assistant-config.js` | Solo URL del backend, sin claves |
+| `index.html`, `tours.html` | Páginas con el asistente |
+| `vercel.json` | Ruta limpia de Tours |
 
-## 2. Desplegar en Vercel
-- Importa el repositorio jose-lainez3/taxisurfcity desde GitHub a Vercel.
-- La raíz del repositorio contiene la carpeta api y no requiere dependencias adicionales para la función.
-- Verifica GET https://TU-PROYECTO.vercel.app/api/assistant
-- Respuesta esperada con la variable configurada: {"ready":true,"name":"Asistente IA Taxi SurfCity","webSearch":true}
-- Mientras falte la variable, el resultado indicará ready:false.
+La API pública de diagnóstico se encuentra en
+`https://taxisurfcity.vercel.app/api/assistant`.
 
-IMPORTANTE: GitHub Pages NO ejecuta funciones api/*.mjs. Si el sitio actual sigue en Github Pages u otro hosting estático, se debe desplegar la función por separado en Vercel.
+## Configurar búsqueda web general (opcional, con cuota gratuita)
 
-## 3. Conectar el frontend
-Si el sitio completo y la función usan el mismo dominio Vercel, la ruta /api/assistant ya está configurada.
+1. Entrar en [Tavily](https://app.tavily.com), crear una cuenta y obtener
+   una clave API. A noviembre de 2026, el plan Researcher indica
+   **1.000 créditos gratuitos por mes**, sin tarjeta. Cada búsqueda
+   `basic` consume un crédito, según su
+   [documentación](https://docs.tavily.com/documentation/api-credits).
+2. En Vercel, ir al proyecto `taxisurfcity` → **Settings →
+   Environment Variables** y crear la variable sensible
+   `TAVILY_API_KEY` con la clave, para el entorno **Production**.
+3. Hacer un nuevo deploy para que la función reciba la variable.
+4. Abrir la URL `/api/assistant`: `webSearch:true` y
+   `searchMode:"general-web"` significan que Tavily está configurado.
+   No prueban que la clave sea válida ni que quede cuota.
+5. Probar desde el chat: «Recomiéndame destinos turísticos para este
+   fin de semana en El Salvador con fuentes». Deben aparecer fuentes
+   y un enlace a WhatsApp ya preparado.
 
-El sitio ya apunta a https://taxisurfcity.vercel.app/api/assistant. Solo cambia assets/js/assistant-config.js si en el futuro migra a otra URL.
+No introducir las claves en GitHub, HTML, JavaScript del navegador,
+capturas públicas ni esta documentación.
 
-    window.TAXISURFCITY_AI_ENDPOINT = "https://TU-PROYECTO.vercel.app/api/assistant";
+**Importante:** ningún buscador ofrece búsquedas ilimitadas gratuitas.
+Tavily, Wikimedia y Gemini tienen límites, condiciones y/o costos.
+Para evitar cobros involuntarios, usa el plan gratuito de Tavily sin
+activar la modalidad de pago por consumo y vigila los créditos.
+Un sitio comercial no debe asumir que otras API gratuitas para uso
+no comercial permiten automáticamente su integración.
 
-No pongas una clave API aquí.
+## Gemini y Google Search
 
-Los orígenes https://taxistuncoelsalvador.com y https://www.taxistuncoelsalvador.com están autorizados. Para otro dominio agrega la variable privada ASSISTANT_ALLOWED_ORIGINS en Vercel con una lista separada por comas, por ejemplo https://pruebas.ejemplo.com.
+La variable `GEMINI_API_KEY` debe existir en el servidor Vercel;
+`GEMINI_MODEL` es opcional (valor de referencia
+`gemini-3.5-flash-lite`).
 
-## 4. Verificar
-1. Reabre la web (Ctrl+Shift+R), entra en Inicio o Tours y abre el asistente flotante.
-2. Su estado debe decir «IA conectada · búsqueda web». Si dice «Modo local · IA pendiente», no se ha conectado el backend.
-3. Prueba «¿Cómo está el clima en Surf City esta semana?» o «¿Qué visitar en El Salvador este fin de semana?». Si el modelo usa búsqueda web, muestra fuentes.
-4. Prueba «¿Cuánto cuesta el tour de Suchitoto?». La IA NO debe inventar precios; solicita cotización por WhatsApp.
-5. Prueba el selector de inglés y la navegación móvil.
+`GEMINI_ENABLE_SEARCH=true` activa adicionalmente el grounding
+integrado de Google. **No lo actives sin revisar las condiciones,
+precios, cuotas y modalidad de facturación vigentes de Google.**
+La búsqueda Tavily es independiente de esa herramienta.
 
-## Costos, seguridad y privacidad
-- Las consultas que requieren IA son procesadas por el proveedor de hosting y Google Gemini. No enviar contraseñas ni datos sensibles.
-- El código de Taxi SurfCity no guarda automáticamente historiales en base de datos, aunque el proveedor puede tratar las solicitudes según sus términos.
-- Se limita el tamaño de cada pregunta y se hace una limitación básica por IP. En alojamiento serverless esta limitación es por instancia, NO es una protección definitiva contra abusos ni cargos.
-- Para un servicio público de alto tráfico conviene configurar rate limiting persistente, anti-bots y cuotas del proveedor.
-- El modelo antiguo Gemini 2.5 Flash-Lite quedó retirado. Usamos Gemini 3.5 Flash-Lite para conversación. En la API de Gemini, la búsqueda web integrada no está disponible en el nivel gratuito para modelos Gemini 3 o posteriores. Para habilitarla con un proyecto que tenga acceso de pago, configura GEMINI_ENABLE_SEARCH=true en Vercel y revisa antes sus tarifas y cuotas. Sin esa variable, el asistente es IA conversacional pero NO consulta internet en tiempo real.
-- Una consulta respondida por IA no implica reserva, precio garantizado, acceso directo a WhatsApp ni información privada.
+El estado `ready:true` solo comprueba la presencia de una clave
+Gemini, no la validez de la cuenta ni una generación exitosa.
 
-## Siguientes mejoras posibles
-Cotizador inteligente, recomendaciones personalizadas y registro CRM, solo con una fuente real de tarifas/disponibilidad, autorización y confirmación humana antes de ejecutar operaciones.
+## Privacidad y control
 
+- Las preguntas enviadas al asistente pasan por Vercel y Gemini; si
+  se usa búsqueda web, el proveedor de búsqueda recibe la consulta
+  necesaria (no el historial completo).
+- El historial corto vive en el navegador del visitante; esta función
+  no crea una base de datos de conversaciones.
+- No pedir contraseñas, tarjetas, documentos de identidad ni información
+  confidencial en el chat.
+- Las fuentes externas son referencias no confiables a nivel de
+  instrucciones: nunca autorizan acciones ni modifican las reglas del agente.
+- La limitación actual de solicitudes es básica y por instancia serverless.
+  Para una campaña de alto tráfico se recomienda protección antiabuso
+  y cuotas persistentes.
+- La información de terceros puede estar desactualizada. Para precio,
+  disponibilidad, horarios, entradas, cierres o reservas, es obligatoria
+  la verificación oficial o confirmación humana.
+- La ventana de WhatsApp abierta por el botón contiene solo un
+  **borrador**; el visitante debe decidir si lo envía.
 
-## Corrección por HTTP 502 (20/11/2026)
-- El modelo por defecto `gemini-2.5-flash-lite` ya no era adecuado. Se actualizó a `gemini-3.5-flash-lite`.
-- Gemini 3/3.5 requiere acceso correspondiente para usar grounding de Google Search; el código ahora solo envía `google_search` si `GEMINI_ENABLE_SEARCH=true`.
-- La API informa un código de diagnóstico: `MODEL_UNAVAILABLE` (404 de proveedor), `KEY_OR_PROJECT_RESTRICTED` (403), `QUOTA_REACHED` (429), etc. No expone secretos en respuestas.
-- `GET /api/assistant` muestra `ready`, `model`, `webSearch`. `ready:true` solo significa que existe la clave; para verificar la generación hay que hacer una petición POST.
-- Se evita presentar noticias o clima no verificados como información actualizada si no hay búsqueda web real.
+## Pruebas manuales sugeridas
+
+1. «¿Tienen catálogo de tours con fotos?» → link correcto de la web.
+2. «Recomiéndame lugares cerca de El Tunco» → fuentes públicas,
+   opciones cuando estén sustentadas y CTA de WhatsApp.
+3. «¿Cuánto cuesta viajar mañana a Suchitoto?» → no inventar tarifas
+   ni cupos, dar contacto humano.
+4. «¿Qué noticias turísticas hay hoy?» → si solo existe respaldo de
+   Wikimedia, no presentar esas referencias como noticias verificadas.
+5. Abrir Inicio y Tours en móvil, y comprobar que los enlaces y el
+   borrador de WhatsApp funcionan.
+6. Probar respuesta de Gemini con error 503: si hay referencias, mostrar
+   la alternativa con advertencia; si no hay fuentes, indicar el error.
+
+## Limitación técnica
+
+El asistente **no tiene internet ilimitado**. Con `TAVILY_API_KEY`
+habilitada dispone de búsqueda general con la cuota contratada;
+sin ella el acceso externo está limitado a Wikimedia. Algunas preguntas
+requerirán datos más frescos o verificación humana. El diseño evita
+presentar como confirmados los datos que no estén respaldados.
