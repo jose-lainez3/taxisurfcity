@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     if (window.matchMedia) {
-      const desktopMenu = window.matchMedia('(min-width: 1024px)');
+      const desktopMenu = window.matchMedia('(min-width: 1200px)');
       const closeOnDesktop = event => { if (event.matches) setMenuOpen(false); };
       if (desktopMenu.addEventListener) desktopMenu.addEventListener('change', closeOnDesktop);
       else if (desktopMenu.addListener) desktopMenu.addListener(closeOnDesktop);
