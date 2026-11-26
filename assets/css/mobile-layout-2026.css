@@ -580,3 +580,126 @@
   body.site-christmas .tour-card,
   body.site-christmas .tour-guide-item {transition:none!important;}
 }
+
+
+
+/* Scenic mobile hero v2 — visual artwork as a real, generous composition,
+   NOT an almost invisible strip behind opaque text. Desktop remains unchanged. */
+body.site-christmas .mobile-scenic-panel {display:none;}
+@media (max-width:767px) {
+  body.site-christmas.home-page #inicio.hero,
+  body.site-christmas.tours-page .hero-collage-wrap {
+    display:block;
+    min-height:0!important;
+    padding:25px 0 0!important;
+    background-color:#062e23;
+    background-image:
+      radial-gradient(ellipse at 50% 12%,rgba(38,102,75,.19),transparent 65%),
+      linear-gradient(180deg,#092c22 0%,#07291f 100%)!important;
+    background-position:center;
+    background-size:cover;
+    background-repeat:no-repeat;
+  }
+  body.site-christmas.home-page #inicio .container,
+  body.site-christmas.tours-page .hero-collage-wrap>.container {
+    max-width:520px;
+    padding:0 20px!important;
+  }
+  body.site-christmas .hero .christmas-greeting {
+    padding:7px 11px;
+    margin-bottom:14px!important;
+    max-width:min(100%,390px);
+    border-color:rgba(241,210,144,.56);
+    box-shadow:none;
+  }
+  body.site-christmas.home-page #inicio h1,
+  body.site-christmas.tours-page .hero h1 {
+    max-width:370px;
+    margin:0 auto 13px!important;
+    font-size:clamp(1.75rem,6.8vw,2.35rem)!important;
+    line-height:1.15;
+    text-wrap:balance;
+  }
+  body.site-christmas.home-page #inicio .lead,
+  body.site-christmas.tours-page .hero .lead {
+    max-width:385px;
+    margin:0 auto 17px!important;
+    font-size:clamp(.79rem,3.3vw,.88rem)!important;
+    line-height:1.59!important;
+    color:#eef5ed;
+  }
+  body.site-christmas.home-page .home-hero-actions,
+  body.site-christmas.tours-page .tour-hero-actions {
+    width:min(100%,355px);
+    gap:9px;
+    margin:0 auto 0;
+  }
+  body.site-christmas .hero .btn,
+  body.site-christmas.tours-page .tour-hero-actions .btn {
+    min-height:44px;
+    padding:10px 14px!important;
+    border-radius:12px;
+    font-size:.79rem!important;
+    box-shadow:0 4px 14px rgba(0,0,0,.17);
+  }
+  body.site-christmas.home-page #inicio .mobile-scenic-panel,
+  body.site-christmas.tours-page .hero-collage-wrap>.mobile-scenic-panel {
+    display:block;
+    position:relative;
+    box-sizing:border-box;
+    width:calc(100% - 28px);
+    max-width:580px;
+    height:clamp(222px,59vw,280px);
+    margin:18px auto 0;
+    border:1px solid rgba(243,220,167,.32);
+    border-radius:19px;
+    overflow:hidden;
+    background-color:#0c3a2f;
+    background-repeat:no-repeat;
+    background-position:72% bottom;
+    background-size:auto clamp(485px,138vw,660px);
+    box-shadow:0 12px 28px rgba(1,18,12,.26);
+    isolation:isolate;
+  }
+  body.site-christmas.home-page #inicio .mobile-scenic-panel {
+    background-image:url("../img/mockup-home-scene.webp");
+  }
+  body.site-christmas.tours-page .hero-collage-wrap>.mobile-scenic-panel {
+    background-image:url("../img/mockup-tours-scene.webp");
+  }
+  /* Soft unobtrusive border highlights; the scenic image remains visible. */
+  body.site-christmas .mobile-scenic-panel::after {
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    border-radius:inherit;
+    box-shadow:inset 0 1px rgba(255,245,209,.32);
+    background:linear-gradient(180deg,rgba(4,31,23,.28),transparent 32%,transparent 85%,rgba(4,30,22,.16));
+  }
+  body.site-christmas.home-page main>.premium-benefits:first-of-type {
+    margin:13px auto 18px!important;
+  }
+  body.site-christmas.tours-page .tour-explore-nav {
+    margin-top:0!important;
+    padding-top:17px!important;
+  }
+}
+@media (max-width:359px) {
+  body.site-christmas.home-page #inicio .container,
+  body.site-christmas.tours-page .hero-collage-wrap>.container {
+    padding-inline:15px!important;
+  }
+  body.site-christmas.home-page #inicio .mobile-scenic-panel,
+  body.site-christmas.tours-page .hero-collage-wrap>.mobile-scenic-panel {
+    width:calc(100% - 22px);
+    height:215px;
+    background-size:auto 485px;
+  }
+}
+@media (min-width:768px) {
+  body.site-christmas .mobile-scenic-panel {display:none!important;}
+}
+@media (prefers-reduced-motion:reduce) {
+  body.site-christmas .mobile-scenic-panel {animation:none!important;}
+}
