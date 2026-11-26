@@ -65,7 +65,7 @@ function officialCatalogLinks(message) {
 }
 function officialRecommendationLinks(message) {
   const items = [];
-  if (/\b(tour|excursion|recorrido|visita|vacacion)\b/i.test(plainSearchText(message))) {
+  if (/\b(tours?|excursiones?|recorridos?|visitas?|vacaciones?)\b/i.test(plainSearchText(message))) {
     items.push({label:"Ver tours de Taxi SurfCity", url:OFFICIAL_TOURS_URL});
   }
   if (travelQuestion(message)) {
