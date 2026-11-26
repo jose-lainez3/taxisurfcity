@@ -11,42 +11,72 @@
     if (document.getElementById("christmas-music-toggle")) return;
 
     const storageKey = "taxi-surfcity-christmas-music-v1";
-    const AudioConstructor = window.AudioContext || window.webkitAudioContext;
+    const snowStorageKey = "taxi-surfcity-snow-v2";
     const motionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : {matches:false};
+    const compactQuery = window.matchMedia ? window.matchMedia("(max-width:767px)") : {matches:false};
+    const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const lowPower = Boolean((navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) ||
+      (navigator.deviceMemory && navigator.deviceMemory <= 3) ||
+      (conn && (conn.saveData || /2g/.test(conn.effectiveType || ""))));
     let wantsMusic = true;
-    try { wantsMusic = localStorage.getItem(storageKey) !== "off"; } catch (_) { /* almacenamiento deshabilitado */ }
+    let snowPaused = false;
+    let snowOverlay = null;
+    try {
+      wantsMusic = localStorage.getItem(storageKey) !== "off";
+      snowPaused = localStorage.getItem(snowStorageKey) === "off";
+    } catch (_) { /* El sitio funciona también sin almacenamiento. */ }
 
-    // Copos decorativos: sin red, sin imágenes, sin interferir con los botones.
-    if (!motionQuery.matches) {
+    // Tres planos de nieve: polvo lejano, copos medios y cristales cercanos.
+    // Solo se crean nodos una vez; CSS anima transform en el compositor.
+    function buildSnow() {
+      if (snowOverlay || motionQuery.matches) return;
       const overlay = document.createElement("div");
       overlay.id = "christmas-snow-overlay";
       overlay.className = "christmas-snow-overlay";
       overlay.setAttribute("aria-hidden", "true");
+      const fragment = document.createDocumentFragment();
+      const count = lowPower ? (compactQuery.matches ? 8 : 12) : (compactQuery.matches ? 18 : 40);
       let seed = 20261224;
       function random() {
-        seed = (1664525 * seed + 1013904223) >>> 0;
+        seed = (Math.imul(1664525, seed) + 1013904223) >>> 0;
         return seed / 4294967296;
       }
-      const compact = window.matchMedia && window.matchMedia("(max-width:767px)").matches;
-      const constrained = (navigator.hardwareConcurrency && navigator.hardwareConcurrency <= 4) || (navigator.deviceMemory && navigator.deviceMemory <= 4) || (navigator.connection && navigator.connection.saveData);
-      const count = constrained ? 10 : compact ? 14 : 32;
-      const fragment = document.createDocumentFragment();
       for (let i = 0; i < count; i++) {
+        const crystal = i % 5 === 0;
+        const near = i % 7 === 0;
+        const far = i % 3 === 0 && !near;
+        const kind = crystal ? "is-crystal" : (far ? "is-soft" : (i % 11 === 0 ? "is-gold" : ""));
         const flake = document.createElement("span");
-        flake.className = "christmas-snowflake";
-        const duration = 15 + random() * 16;
-        const size = i % 9 === 0 ? 6 + random() * 3 : 1.5 + random() * 3.5;
-        flake.style.setProperty("--snow-left", (random() * 99).toFixed(1) + "%");
+        flake.className = "christmas-snowflake" + (kind ? " " + kind : "") + (near ? " is-near" : "");
+        const duration = near ? 12 + random() * 10 : far ? 27 + random() * 13 : 18 + random() * 15;
+        const size = crystal ? (near ? 16 + random() * 7 : 9 + random() * 7)
+                     : near ? 6 + random() * 5 : far ? 2 + random() * 2.5 : 3.5 + random() * 4;
+        const opacity = crystal ? (.46 + random() * .31) :
+                        near ? (.62 + random() * .27) : far ? (.26 + random() * .25) : (.35 + random() * .34);
+        const drift = Math.round(-120 + random() * 240);
+        const sway = Math.round(16 + random() * 49);
+        const spin = Math.round(-115 + random() * 230);
+        flake.style.setProperty("--snow-left", (random() * 99).toFixed(2) + "%");
         flake.style.setProperty("--snow-size", size.toFixed(1) + "px");
-        flake.style.setProperty("--snow-opacity", (0.25 + random() * 0.46).toFixed(2));
-        flake.style.setProperty("--snow-drift", Math.round(-65 + random() * 130) + "px");
-        flake.style.setProperty("--snow-duration", duration.toFixed(1) + "s");
-        flake.style.setProperty("--snow-delay", (-random() * duration).toFixed(1) + "s");
+        flake.style.setProperty("--snow-opacity", opacity.toFixed(2));
+        flake.style.setProperty("--snow-drift", drift + "px");
+        flake.style.setProperty("--snow-sway", sway + "px");
+        flake.style.setProperty("--snow-spin", spin + "deg");
+        flake.style.setProperty("--snow-duration", duration.toFixed(2) + "s");
+        flake.style.setProperty("--snow-delay", (-random() * duration).toFixed(2) + "s");
         fragment.appendChild(flake);
       }
       overlay.appendChild(fragment);
       document.body.appendChild(overlay);
+      snowOverlay = overlay;
     }
+    buildSnow();
+    document.body.classList.toggle("christmas-snow-user-paused", snowPaused);
+
+    // Un solo grupo flotante: control de música + control de nieve.
+    const controls = document.createElement("div");
+    controls.className = "christmas-controls";
+    document.body.appendChild(controls);
 
     const button = document.createElement("button");
     button.id = "christmas-music-toggle";
@@ -54,7 +84,41 @@
     button.type = "button";
     button.dataset.playing = "false";
     button.innerHTML = '<i class="bi bi-music-note-beamed" aria-hidden="true"></i><span class="christmas-music-label"></span>';
-    document.body.appendChild(button);
+    controls.appendChild(button);
+
+    const snowButton = document.createElement("button");
+    snowButton.id = "christmas-snow-toggle";
+    snowButton.className = "christmas-snow-toggle";
+    snowButton.type = "button";
+    snowButton.innerHTML = '<i class="bi bi-snow" aria-hidden="true"></i><span class="christmas-snow-label"></span>';
+    controls.appendChild(snowButton);
+    const snowLabel = snowButton.querySelector(".christmas-snow-label");
+    function updateSnowButton() {
+      const english = document.documentElement.lang === "en";
+      const text = snowPaused
+        ? (english ? "Resume snow" : "Reanudar nieve")
+        : (english ? "Pause snow" : "Pausar nieve");
+      snowButton.dataset.paused = snowPaused ? "true" : "false";
+      snowButton.setAttribute("aria-label", text);
+      snowButton.setAttribute("aria-pressed", snowPaused ? "true" : "false");
+      snowButton.title = text;
+      if (snowLabel) snowLabel.textContent = text;
+    }
+    snowButton.addEventListener("click", function(event) {
+      event.stopPropagation();
+      snowPaused = !snowPaused;
+      document.body.classList.toggle("christmas-snow-user-paused", snowPaused);
+      try { localStorage.setItem(snowStorageKey, snowPaused ? "off" : "on"); } catch (_) {}
+      updateSnowButton();
+    });
+    if (motionQuery && motionQuery.addEventListener) {
+      motionQuery.addEventListener("change", function() {
+        if (!motionQuery.matches) buildSnow();
+        snowButton.hidden = motionQuery.matches;
+      });
+    }
+    snowButton.hidden = motionQuery.matches;
+    updateSnowButton();
     const icon = button.querySelector("i");
     const label = button.querySelector(".christmas-music-label");
     const english = () => document.documentElement.lang === "en";
@@ -65,7 +129,7 @@
     const sound = document.createElement("audio");
     sound.id = "christmas-original-audio";
     sound.src = "/assets/audio/navidad-surfcity-original.mp3";
-    sound.preload = "auto";
+    sound.preload = "metadata";
     sound.loop = true;
     sound.volume = .34;
     sound.setAttribute("aria-hidden", "true");
@@ -183,7 +247,7 @@
       unavailable = true;
       updateButton();
     });
-    document.addEventListener("languagechange", updateButton);
+    document.addEventListener("languagechange", function() { updateButton(); updateSnowButton(); });
     document.addEventListener("visibilitychange", function () {
       document.body.classList.toggle("christmas-snow-paused", document.hidden);
       if (document.hidden) {
