@@ -108,7 +108,7 @@ body.site-christmas .quote-submit{
 body.site-christmas .mobile-scenic-panel{display:none!important;}
 
 /* Compact navigation appears before the brand and menu start colliding. */
-@media(max-width:1023px){
+@media(max-width:1199px){
   body.site-christmas .navbar{
     position:sticky;
     top:0;
@@ -680,7 +680,23 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   }
 }
 /* Tablets: photo/copy and card grids use available room. */
-@media(min-width:768px) and (max-width:1023px){
+@media(min-width:768px) and (max-width:1199px){
+  /* One responsive landscape scene instead of downloading two competing
+     backgrounds from the legacy desktop and holiday CSS layers. */
+  body.site-christmas.home-page #inicio.hero,
+  body.site-christmas.tours-page .hero-collage-wrap{
+    background-position:center,center 57%!important;
+    background-size:cover,cover!important;
+    background-repeat:no-repeat!important;
+  }
+  body.site-christmas.home-page #inicio.hero{
+    background-image:linear-gradient(90deg,rgba(4,37,27,.90) 0%,rgba(4,37,27,.76) 41%,rgba(4,37,27,.14) 82%),
+      url("../img/mockup-home-scene.webp")!important;
+  }
+  body.site-christmas.tours-page .hero-collage-wrap{
+    background-image:linear-gradient(90deg,rgba(4,37,27,.90) 0%,rgba(4,37,27,.76) 41%,rgba(4,37,27,.14) 82%),
+      url("../img/mockup-tours-scene.webp")!important;
+  }
   body.site-christmas.home-page #inicio .container,
   body.site-christmas.tours-page .hero-collage-wrap>.container{
     width:min(94%,900px);
