@@ -25,7 +25,15 @@ async function inspect(page,route,label) {
     heroBg:getComputedStyle(document.querySelector(".hero")).backgroundImage,
     xOverflow:document.documentElement.scrollWidth-innerWidth,
     styles:[...document.styleSheets].some(s=>s.href?.includes("christmas-experience.css")),
-    requests:performance.getEntriesByType("resource").length
+    requests:performance.getEntriesByType("resource").length,
+    cardVisuals:[...document.querySelectorAll(document.body.classList.contains("home-page") ? ".card" : ".tour-card, .tour-guide-item")].map(card=>({
+      before:getComputedStyle(card,"::before").content,
+      after:getComputedStyle(card,"::after").content,
+      backdrop:getComputedStyle(card).backdropFilter,
+      shadow:getComputedStyle(card).boxShadow
+    })),
+    tileSnow:[...document.querySelectorAll(".tour-explore-links a")].map(a=>getComputedStyle(a,"::after").content),
+    cardMask:[...document.querySelectorAll("#servicios .card > img, .tour-guide-item .premium-guide-photo")].map(img=>(getComputedStyle(img).maskImage || "none"))
   }));
   assert.ok(snapshot.hasAudio && snapshot.hasWhatsApp && snapshot.styles,label+" missing primary UI");
   if(label.startsWith("home"))assert.match(snapshot.heroBg,/christmas-beach-new.webp/,label+" hero background lost");
@@ -33,6 +41,11 @@ async function inspect(page,route,label) {
   assert.ok(snapshot.snowflakes >= 6 && snapshot.snowflakes <= 40,label+" wrong snowfall density");
   assert.ok(snapshot.snowTypes.length>=3,label+" snow variety insufficient");
   assert.ok(snapshot.xOverflow <= 2,label+" unexpected horizontal overflow "+snapshot.xOverflow);
+  assert.ok(snapshot.cardVisuals.length>=3,label+" no cards found");
+  assert.ok(snapshot.cardVisuals.every(v=>v.before==="none"&&v.after==="none"),label+" frost snow pseudo-elements still rendered");
+  assert.ok(snapshot.cardVisuals.every(v=>v.backdrop==="none"),label+" expensive card blur filter active");
+  assert.ok(snapshot.tileSnow.every(value=>value==="none"),label+" snowcap still rendered on tour tiles");
+  assert.ok(snapshot.cardMask.every(value=>value==="none"),label+" costly image mask still active");
   if(failures.length)console.warn(label+" third party or JS errors:",failures.slice(0,5));
   results.push({label,...snapshot});
   return snapshot;
@@ -71,6 +84,12 @@ try {
   assert.equal(await tours.locator(".hero-collage img").count(),0,"Hidden hero collage still downloads image assets");
   await tours.screenshot({path:screenshots+"/tours-desktop.png",animations:"disabled"});
   await tours.close();
+
+  const toursMobile = await browser.newPage({viewport:{width:390,height:844},isMobile:true,hasTouch:true});
+  await inspect(toursMobile,"/tours","tours-mobile");
+  assert.equal(await toursMobile.locator(".tour-card").count(),6,"Mobile tours catalog was altered");
+  await toursMobile.screenshot({path:screenshots+"/tours-mobile.png",animations:"disabled"});
+  await toursMobile.close();
 
   const reduced = await browser.newPage({viewport:{width:1366,height:768},reducedMotion:"reduce"});
   await reduced.goto(ORIGIN+"/",{waitUntil:"domcontentloaded"});
