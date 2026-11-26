@@ -282,19 +282,22 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     background-color:#082e23!important;
     background-repeat:no-repeat!important;
     background-attachment:scroll!important;
-    background-size:100% 100%,auto clamp(350px,96vw,490px)!important;
-    background-position:center center,72% bottom!important;
+    /* The artwork must cover the WHOLE hero, not just a strip below CTA.
+       Use a composited static background (no scrolling or blur effects). */
+    background-size:100% 100%,cover!important;
+    background-position:center center,81% center!important;
   }
   body.site-christmas.home-page #inicio.hero{
     background-image:
-      linear-gradient(180deg,rgba(4,43,31,.97) 0%,rgba(4,40,30,.92) 30%,rgba(4,40,30,.80) 50%,rgba(4,37,28,.33) 76%,rgba(4,37,28,.19) 91%,rgba(4,37,28,.42) 100%),
+      linear-gradient(180deg,rgba(4,43,31,.88) 0%,rgba(4,40,30,.84) 28%,rgba(4,40,30,.73) 50%,rgba(4,37,28,.36) 76%,rgba(4,37,28,.11) 92%,rgba(4,37,28,.33) 100%),
       url("../img/mockup-home-scene.webp")!important;
   }
   body.site-christmas.tours-page .hero-collage-wrap{
     background-image:
-      linear-gradient(180deg,rgba(4,43,31,.97) 0%,rgba(4,40,30,.92) 30%,rgba(4,40,30,.80) 50%,rgba(4,37,28,.32) 76%,rgba(4,37,28,.18) 91%,rgba(4,37,28,.42) 100%),
+      linear-gradient(180deg,rgba(4,43,31,.88) 0%,rgba(4,40,30,.84) 28%,rgba(4,40,30,.73) 50%,rgba(4,37,28,.36) 76%,rgba(4,37,28,.11) 92%,rgba(4,37,28,.33) 100%),
       url("../img/mockup-tours-scene.webp")!important;
   }
+  body.site-christmas.tours-page .hero-collage-wrap{background-position:center center,72% center!important;}
   body.site-christmas.home-page #inicio .container,
   body.site-christmas.tours-page .hero-collage-wrap>.container{
     position:relative;
@@ -739,7 +742,8 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   body.site-christmas.home-page #inicio.hero,
   body.site-christmas.tours-page .hero-collage-wrap{
     padding-bottom:184px!important;
-    background-size:100% 100%,auto 350px!important;
+    background-size:100% 100%,cover!important;
+    background-position:center center,83% center!important;
   }
 }
 @media(prefers-reduced-motion:reduce){
