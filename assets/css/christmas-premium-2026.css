@@ -1098,3 +1098,48 @@ body.site-christmas .christmas-snowflake:nth-child(9n+1){background:radial-gradi
  body.site-christmas .premium-benefits::before,body.site-christmas.tours-page .tour-benefits-band>.container>.grid::before{height:18px}
  body.site-christmas .premium-benefits,body.site-christmas.tours-page .tour-benefits-band>.container>.grid,body.site-christmas.tours-page .tour-explore-inner,body.site-christmas .christmas-music-toggle{backdrop-filter:none;-webkit-backdrop-filter:none}
 }
+
+/* Rendimiento progresivo: preservar el estilo premium sin desenfoques caros.
+   La nieve se ajusta por hardware en christmas-experience.js. */
+body.site-christmas.christmas-low-power .festive-scene,
+body.site-christmas.christmas-low-power .hero::before {
+  display:none!important;
+}
+body.site-christmas.christmas-low-power .premium-benefits,
+body.site-christmas.christmas-low-power .tour-explore-inner,
+body.site-christmas.christmas-low-power .tour-benefits-band>.container>.grid,
+body.site-christmas.christmas-low-power .christmas-music-toggle,
+body.site-christmas.christmas-low-power .card {
+  -webkit-backdrop-filter:none!important;
+  backdrop-filter:none!important;
+}
+body.site-christmas.christmas-low-power .card,
+body.site-christmas.christmas-low-power .tour-card,
+body.site-christmas.christmas-low-power .tour-guide-item {
+  box-shadow:0 6px 18px rgba(0,0,0,.27)!important;
+}
+@media (max-width:767px) {
+  body.site-christmas.home-page .card,
+  body.site-christmas.tours-page .tour-card {
+    box-shadow:0 7px 20px rgba(0,0,0,.28);
+  }
+  body.site-christmas .hero::before {
+    opacity:.16;
+  }
+  body.site-christmas .tour-explore-inner,
+  body.site-christmas .premium-benefits,
+  body.site-christmas .tour-benefits-band>.container>.grid,
+  body.site-christmas .premium-custom-tour {
+    -webkit-backdrop-filter:none!important;
+    backdrop-filter:none!important;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  body.site-christmas .card,
+  body.site-christmas .tour-card,
+  body.site-christmas .tour-guide-item,
+  body.site-christmas .tour-explore-links a {
+    transition:none!important;
+    transform:none!important;
+  }
+}
