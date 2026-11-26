@@ -60,8 +60,12 @@
         flake.style.setProperty("--snow-size", size.toFixed(1) + "px");
         flake.style.setProperty("--snow-opacity", opacity.toFixed(2));
         flake.style.setProperty("--snow-drift", drift + "px");
-        flake.style.setProperty("--snow-sway", sway + "px");
+        flake.style.setProperty("--snow-x-start", Math.round(drift * -.25) + "px");
+        flake.style.setProperty("--snow-x-mid1", Math.round(drift * .34 + sway) + "px");
+        flake.style.setProperty("--snow-x-mid2", Math.round(drift * .60 - sway) + "px");
         flake.style.setProperty("--snow-spin", spin + "deg");
+        flake.style.setProperty("--snow-spin-mid1", Math.round(spin * .25) + "deg");
+        flake.style.setProperty("--snow-spin-mid2", Math.round(spin * .70) + "deg");
         flake.style.setProperty("--snow-duration", duration.toFixed(2) + "s");
         flake.style.setProperty("--snow-delay", (-random() * duration).toFixed(2) + "s");
         fragment.appendChild(flake);
