@@ -1,0 +1,22 @@
+name: Verify Taxi SurfCity assistant
+on:
+  push:
+    paths:
+      - 'api/assistant.mjs'
+      - 'api/travel-research.mjs'
+      - 'scripts/test_live_assistant.py'
+      - '.github/workflows/assistant-smoke.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate deployed health, catalog and recommendation
+        run: python scripts/test_live_assistant.py
