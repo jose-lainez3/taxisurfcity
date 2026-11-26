@@ -14,6 +14,23 @@
     "nav.resenas": "Reviews",
     "nav.cotizar": "Get a quote",
 
+    /* Christmas premium design (Home and Tours) */
+    "premium.ben1.title": "Safe & reliable",
+    "premium.ben1.desc": "Comfortable private transport.",
+    "premium.ben2.title": "Flexible itineraries",
+    "premium.ben2.desc": "You choose the stops and times.",
+    "premium.ben3.title": "Local expert drivers",
+    "premium.ben3.desc": "We know the best routes.",
+    "premium.ben4.title": "For every traveler",
+    "premium.ben4.desc": "Families, couples and groups.",
+    "premium.service.airport": "Airport transfer",
+    "premium.service.coast": "Surf City & beaches",
+    "premium.service.tours": "Tours & destinations",
+    "premium.tour.view": "Explore tour",
+    "premium.custom.title": "Want a custom tour?",
+    "premium.custom.desc": "Tell us your destinations, date and group size. We'll prepare a personalized quote via WhatsApp.",
+    "premium.custom.cta": "Plan my tour",
+
     "trust.cancelacion": "Flexible cancellation",
     "trust.chofer": "Trusted local driver",
     "trust.disponibilidad": "24/7 availability across El Salvador",
