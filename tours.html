@@ -53,7 +53,7 @@
 <link rel="stylesheet" href="/assets/css/styllees.css?v=20261120-tourseo">
 <link rel="stylesheet" href="/assets/css/christmas-unified.css?v=20261120-sitewide-1">
 <link rel="stylesheet" href="/assets/css/christmas-experience.css?v=20261126-1">
-<link rel="stylesheet" href="/assets/css/christmas-premium-2026.css?v=20261126-christmas-beach-2">
+<link rel="stylesheet" href="/assets/css/christmas-premium-2026.css?v=20261126-layout-hd-3">
 <noscript><style>[data-reveal]{opacity:1!important;transform:none!important}</style></noscript>
 
 <script type="application/ld+json">
@@ -251,12 +251,12 @@
     <p class="lead" data-reveal data-i18n="t.hero.lead">Explora los destinos más impresionantes de El Salvador con chofer local y vehículo exclusivo. Rutas personalizadas a la Ruta de las Flores, senderismo en volcanes, lagos, arquitectura colonial y playas de surf con total seguridad y confort.</p>
     <div class="tour-hero-actions" data-reveal>
       <a href="https://wa.me/50376401181?text=Hola%2C%20quisiera%20cotizar%20un%20tour%20privado%20en%20El%20Salvador." target="_blank" rel="noopener" class="btn btn-lime" data-i18n="t.hero.cta">Cotizar por WhatsApp</a>
-      <a href="#tours" class="btn tour-hero-secondary" data-i18n="t.hero.explore">Explorar destinos</a>
+      <a href="#tour-destinations" class="btn tour-hero-secondary" data-i18n="t.hero.explore">Explorar destinos</a>
     </div>
   </div>
 </section>
 
-<nav class="tour-explore-nav" aria-label="Accesos a los tours">
+<nav id="tour-destinations" class="tour-explore-nav" aria-label="Accesos a los tours">
   <div class="container tour-explore-inner">
     <span class="tour-explore-label" data-i18n="t.quick.label">Explora los destinos</span>
     <div class="tour-explore-links">
@@ -287,6 +287,45 @@
         <h4 style="margin: 10px 0 5px;" data-i18n="t.ben.3.title">Choferes Locales Expertos</h4>
         <p style="font-size: 0.9rem; color: #a1a1aa;" data-i18n="t.ben.3.desc">Conductores con amplio conocimiento de las mejores rutas y destinos del país.</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<section id="elegir-tour" class="section tour-guide-section" aria-labelledby="tour-guide-heading">
+  <div class="container">
+    <div class="section-head">
+      <span class="eyebrow" data-i18n="t.guide.eyebrow">Encuentra tu experiencia</span>
+      <h2 id="tour-guide-heading" data-i18n="t.guide.title">¿Qué tour privado elegir en El Salvador?</h2>
+      <p data-i18n="t.guide.intro">Si visitas El Salvador por primera vez, descubre qué excursión se adapta a tus intereses y al tiempo disponible.</p>
+    </div>
+    <div class="tour-guide-grid">
+      <article class="tour-guide-item">
+        <img class="premium-guide-photo" src="/assets/img/volcan-coatepeque-hero-bg.webp" alt="Vistas del Volcán y Lago de Coatepeque" loading="lazy" decoding="async" width="420" height="175">
+        <span class="tour-guide-number">01 — NATURALEZA</span>
+        <h3 data-i18n="t.guide.a.title">Volcanes y paisajes</h3>
+        <p data-i18n="t.guide.a.text">Para senderismo y vistas naturales, explora el <a href="#volcan-coatepeque">Volcán de Santa Ana y Lago de Coatepeque</a>. Si prefieres un paseo más tranquilo, conoce <a href="#boqueron">El Boquerón</a>.</p>
+      </article>
+      <article class="tour-guide-item">
+        <img class="premium-guide-photo" src="/assets/img/ruta-flores-bg.webp" alt="Pueblos de la Ruta de las Flores" loading="lazy" decoding="async" width="420" height="175">
+        <span class="tour-guide-number">02 — CULTURA</span>
+        <h3 data-i18n="t.guide.b.title">Pueblos, café e historia</h3>
+        <p data-i18n="t.guide.b.text">Disfruta del café, la gastronomía y los pueblos de la <a href="#ruta-de-las-flores">Ruta de las Flores</a>. También puedes visitar <a href="#suchitoto">Suchitoto</a> o <a href="#joya-de-ceren">Joya de Cerén</a>.</p>
+      </article>
+      <article class="tour-guide-item">
+        <img class="premium-guide-photo" src="/assets/img/1-bg.webp" alt="Playas de Surf City al atardecer" loading="lazy" decoding="async" width="420" height="175">
+        <span class="tour-guide-number">03 — COSTA</span>
+        <h3 data-i18n="t.guide.c.title">Playas y atardeceres</h3>
+        <p data-i18n="t.guide.c.text">Conoce El Tunco, El Zonte y Mizata en un <a href="#surf-city">recorrido por Surf City</a> con paradas y horarios adaptados a tu grupo.</p>
+      </article>
+    </div>
+    <p class="tour-guide-note" data-i18n="t.guide.note">Consulta por WhatsApp la tarifa, disponibilidad, entradas, alimentos y necesidad de guías especializados antes de confirmar tu excursión.</p>
+    <div class="premium-custom-tour">
+      <i class="bi bi-map" aria-hidden="true"></i>
+      <div>
+        <strong data-i18n="premium.custom.title">¿Quieres un tour a tu medida?</strong>
+        <p data-i18n="premium.custom.desc">Dinos qué lugares quieres visitar, la fecha y cuántas personas viajan. Preparamos tu cotización por WhatsApp.</p>
+      </div>
+      <a class="btn" href="#cotiza-tu-tour"><i class="bi bi-arrow-right-circle" aria-hidden="true"></i> <span data-i18n="premium.custom.cta">Diseñar mi tour</span></a>
     </div>
   </div>
 </section>
@@ -493,45 +532,6 @@
     <div class="text-center" style="margin-top:44px;" data-reveal>
       <p style="margin-bottom:16px;" data-i18n="t.more.text">¿Deseas visitar otro destino en El Salvador? Diseñamos rutas a medida: Ruta de la Paz, Golfo de Fonseca, Costa del Sol, Cascadas de Tamanique y más.</p>
       <a href="https://wa.me/50376401181?text=Hola,%20quisiera%20armar%20un%20tour%20o%20viaje%20personalizado%20en%20El%20Salvador." target="_blank" rel="noopener" class="btn btn-outline btn-sm"><i class="bi bi-whatsapp"></i> <span data-i18n="t.more.btn">Solicitar tour o itinerario a mi medida</span></a>
-    </div>
-  </div>
-</section>
-
-<section id="elegir-tour" class="section tour-guide-section" aria-labelledby="tour-guide-heading">
-  <div class="container">
-    <div class="section-head">
-      <span class="eyebrow" data-i18n="t.guide.eyebrow">Encuentra tu experiencia</span>
-      <h2 id="tour-guide-heading" data-i18n="t.guide.title">¿Qué tour privado elegir en El Salvador?</h2>
-      <p data-i18n="t.guide.intro">Si visitas El Salvador por primera vez, descubre qué excursión se adapta a tus intereses y al tiempo disponible.</p>
-    </div>
-    <div class="tour-guide-grid">
-      <article class="tour-guide-item">
-        <img class="premium-guide-photo" src="/assets/img/volcan-coatepeque-hero-bg.webp" alt="Vistas del Volcán y Lago de Coatepeque" loading="lazy" decoding="async" width="420" height="175">
-        <span class="tour-guide-number">01 — NATURALEZA</span>
-        <h3 data-i18n="t.guide.a.title">Volcanes y paisajes</h3>
-        <p data-i18n="t.guide.a.text">Para senderismo y vistas naturales, explora el <a href="#volcan-coatepeque">Volcán de Santa Ana y Lago de Coatepeque</a>. Si prefieres un paseo más tranquilo, conoce <a href="#boqueron">El Boquerón</a>.</p>
-      </article>
-      <article class="tour-guide-item">
-        <img class="premium-guide-photo" src="/assets/img/ruta-flores-bg.webp" alt="Pueblos de la Ruta de las Flores" loading="lazy" decoding="async" width="420" height="175">
-        <span class="tour-guide-number">02 — CULTURA</span>
-        <h3 data-i18n="t.guide.b.title">Pueblos, café e historia</h3>
-        <p data-i18n="t.guide.b.text">Disfruta del café, la gastronomía y los pueblos de la <a href="#ruta-de-las-flores">Ruta de las Flores</a>. También puedes visitar <a href="#suchitoto">Suchitoto</a> o <a href="#joya-de-ceren">Joya de Cerén</a>.</p>
-      </article>
-      <article class="tour-guide-item">
-        <img class="premium-guide-photo" src="/assets/img/1-bg.webp" alt="Playas de Surf City al atardecer" loading="lazy" decoding="async" width="420" height="175">
-        <span class="tour-guide-number">03 — COSTA</span>
-        <h3 data-i18n="t.guide.c.title">Playas y atardeceres</h3>
-        <p data-i18n="t.guide.c.text">Conoce El Tunco, El Zonte y Mizata en un <a href="#surf-city">recorrido por Surf City</a> con paradas y horarios adaptados a tu grupo.</p>
-      </article>
-    </div>
-    <p class="tour-guide-note" data-i18n="t.guide.note">Consulta por WhatsApp la tarifa, disponibilidad, entradas, alimentos y necesidad de guías especializados antes de confirmar tu excursión.</p>
-    <div class="premium-custom-tour">
-      <i class="bi bi-map" aria-hidden="true"></i>
-      <div>
-        <strong data-i18n="premium.custom.title">¿Quieres un tour a tu medida?</strong>
-        <p data-i18n="premium.custom.desc">Dinos qué lugares quieres visitar, la fecha y cuántas personas viajan. Preparamos tu cotización por WhatsApp.</p>
-      </div>
-      <a class="btn" href="#cotiza-tu-tour"><i class="bi bi-arrow-right-circle" aria-hidden="true"></i> <span data-i18n="premium.custom.cta">Diseñar mi tour</span></a>
     </div>
   </div>
 </section>
