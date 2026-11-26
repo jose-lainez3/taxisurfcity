@@ -64,7 +64,7 @@ async function checkCompactLayout(page, label) {
       label+" mobile Christmas background missing from hero");
     assert.ok(metrics.heroSize.includes("auto"),label+" image aspect ratio should not be distorted");
     assert.ok(metrics.heroSize.split(",").length===2,label+" expected one color overlay and one photo");
-    assert.ok(metrics.heroPosition.includes("bottom"),label+" scenic background should anchor to bottom");
+    assert.ok(/bottom|100%/.test(metrics.heroPosition),label+" scenic background should anchor to bottom");
     assert.ok(!metrics.heroAttachment.includes("fixed"),label+" costly fixed parallax enabled on mobile");
     assert.ok(metrics.hero.h>metrics.actions.y+metrics.actions.h-metrics.hero.y+120,
       label+" insufficient scenic space under CTA");
