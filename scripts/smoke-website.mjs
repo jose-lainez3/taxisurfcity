@@ -32,12 +32,11 @@ async function checkCompactLayout(page, label) {
       chat:get(".cb-launcher"), wa:get(".wa-float"),
       music:get(".christmas-controls"), chatWindow:get(".cb-window"),
       benefits:get(".premium-benefits"),
-      scene:get(".mobile-scenic-panel"),
-      sceneBg:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundImage,
-      sceneDisplay:getComputedStyle(document.querySelector(".mobile-scenic-panel")).display,
-      sceneSize:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundSize,
-      scenePosition:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundPosition,
-      sceneBorder:getComputedStyle(document.querySelector(".mobile-scenic-panel")).borderTopWidth,
+      separateSceneCount:document.querySelectorAll(".mobile-scenic-panel").length,
+      heroBg:getComputedStyle(hero).backgroundImage,
+      heroSize:getComputedStyle(hero).backgroundSize,
+      heroPosition:getComputedStyle(hero).backgroundPosition,
+      heroAttachment:getComputedStyle(hero).backgroundAttachment,
       firstCard:get(document.body.classList.contains("home-page") ? "#servicios .card" : ".tour-card"),
       tourGrid:document.body.classList.contains("tours-page")
         ? getComputedStyle(document.querySelector(".tour-explore-links")).gridTemplateColumns : null,
@@ -58,23 +57,21 @@ async function checkCompactLayout(page, label) {
   assert.ok(metrics.menu.x >= 0 && metrics.menu.x + metrics.menu.w <= viewport.width+1,label+" mobile toggle spills");
   assert.ok(metrics.lang.x >= 0 && metrics.lang.x + metrics.lang.w <= viewport.width+1,label+" language toggle spills");
   assert.ok(metrics.firstCard.w < viewport.width, label+" card occupies entire viewport without margins");
+  assert.equal(metrics.separateSceneCount,0,label+" photo must be hero background, not a second card");
   if (viewport.width < 768) {
-    assert.equal(metrics.sceneDisplay, "block", label+" scenic image hidden on phone");
-    assert.ok(metrics.scene.h >= 210 && metrics.scene.w >= viewport.width*.86,
-      label+" scenic image must be large, not a narrow strip");
-    assert.ok(metrics.scene.y >= metrics.actions.y + metrics.actions.h+8,
-      label+" photo overlaps main call-to-action");
-    assert.match(metrics.sceneBg,
+    assert.match(metrics.heroBg,
       label.startsWith("home")?/mockup-home-scene.webp/:/mockup-tours-scene.webp/,
-      label+" mobile scenic background missing");
-    assert.equal(metrics.sceneSize,"cover",label+" mobile photo improperly zoomed");
-    assert.equal(metrics.sceneBorder,"0px",label+" unnecessary photo frame");
+      label+" mobile Christmas background missing from hero");
+    assert.ok(metrics.heroSize.includes("auto"),label+" image aspect ratio should not be distorted");
+    assert.ok(metrics.heroSize.split(",").length===2,label+" expected one color overlay and one photo");
+    assert.ok(metrics.heroPosition.includes("bottom"),label+" scenic background should anchor to bottom");
+    assert.ok(!metrics.heroAttachment.includes("fixed"),label+" costly fixed parallax enabled on mobile");
+    assert.ok(metrics.hero.h>metrics.actions.y+metrics.actions.h-metrics.hero.y+120,
+      label+" insufficient scenic space under CTA");
     assert.ok(Math.abs(metrics.chat.y-metrics.wa.y) <= 3,
       label+" WhatsApp and chat are vertically stacked over content");
     assert.ok(Math.abs((metrics.music.y+metrics.music.h/2)-(metrics.wa.y+metrics.wa.h/2)) <= 6,
       label+" music and snow buttons are not aligned with contact actions");
-  } else {
-    assert.equal(metrics.sceneDisplay,"none",label+" mobile photo should not duplicate desktop background");
   }
   if (viewport.width < 768) {
     assert.ok(metrics.title.y >= metrics.nav.y+metrics.nav.h,label+" title under sticky nav");
@@ -143,7 +140,7 @@ async function inspect(page,route,label) {
     hasSnow:!!document.getElementById("christmas-snow-overlay"),
     hasWhatsApp:!!document.querySelector('a[href*="wa.me/50376401181"]'),
     heroBg:getComputedStyle(document.querySelector(".hero")).backgroundImage,
-    sceneBg:getComputedStyle(document.querySelector(".mobile-scenic-panel")).backgroundImage,
+    hasDetachedScene:!!document.querySelector(".mobile-scenic-panel"),
     xOverflow:document.documentElement.scrollWidth-innerWidth,
     styles:[...document.styleSheets].some(s=>s.href?.includes("christmas-experience.css")),
     requests:performance.getEntriesByType("resource").length,
@@ -161,12 +158,11 @@ async function inspect(page,route,label) {
   const expectedHero = label.startsWith("home")
     ? /christmas-beach-new.webp/
     : /volcan-coatepeque-hero-bg.webp/;
+  assert.equal(snapshot.hasDetachedScene,false,label+" duplicated scenic block");
   if(phone) {
-    assert.match(snapshot.sceneBg,
+    assert.match(snapshot.heroBg,
       label.startsWith("home") ? /mockup-home-scene.webp/ : /mockup-tours-scene.webp/,
-      label+" mobile photo missing");
-    assert.doesNotMatch(snapshot.heroBg, /mockup-home-scene.webp|mockup-tours-scene.webp/,
-      label+" hero is downloading redundant background");
+      label+" mobile photo missing from full-bleed background");
   } else assert.match(snapshot.heroBg, expectedHero, label+" desktop background lost");
   assert.ok(snapshot.snowflakes >= 6 && snapshot.snowflakes <= 40,label+" wrong snowfall density");
   assert.ok(snapshot.snowTypes.length>=3,label+" snow variety insufficient");
@@ -261,13 +257,13 @@ try {
       const response = await custom.goto("https://taxistuncoelsalvador.com"+route,
         {waitUntil:"domcontentloaded",timeout:30000});
       const state = await custom.evaluate(() => ({
-        mobileV2:!!document.querySelector('link[href*="mobile-scene-v3"]'),
-        scenicElement:!!document.querySelector(".mobile-scenic-panel"),
+        mobileV4:!!document.querySelector('link[href*="mobile-bg-v4"]'),
+        backgroundEnabled:!document.querySelector(".mobile-scenic-panel"),
         title:document.title
       }));
       console.log("CUSTOM DOMAIN "+JSON.stringify({
         route,status:response?.status(),...state,
-        readyToShowNewDesign:response?.status()===200&&state.mobileV2&&state.scenicElement
+        readyToShowNewDesign:response?.status()===200&&state.mobileV4&&state.backgroundEnabled
       }));
     }
   } catch (err) {
