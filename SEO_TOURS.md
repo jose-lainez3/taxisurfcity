@@ -47,3 +47,13 @@ Los cambios de este paquete **ya están en la rama `main`**; no es necesario eje
 - La interfaz del control está en español o inglés según el selector del sitio.
 - Probar de forma manual en Chrome, Brave, Firefox y Safari móvil: recargar, activar/silenciar, navegar entre páginas y revisar el ajuste «Reducir movimiento».
 - Para retirar la música y la nieve tras la temporada, quitar las dos referencias de las páginas o deshabilitar la carga de `christmas-experience.js`.
+
+
+## Música navideña instrumental con grabación real — 26/11/2026
+- Se reemplazó el generador Web Audio anterior por un MP3 instrumental **original**, pensado como música navideña cálida con piano, celesta, glockenspiel, cuerdas, coro suave y cascabeles.
+- Pista pública: `assets/audio/navidad-surfcity-original.mp3` (aprox. 54 segundos, se reproduce en bucle). Sin dependencias de YouTube, licencias de grabaciones ajenas ni sonido descargado de terceros.
+- Fuente reproducible: `scripts/create_christmas_track.py`; la automatización manual o al actualizar ese script está en `.github/workflows/christmas-audio.yml`.
+- El reproductor conserva el botón **Silenciar música** / **Activar música navideña**, el volumen moderado y la preferencia en `localStorage`. Guarda la posición en `sessionStorage` durante la navegación.
+- El navegador intenta reproducir de inmediato; si Chrome, Brave, Safari o Firefox bloquean autoplay con sonido, el audio se activa en la primera interacción del usuario. No se intenta evitar las políticas del navegador.
+- Se mantiene el efecto de nieve y su respeto a `prefers-reduced-motion`.
+- Para revisar el funcionamiento: abrir Inicio y Tours en incógnito, comprobar en Network que el MP3 devuelve HTTP 200 y que los controles de audio funcionan.
