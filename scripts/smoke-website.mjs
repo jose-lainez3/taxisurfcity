@@ -241,6 +241,27 @@ try {
   assert.ok(!(await reduced.locator("#christmas-snow-toggle").isVisible()),"Snow button should hide in reduced motion");
   await reduced.close();
 
+  // The public custom domain may be hosted/cached separately from Vercel.
+  // Report its state without hiding a successful Vercel deployment.
+  const custom = await browser.newPage();
+  try {
+    for (const route of ["/","/tours"]) {
+      const response = await custom.goto("https://taxistuncoelsalvador.com"+route,
+        {waitUntil:"domcontentloaded",timeout:30000});
+      const state = await custom.evaluate(() => ({
+        mobileV2:!!document.querySelector('link[href*="mobile-scene-v2"]'),
+        scenicElement:!!document.querySelector(".mobile-scenic-panel"),
+        title:document.title
+      }));
+      console.log("CUSTOM DOMAIN "+JSON.stringify({
+        route,status:response?.status(),...state,
+        readyToShowNewDesign:response?.status()===200&&state.mobileV2&&state.scenicElement
+      }));
+    }
+  } catch (err) {
+    console.warn("CUSTOM DOMAIN CHECK UNAVAILABLE",err.message);
+  } finally {await custom.close();}
+
   console.log("FRONTEND SMOKE PASSED");
   for(const res of results) console.log(JSON.stringify({label:res.label,flakes:res.snowflakes,types:res.snowTypes.length,resources:res.requests,xOverflow:res.xOverflow}));
 } finally {
