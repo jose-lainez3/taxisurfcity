@@ -305,12 +305,12 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   }
   body.site-christmas.home-page #inicio.hero::after{
     background-image:
-      linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,0) 26%),
+      linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,.55) 9%,rgba(8,46,35,0) 30%),
       url("../img/mockup-home-scene.webp")!important;
   }
   body.site-christmas.tours-page .hero-collage-wrap::after{
     background-image:
-      linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,0) 26%),
+      linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,.55) 9%,rgba(8,46,35,0) 30%),
       url("../img/mockup-tours-scene.webp")!important;
   }
   body.site-christmas.home-page #inicio .festive-scene,
@@ -347,8 +347,8 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     max-width:370px;
     margin:0 auto 14px!important;
     font-size:clamp(1.62rem,6.4vw,2.25rem)!important;
-    line-height:1.15;
-    letter-spacing:-.035em;
+    line-height:1.22;
+    letter-spacing:-.025em;
     text-wrap:balance;
     overflow-wrap:break-word;
     text-shadow:0 2px 7px rgba(0,18,13,.40);
@@ -387,6 +387,14 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     text-align:center;
     white-space:normal;
     box-shadow:0 5px 14px rgba(0,0,0,.22);
+  }
+  /* Shared mobile primary action; retain accessible contrast. */
+  body.site-christmas.home-page #inicio .btn-lime,
+  body.site-christmas.tours-page .tour-hero-actions .btn-lime{
+    background:linear-gradient(110deg,#fff1c6 0%,#f4d58b 54%,#dcac58 100%)!important;
+    color:#10291e!important;
+    border:1px solid #f9e4b0!important;
+    box-shadow:0 4px 12px rgba(0,0,0,.22)!important;
   }
   body.site-christmas .section{padding:clamp(31px,7vw,43px) 0!important;}
   body.site-christmas .section>.container{
@@ -643,7 +651,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   /* Four compact quick actions share the same screen edge. */
   body.site-christmas .christmas-controls{
     position:fixed;
-    bottom:max(17px,calc(env(safe-area-inset-bottom) + 3px))!important;
+    bottom:max(16px,calc(env(safe-area-inset-bottom) + 2px))!important;
     left:12px!important;
     display:flex;
     width:auto;
@@ -672,16 +680,16 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     position:fixed;
     right:12px!important;
     bottom:max(14px,env(safe-area-inset-bottom))!important;
-    width:48px!important;
-    height:48px!important;
+    width:44px!important;
+    height:44px!important;
     z-index:1197;
   }
   body.site-christmas .cb-launcher{
     position:fixed;
-    right:77px!important;
+    right:68px!important;
     bottom:max(14px,env(safe-area-inset-bottom))!important;
-    width:48px!important;
-    height:48px!important;
+    width:44px!important;
+    height:44px!important;
     z-index:1198;
   }
   body.site-christmas .cb-window{
