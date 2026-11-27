@@ -10,6 +10,7 @@ import {
  * Gemini consulta Google Search cuando el modelo lo considera necesario.
  */
 const WORKERS_MODEL = "@cf/google/gemma-4-26b-a4b-it";
+const API_VERSION = "cloudflare-20261127-v3";
 const MAX_REQUEST_BYTES = 16000;
 const MAX_MESSAGE_LENGTH = 1400;
 const MAX_HISTORY = 10;
@@ -168,6 +169,7 @@ async function GET(request, env) {
   const gemini = !env.AI && Boolean(env.GEMINI_API_KEY);
   return responseJSON({
     ready: gemini || Boolean(env.AI),
+    version: API_VERSION,
     name:"Asistente IA Taxi SurfCity",
     model: gemini ? (env.GEMINI_MODEL || "gemini-3.5-flash-lite") : WORKERS_MODEL,
     provider: gemini ? "gemini" : "cloudflare",
@@ -240,22 +242,37 @@ async function POST(request, env) {
       }))];
       let result;
       try {
-        result = await env.AI.run(workerModel,{messages,max_completion_tokens:900,temperature:0.35,stream:false});
+        // Limit the wait for the visitor; disable extended reasoning for a travel chat.
+        let timer;
+        const started = Date.now();
+        try {
+          result = await Promise.race([
+            env.AI.run(workerModel,{
+              messages, max_completion_tokens:600, temperature:0.35, stream:false,
+              chat_template_kwargs:{enable_thinking:false}
+            }),
+            new Promise((_,reject)=>{
+              timer = setTimeout(()=>reject(new Error("INFERENCE_TIMEOUT")),22000);
+            })
+          ]);
+          console.log("Workers AI completed",{model:workerModel,durationMs:Date.now()-started});
+        } finally { clearTimeout(timer); }
       } catch (error) {
         const detail = String(error?.message || "");
         const code = String(error?.code || error?.status || detail.match(/\b(?:5028|3040|5016|5035|429|410|403)\b/)?.[0] || "UNKNOWN").slice(0,40);
         console.error("Workers AI inference failed",{model:workerModel,code,errorName:String(error?.name || "Error")});
+        const timedOut = /INFERENCE_TIMEOUT|timed out|timeout/i.test(detail);
         const quota = /429|quota|rate limit|neurons/i.test(code+" "+detail);
         const retired = /5028|410|deprecated|retired/i.test(code+" "+detail);
         const busy = /3040|capacity|busy|overload/i.test(code+" "+detail);
         return responseJSON({
-          error: quota ? "Se alcanzó el límite de uso de la IA. Intenta más tarde." :
+          error: timedOut ? "La generación de IA superó el tiempo de espera. Puedes reintentar." : quota ? "Se alcanzó el límite de uso de la IA. Intenta más tarde." :
             retired ? "El modelo de IA configurado ya no está disponible." :
             busy ? "La IA está ocupada temporalmente. Intenta nuevamente." :
             "Workers AI no pudo generar una respuesta. Revisa los registros de Cloudflare.",
-          code: quota ? "QUOTA_REACHED" : retired ? "MODEL_UNAVAILABLE" : busy ? "PROVIDER_BUSY" : "WORKERS_AI_ERROR",
+          code: timedOut ? "INFERENCE_TIMEOUT" : quota ? "QUOTA_REACHED" : retired ? "MODEL_UNAVAILABLE" : busy ? "PROVIDER_BUSY" : "WORKERS_AI_ERROR",
           provider:"cloudflare",model:workerModel
-        },quota?429:busy?503:502,origin);
+        },timedOut?504:quota?429:busy?503:502,origin);
       }
       const content = result?.choices?.[0]?.message?.content;
       const rawAnswer = typeof result?.response === "string" ? result.response :
