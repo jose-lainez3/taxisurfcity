@@ -16,7 +16,6 @@ jobs:
     runs-on: ubuntu-latest
     env:
       TAXICMS_VERSION_CODE: ${{ github.run_number }}
-      TAXICMS_KEYSTORE_PATH: ${{ runner.temp }}/taxicms-release.p12
       TAXICMS_KEYSTORE_PASSWORD: ${{ secrets.TAXICMS_KEYSTORE_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +28,8 @@ jobs:
           gradle-version: '8.9'
       - name: Android SDK
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Set signing key path
+        run: echo "TAXICMS_KEYSTORE_PATH=$RUNNER_TEMP/taxicms-release.p12" >> "$GITHUB_ENV"
       - name: Verify debug build
         run: gradle -p taxicms-android --no-daemon :app:assembleDebug
       - name: Restore permanent signing key
