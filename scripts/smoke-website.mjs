@@ -82,8 +82,11 @@ async function checkCompactLayout(page, label) {
       label.startsWith("home")?/mockup-home-scene.webp/:/mockup-tours-scene.webp/,
       label+" mobile artwork missing from ::after scenic panel");
     assert.notEqual(metrics.photoDisplay,"none",label+" mobile scenic panel is hidden");
-    assert.ok(metrics.photoSize.includes("100% auto"),
-      label+" mobile artwork is not scaled proportionally");
+    // Chromium serializes "100% auto" as "100%" in computed background-size.
+    // Check the final (photographic) layer, not the gradient layer.
+    const photoLayerSize=metrics.photoSize.split(",").at(-1).trim();
+    assert.match(photoLayerSize,/^100%(?:\s+auto)?$/,
+      label+" mobile artwork is not scaled proportionally: "+metrics.photoSize);
     assert.ok(metrics.photoPosition.includes("bottom"),
       label+" mobile artwork is not bottom-aligned");
     assert.ok(metrics.photoHeight >= Math.max(180,viewport.width*9/16)-3,
