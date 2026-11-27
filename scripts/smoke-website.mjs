@@ -265,6 +265,15 @@ try {
   const tours = await browser.newPage({viewport:{width:1440,height:900}});
   await inspect(tours,TOURS_ROUTE,"tours-desktop");
   const desktopTourIds = await checkTourCatalog(tours,"tours-desktop");
+  const cityPhoto = tours.locator('#centro-historico-san-salvador .tour-card-media img');
+  if(await cityPhoto.count()){
+    const expectedSrc=await cityPhoto.getAttribute('src');
+    await cityPhoto.scrollIntoViewIfNeeded();
+    await cityPhoto.evaluate(img=>img.decode());
+    assert.ok(await cityPhoto.evaluate(img=>img.naturalWidth>100),"City tour photograph missing");
+    assert.equal(await cityPhoto.evaluate(img=>new URL(img.currentSrc).pathname),new URL(expectedSrc,ORIGIN).pathname,"City tour photograph fell back to logo");
+  }
+
   await checkTourCards(tours,"tours-desktop");
   assert.equal(await tours.locator(".hero-collage img").count(),0,"Hidden hero collage still downloads image assets");
   await tours.screenshot({path:screenshots+"/tours-desktop.png",animations:"disabled"});
