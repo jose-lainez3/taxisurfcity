@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { chromium } from "playwright";
 import { mkdir } from "node:fs/promises";
 
-const ORIGIN = process.env.WEBSITE_ORIGIN || "https://taxisurfcity.vercel.app";
+const ORIGIN = process.env.WEBSITE_ORIGIN || "https://taxistuncoelsalvador.com";
 const TOURS_ROUTE = ORIGIN.includes("127.0.0.1") ? "/tours.html" : "/tours";
 const browser = await chromium.launch({headless:true,args:["--no-sandbox"]});
 const screenshots = "website-smoke";
@@ -34,8 +34,12 @@ async function checkCompactLayout(page, label) {
       benefits:get(".premium-benefits"),
       separateSceneCount:document.querySelectorAll(".mobile-scenic-panel").length,
       heroBg:getComputedStyle(hero).backgroundImage,
-      heroSize:getComputedStyle(hero).backgroundSize,
-      heroPosition:getComputedStyle(hero).backgroundPosition,
+      heroBgColor:getComputedStyle(hero).backgroundColor,
+      photoBg:getComputedStyle(hero,"::after").backgroundImage,
+      photoSize:getComputedStyle(hero,"::after").backgroundSize,
+      photoPosition:getComputedStyle(hero,"::after").backgroundPosition,
+      photoHeight:parseFloat(getComputedStyle(hero,"::after").height),
+      photoDisplay:getComputedStyle(hero,"::after").display,
       heroAttachment:getComputedStyle(hero).backgroundAttachment,
       firstCard:get(document.body.classList.contains("home-page") ? "#servicios .card" : ".tour-card"),
       tourGrid:document.body.classList.contains("tours-page")
@@ -67,22 +71,27 @@ async function checkCompactLayout(page, label) {
   if (viewport.width <= 540 && label.startsWith("home")) {
     assert.equal(metrics.servicesColumns.trim().split(/\s+/).length,1,label+" services must stack on narrow screens");
   }
-  assert.equal(metrics.separateSceneCount,0,label+" photo must be hero background, not a second card");
+  assert.equal(metrics.separateSceneCount,0,label+" unexpected detached scenic card");
   if (viewport.width < 768) {
-    assert.match(metrics.heroBg,
+    // The full-width photograph lives in ::after, below the text and CTAs.
+    // The hero itself remains an opaque, readable forest-green backdrop.
+    assert.equal(metrics.heroBg,"none",label+" text area has a background image");
+    assert.match(metrics.heroBgColor,/rgb\(8, 46, 35\)/,
+      label+" text area lost its solid green background");
+    assert.match(metrics.photoBg,
       label.startsWith("home")?/mockup-home-scene.webp/:/mockup-tours-scene.webp/,
-      label+" mobile Christmas background missing from hero");
-    assert.ok(metrics.heroSize.includes("cover"),label+" Christmas background must cover the entire hero");
-    assert.ok(metrics.heroSize.split(",").length===2,label+" expected one color overlay and one photo");
-    assert.ok(metrics.heroPosition.includes("%"),label+" scenic background needs its mobile focal point");
-    if (label.startsWith("tours")) {
-      const photoPosition=metrics.heroPosition.split(",").at(-1).trim();
-      assert.ok(/^(100%|right)(?:\s|$)/.test(photoPosition),
-        label+" mobile tours photo is cropped at the wrong focal point: "+photoPosition);
-    }
+      label+" mobile artwork missing from ::after scenic panel");
+    assert.notEqual(metrics.photoDisplay,"none",label+" mobile scenic panel is hidden");
+    assert.ok(metrics.photoSize.includes("100% auto"),
+      label+" mobile artwork is not scaled proportionally");
+    assert.ok(metrics.photoPosition.includes("bottom"),
+      label+" mobile artwork is not bottom-aligned");
+    assert.ok(metrics.photoHeight >= Math.max(180,viewport.width*9/16)-3,
+      label+" mobile scenic image height is unexpectedly short");
     assert.ok(!metrics.heroAttachment.includes("fixed"),label+" costly fixed parallax enabled on mobile");
-    assert.ok(metrics.hero.h>metrics.actions.y+metrics.actions.h-metrics.hero.y+120,
-      label+" insufficient scenic space under CTA");
+    const sceneTop=metrics.hero.y+metrics.hero.h-metrics.photoHeight;
+    assert.ok(sceneTop>=metrics.actions.y+metrics.actions.h-3,
+      label+" scenic panel overlaps the CTA area");
     assert.ok(Math.abs(metrics.chat.y-metrics.wa.y) <= 3,
       label+" WhatsApp and chat are vertically stacked over content");
     assert.ok(Math.abs((metrics.music.y+metrics.music.h/2)-(metrics.wa.y+metrics.wa.h/2)) <= 6,
@@ -159,6 +168,7 @@ async function inspect(page,route,label) {
     hasSnow:!!document.getElementById("christmas-snow-overlay"),
     hasWhatsApp:!!document.querySelector('a[href*="wa.me/50376401181"]'),
     heroBg:getComputedStyle(document.querySelector(".hero")).backgroundImage,
+    heroPhotoBg:getComputedStyle(document.querySelector(".hero"),"::after").backgroundImage,
     hasDetachedScene:!!document.querySelector(".mobile-scenic-panel"),
     xOverflow:document.documentElement.scrollWidth-innerWidth,
     styles:[...document.styleSheets].some(s=>s.href?.includes("christmas-experience.css")),
@@ -182,9 +192,9 @@ async function inspect(page,route,label) {
     : /volcan-coatepeque-hero-bg.webp/;
   assert.equal(snapshot.hasDetachedScene,false,label+" duplicated scenic block");
   if(phone) {
-    assert.match(snapshot.heroBg,
+    assert.match(snapshot.heroPhotoBg,
       label.startsWith("home") ? /mockup-home-scene.webp/ : /mockup-tours-scene.webp/,
-      label+" mobile photo missing from full-bleed background");
+      label+" mobile photo missing from scenic ::after layer");
   } else assert.match(snapshot.heroBg, expectedHero, label+" desktop background lost");
   assert.ok(snapshot.snowflakes >= 6 && snapshot.snowflakes <= 40,label+" wrong snowfall density");
   assert.ok(snapshot.snowTypes.length>=3,label+" snow variety insufficient");
