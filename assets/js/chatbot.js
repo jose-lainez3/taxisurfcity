@@ -388,11 +388,11 @@
           if (response.status === 401 || response.status === 403) {
             aiDetail = "El servidor bloquea el acceso (HTTP " + response.status + "). Revisa los permisos de Cloudflare.";
           } else if (response.status === 404) {
-            aiDetail = "La función /api/assistant no está publicada (HTTP 404). Revisa el despliegue de Pages Functions en Cloudflare.";
+            aiDetail = "La función /api/assistant no está publicada (HTTP 404). Revisa el despliegue de Worker en Cloudflare.";
           } else if (!response.ok) {
             aiDetail = "El servidor respondió con HTTP " + response.status + ". Revisa los registros de Cloudflare.";
           } else if (!(response.headers.get("content-type") || "").includes("application/json")) {
-            aiDetail = "La dirección devuelve una página HTML en vez de la API JSON. Revisa las rutas de Pages Functions.";
+            aiDetail = "La dirección devuelve una página HTML en vez de la API JSON. Revisa las rutas de Worker.";
           } else {
             var result = await response.json();
             aiReady = result.ready === true;
@@ -478,21 +478,40 @@
     }
 
     async function askAI(message) {
-      var response = await fetch(aiEndpoint, {
-        method: "POST",
-        headers: {"Content-Type":"application/json"},
-        body: JSON.stringify({message: message, history: conversation.slice(-10)})
-      });
-      var payload = await response.json();
-      if (!response.ok) {
-        var error = new Error(payload.error || "El servicio no respondió.");
-        error.status = response.status;
+      var controller = new AbortController();
+      var timer = setTimeout(function(){controller.abort();}, 38000);
+      try {
+        var response = await fetch(aiEndpoint, {
+          method:"POST", cache:"no-store", credentials:"same-origin",
+          signal:controller.signal,
+          headers:{"Content-Type":"application/json","Accept":"application/json"},
+          body:JSON.stringify({message:message,history:conversation.slice(-10)})
+        });
+        var ray = response.headers.get("cf-ray") || "";
+        var payload;
+        try { payload = await response.json(); } catch (_) {
+          payload = {};
+        }
+        if (!response.ok || !payload.answer || typeof payload.answer !== "string") {
+          var error = new Error(payload.error || (response.ok
+            ? "La API no devolvió una respuesta válida."
+            : "Cloudflare no devolvió una respuesta de IA válida."));
+          error.status = response.status;
+          error.code = payload.code || "INVALID_RESPONSE";
+          error.ray = ray;
+          throw error;
+        }
+        return payload;
+      } catch(error) {
+        if (error.name === "AbortError") {
+          error = new Error("La solicitud agotó el tiempo de espera.");
+          error.code = "CLIENT_TIMEOUT";
+        } else if (error instanceof TypeError) {
+          error = new Error("No se recibió respuesta HTTP de Cloudflare. Comprueba la conexión y los registros del Worker.");
+          error.code = "NETWORK_ERROR";
+        }
         throw error;
-      }
-      if (!payload.answer || typeof payload.answer !== "string") {
-        throw new Error("La IA no devolvió una respuesta.");
-      }
-      return payload;
+      } finally { clearTimeout(timer); }
     }
 
 
@@ -637,14 +656,20 @@
             return;
           } catch(error) {
             hideTyping();
-            if (error.status === 429) {
-              addMsg("El servicio de IA alcanzó su límite temporal de consultas. Puedes contactar al equipo por WhatsApp.", "bot", true);
-              addWhatsappCta("Hola, necesito información sobre: " + text);
-              return;
-            }
             var statusText = error.status ? " (HTTP " + error.status + ")" : "";
-            addMsg("No pude obtener respuesta del servicio de IA" + statusText + ": " + String(error.message || "Error de conexión") + ". No voy a presentar respuestas locales como si fueran resultados de IA. Puedes reintentar con ↻ o contactar al equipo.", "bot", true);
-            addWhatsappCta("Hola, necesito ayuda con: " + text);
+            console.warn("[TaxiSurfCity AI]",{status:error.status || 0,code:error.code || "UNKNOWN",ray:error.ray || ""});
+            aiCheckedAt = 0;
+            aiReady = false;
+            updateAIStatus("La generación no está disponible en este momento.");
+            addMsg("IA temporalmente no disponible" + statusText + ". Te muestro ayuda local, no una respuesta generada por IA.", "bot", true);
+            if (isGreeting(text)) addMsg(pick(GREETING_REPLIES), "bot");
+            else if (isThanks(text)) addMsg(pick(THANKS_REPLIES), "bot");
+            else {
+              var localAnswer = findAnswer(text);
+              if (localAnswer) addMsg(localAnswer, "bot");
+              else addMsg("No tengo información local suficiente para esa consulta. Nuestro equipo puede ayudarte directamente.", "bot", true);
+            }
+            if (!isGreeting(text) && !isThanks(text)) addWhatsappCta("Hola, necesito ayuda con: " + text);
             return;
           }
         } else {
