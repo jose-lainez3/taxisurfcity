@@ -276,8 +276,9 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     width:100%;
     height:auto!important;
     min-height:0!important;
-    --mobile-scene-height:clamp(180px,56.28vw,432px);
-    padding:clamp(25px,6vw,34px) 0 calc(var(--mobile-scene-height) + 12px)!important;
+    --mobile-scene-height:clamp(180px,calc(56.25vw + 14px),446px);
+    --mobile-scene-fade:linear-gradient(to bottom,#082e23 0%,#082e23 6%,rgba(8,46,35,.94) 14%,rgba(8,46,35,.65) 24%,rgba(8,46,35,.25) 35%,rgba(8,46,35,0) 48%);
+    padding:clamp(25px,6vw,34px) 0 calc(var(--mobile-scene-height) + 6px)!important;
     background-attachment:scroll!important;
     overflow:hidden;
     isolation:isolate;
@@ -299,18 +300,21 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     opacity:1!important;
     transform:none!important;
     animation:none!important;
+    border:0!important;
+    box-shadow:none!important;
+    background-color:#082e23!important;
     background-repeat:no-repeat!important;
     background-position:center,center bottom!important;
     background-size:100% 100%,100% auto!important;
   }
   body.site-christmas.home-page #inicio.hero::after{
     background-image:
-      linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,.92) 5%,rgba(8,46,35,.48) 16%,rgba(8,46,35,0) 34%),
+      var(--mobile-scene-fade),
       url("../img/mockup-home-scene.webp")!important;
   }
   body.site-christmas.tours-page .hero-collage-wrap::after{
     background-image:
-      linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,.92) 5%,rgba(8,46,35,.48) 16%,rgba(8,46,35,0) 34%),
+      var(--mobile-scene-fade),
       url("../img/mockup-tours-scene.webp")!important;
   }
   body.site-christmas.home-page #inicio .festive-scene,
@@ -331,7 +335,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     padding:0 clamp(15px,5vw,22px)!important;
     margin:0 auto;
     text-align:center;
-    background:radial-gradient(ellipse at 50% 45%,rgba(35,91,65,.16),transparent 72%)!important;
+    background:none!important;
   }
   body.site-christmas .hero .christmas-greeting{
     max-width:100%;
@@ -774,7 +778,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   }
   body.site-christmas.home-page #inicio.hero,
   body.site-christmas.tours-page .hero-collage-wrap{
-    padding-bottom:calc(var(--mobile-scene-height) + 12px)!important;
+    padding-bottom:calc(var(--mobile-scene-height) + 6px)!important;
   }
 }
 @media(prefers-reduced-motion:reduce){
