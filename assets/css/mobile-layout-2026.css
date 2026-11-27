@@ -276,20 +276,19 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     width:100%;
     height:auto!important;
     min-height:0!important;
-    padding:clamp(25px,6vw,34px) 0 clamp(184px,47vw,245px)!important;
+    padding:clamp(25px,6vw,34px) 0 clamp(192px,56.3vw,432px)!important;
     overflow:hidden;
     isolation:isolate;
     background-color:#082e23!important;
     background-repeat:no-repeat!important;
     background-attachment:scroll!important;
-    /* The artwork must cover the WHOLE hero, not just a strip below CTA.
-       Use a composited static background (no scrolling or blur effects). */
-    background-size:100% 100%,cover!important;
-    background-position:center center,81% center!important;
+    /* Display the complete 16:9 scene below the copy without mobile zoom. */
+    background-size:100% 100%,100% auto!important;
+    background-position:center center,center bottom!important;
   }
   body.site-christmas.home-page #inicio.hero{
     background-image:
-      linear-gradient(180deg,rgba(4,43,31,.88) 0%,rgba(4,40,30,.84) 28%,rgba(4,40,30,.73) 50%,rgba(4,37,28,.36) 76%,rgba(4,37,28,.11) 92%,rgba(4,37,28,.33) 100%),
+      linear-gradient(to bottom,#082e23 0%,#082e23 calc(100% - clamp(192px,56.3vw,432px)),rgba(8,46,35,.20) calc(100% - clamp(150px,43vw,330px)),rgba(8,46,35,.04) 100%),
       url("../img/mockup-home-scene.webp")!important;
   }
   /* Tours mobile: show the volcano, festive sign and overlook, not just
@@ -297,16 +296,14 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
      and softer vertical tint keep both the scenery and labels readable. */
   body.site-christmas.tours-page .hero-collage-wrap{
     background-image:
-      linear-gradient(180deg,
-        rgba(3,33,27,.78) 0%,
-        rgba(3,33,27,.72) 27%,
-        rgba(3,33,27,.58) 50%,
-        rgba(3,33,27,.27) 73%,
-        rgba(3,33,27,.10) 91%,
-        rgba(3,33,27,.26) 100%),
+      linear-gradient(to bottom,
+        #082e23 0%,
+        #082e23 calc(100% - clamp(192px,56.3vw,432px)),
+        rgba(8,46,35,.20) calc(100% - clamp(150px,43vw,330px)),
+        rgba(8,46,35,.04) 100%),
       url("../img/mockup-tours-scene.webp")!important;
-    background-position:center center,100% center!important;
-    background-size:100% 100%,cover!important;
+    background-position:center center,center bottom!important;
+    background-size:100% 100%,100% auto!important;
   }
   body.site-christmas.tours-page .hero h1,
   body.site-christmas.tours-page .hero .lead {
@@ -342,6 +339,8 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     line-height:1.16;
     letter-spacing:-.035em;
     text-wrap:balance;
+    overflow-wrap:break-word;
+    text-shadow:0 2px 7px rgba(0,18,13,.40);
   }
   body.site-christmas.home-page #inicio .lead,
   body.site-christmas.tours-page .hero .lead{
@@ -755,12 +754,12 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   }
   body.site-christmas.home-page #inicio.hero,
   body.site-christmas.tours-page .hero-collage-wrap{
-    padding-bottom:184px!important;
-    background-size:100% 100%,cover!important;
-    background-position:center center,83% center!important;
+    padding-bottom:192px!important;
+    background-size:100% 100%,100% auto!important;
+    background-position:center center,center bottom!important;
   }
   body.site-christmas.tours-page .hero-collage-wrap {
-    background-position:center center,100% center!important;
+    background-position:center center,center bottom!important;
   }
 }
 @media(prefers-reduced-motion:reduce){
