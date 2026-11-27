@@ -1,0 +1,13 @@
+/*
+!/assets/
+!/*.html
+!/robots.txt
+!/sitemap.xml
+!/favicon.ico
+!/manifest.json
+!/manifest.webmanifest
+!/_headers
+!/_redirects
+/assets/**/.env*
+/assets/**/.git*
+/assets/**/*.map
