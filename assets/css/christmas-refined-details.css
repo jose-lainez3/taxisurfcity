@@ -97,3 +97,49 @@ body.site-christmas .footer-bottom::before{
   body.site-christmas .holiday-hero-hangers,
   body.site-christmas .holiday-navbar-sprigs{animation:none!important;}
 }
+
+/* Multicolour fairy lights: two painted strips, composited opacity only.
+   The old navbar glow is a no-JS fallback. No per-bulb DOM or flashing. */
+body.site-christmas .navbar.holiday-lights-ready::after{display:none!important;}
+body.site-christmas .navbar .holiday-light-string{
+  position:absolute;
+  z-index:1;
+  left:8px;
+  right:8px;
+  bottom:-9px;
+  height:16px;
+  pointer-events:none;
+  background:linear-gradient(90deg,transparent,#a78a53 8%,#a78a53 92%,transparent) center 4px/100% 1px no-repeat;
+}
+body.site-christmas .holiday-light-string::before,
+body.site-christmas .holiday-light-string::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-repeat:repeat-x;
+  background-size:176px 16px;
+  pointer-events:none;
+}
+body.site-christmas .holiday-light-string::before{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='16' viewBox='0 0 176 16'%3E%3Cdefs%3E%3CradialGradient id='a'%3E%3Cstop stop-color='%23ffe8a0' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%23ffd060' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='b'%3E%3Cstop stop-color='%23e86d70' stop-opacity='.65'/%3E%3Cstop offset='1' stop-color='%23e86d70' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='c'%3E%3Cstop stop-color='%238ce5b3' stop-opacity='.7'/%3E%3Cstop offset='1' stop-color='%238ce5b3' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='d'%3E%3Cstop stop-color='%239bcaff' stop-opacity='.7'/%3E%3Cstop offset='1' stop-color='%239bcaff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg%3E%3Ccircle cx='22' cy='8' r='8' fill='url(%23a)'/%3E%3Ccircle cx='66' cy='8' r='8' fill='url(%23b)'/%3E%3Ccircle cx='110' cy='8' r='8' fill='url(%23c)'/%3E%3Ccircle cx='154' cy='8' r='8' fill='url(%23d)'/%3E%3C/g%3E%3Cg stroke='%233a5344' stroke-width='2'%3E%3Cpath d='M22 2v3M66 2v3M110 2v3M154 2v3'/%3E%3C/g%3E%3Cg%3E%3Cellipse cx='22' cy='9' rx='3' ry='4' fill='%23ffe7a0'/%3E%3Cellipse cx='66' cy='9' rx='3' ry='4' fill='%23ff9896'/%3E%3Cellipse cx='110' cy='9' rx='3' ry='4' fill='%23a6f0c7'/%3E%3Cellipse cx='154' cy='9' rx='3' ry='4' fill='%23b8d8ff'/%3E%3C/g%3E%3Cpath d='M21 7v2M65 7v2M109 7v2M153 7v2' stroke='%23fff9e8' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+body.site-christmas .holiday-light-string::after{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='16' viewBox='0 0 176 16'%3E%3Cdefs%3E%3CradialGradient id='a'%3E%3Cstop stop-color='%23ffe8a0' stop-opacity='.8'/%3E%3Cstop offset='1' stop-color='%23ffd060' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='b'%3E%3Cstop stop-color='%23e86d70' stop-opacity='.7'/%3E%3Cstop offset='1' stop-color='%23e86d70' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='c'%3E%3Cstop stop-color='%238ce5b3' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%238ce5b3' stop-opacity='0'/%3E%3C/radialGradient%3E%3CradialGradient id='d'%3E%3Cstop stop-color='%239bcaff' stop-opacity='.75'/%3E%3Cstop offset='1' stop-color='%239bcaff' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='22' cy='8' r='8' fill='url(%23c)'/%3E%3Ccircle cx='66' cy='8' r='8' fill='url(%23d)'/%3E%3Ccircle cx='110' cy='8' r='8' fill='url(%23a)'/%3E%3Ccircle cx='154' cy='8' r='8' fill='url(%23b)'/%3E%3Cpath d='M22 2v3M66 2v3M110 2v3M154 2v3' stroke='%233a5344' stroke-width='2'/%3E%3Cellipse cx='22' cy='9' rx='3' ry='4' fill='%23a6f0c7'/%3E%3Cellipse cx='66' cy='9' rx='3' ry='4' fill='%23b8d8ff'/%3E%3Cellipse cx='110' cy='9' rx='3' ry='4' fill='%23ffe7a0'/%3E%3Cellipse cx='154' cy='9' rx='3' ry='4' fill='%23ff9896'/%3E%3Cpath d='M21 7v2M65 7v2M109 7v2M153 7v2' stroke='%23fff9e8' stroke-linecap='round'/%3E%3C/svg%3E");
+  opacity:0;
+  animation:holiday-light-crossfade 8s ease-in-out infinite alternate;
+}
+@keyframes holiday-light-crossfade{
+  0%,15%{opacity:0}
+  85%,100%{opacity:1}
+}
+@media(max-width:767px){
+  body.site-christmas .navbar .holiday-light-string{left:5px;right:5px;bottom:-8px;height:14px;}
+  body.site-christmas .holiday-light-string::before,
+  body.site-christmas .holiday-light-string::after{background-size:144px 14px;}
+}
+html.fx-paused body.site-christmas .holiday-light-string::after,
+body.site-christmas.christmas-snow-paused .holiday-light-string::after{animation-play-state:paused!important;}
+body.site-christmas.christmas-low-power .holiday-light-string::after{animation:none;opacity:0;}
+@media(prefers-reduced-motion:reduce){
+  body.site-christmas .holiday-light-string::after{animation:none!important;opacity:0;}
+}
