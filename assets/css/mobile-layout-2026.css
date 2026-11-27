@@ -278,6 +278,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     min-height:0!important;
     --mobile-scene-height:clamp(180px,56.28vw,432px);
     padding:clamp(25px,6vw,34px) 0 var(--mobile-scene-height)!important;
+    background-attachment:scroll!important;
     overflow:hidden;
     isolation:isolate;
     /* One opaque text zone, regardless of legacy background layers. */
@@ -290,27 +291,30 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     content:"";
     display:block!important;
     position:absolute;
-    inset:auto 0 0;
-    width:100%;
-    height:var(--mobile-scene-height);
+    inset:auto 0 0!important;
+    width:100%!important;
+    height:var(--mobile-scene-height)!important;
     z-index:0;
     pointer-events:none;
-    opacity:1;
-    transform:none;
-    background-repeat:no-repeat;
-    background-position:center,center bottom;
-    background-size:100% 100%,100% auto;
+    opacity:1!important;
+    transform:none!important;
+    animation:none!important;
+    background-repeat:no-repeat!important;
+    background-position:center,center bottom!important;
+    background-size:100% 100%,100% auto!important;
   }
   body.site-christmas.home-page #inicio.hero::after{
     background-image:
       linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,0) 26%),
-      url("../img/mockup-home-scene.webp");
+      url("../img/mockup-home-scene.webp")!important;
   }
   body.site-christmas.tours-page .hero-collage-wrap::after{
     background-image:
       linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,0) 26%),
-      url("../img/mockup-tours-scene.webp");
+      url("../img/mockup-tours-scene.webp")!important;
   }
+  body.site-christmas.home-page #inicio .festive-scene,
+  body.site-christmas.home-page #inicio .hero-overlay{display:none!important;}
   body.site-christmas.tours-page .hero h1,
   body.site-christmas.tours-page .hero .lead {
     text-shadow:0 2px 9px rgba(0,24,18,.42);
