@@ -12,7 +12,8 @@ import android.view.WindowInsets;
 import android.webkit.*;
 import android.widget.*;
 import org.json.*;
-import java.net.*;
+import java.net.URL;
+import java.net.HttpURLConnection;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
@@ -79,7 +80,7 @@ public class MainActivity extends Activity {
         s.setJavaScriptCanOpenWindowsAutomatically(false);
         s.setSupportMultipleWindows(false);
         if (android.os.Build.VERSION.SDK_INT >= 26) s.setSafeBrowsingEnabled(true);
-        CookieManager.getInstance().setAcceptThirdPartyCookies(web,false);
+        android.webkit.CookieManager.getInstance().setAcceptThirdPartyCookies(web,false);
         web.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request) {
                 Uri u=request.getUrl();
