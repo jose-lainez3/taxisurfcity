@@ -9,6 +9,7 @@ import {
  * No almacena conversaciones ni permite acciones externas.
  * Gemini consulta Google Search cuando el modelo lo considera necesario.
  */
+const WORKERS_MODEL = "@cf/google/gemma-4-26b-a4b-it";
 const MAX_REQUEST_BYTES = 16000;
 const MAX_MESSAGE_LENGTH = 1400;
 const MAX_HISTORY = 10;
@@ -164,11 +165,11 @@ function throttled(request) {
 }
 async function GET(request, env) {
   if (!allowedOrigin(request)) return responseJSON({error:"Origen no autorizado."},403);
-  const gemini = Boolean(env.GEMINI_API_KEY);
+  const gemini = !env.AI && Boolean(env.GEMINI_API_KEY);
   return responseJSON({
     ready: gemini || Boolean(env.AI),
     name:"Asistente IA Taxi SurfCity",
-    model: gemini ? (env.GEMINI_MODEL || "gemini-3.5-flash-lite") : "@cf/meta/llama-3.1-8b-instruct",
+    model: gemini ? (env.GEMINI_MODEL || "gemini-3.5-flash-lite") : WORKERS_MODEL,
     provider: gemini ? "gemini" : "cloudflare",
     webSearch:Boolean(env.TAVILY_API_KEY) || (gemini && env.GEMINI_ENABLE_SEARCH === "true"),
     publicResearch:true
@@ -200,8 +201,8 @@ async function POST(request, env) {
   // Gemini 2.5 Flash-Lite fue retirado. La búsqueda integrada en modelos
   // actuales requiere acceso habilitado por Google; no crear cargos por defecto.
   const model = env.GEMINI_MODEL || "gemini-3.5-flash-lite";
-  const enableWebSearch = Boolean(env.GEMINI_API_KEY) && env.GEMINI_ENABLE_SEARCH === "true";
-  if (env.GEMINI_API_KEY && !/^[a-z0-9][a-z0-9.-]{2,79}$/.test(model)) {
+  const enableWebSearch = !env.AI && Boolean(env.GEMINI_API_KEY) && env.GEMINI_ENABLE_SEARCH === "true";
+  if (!env.AI && env.GEMINI_API_KEY && !/^[a-z0-9][a-z0-9.-]{2,79}$/.test(model)) {
     return responseJSON({error:"El modelo está mal configurado."},503,origin);
   }
   // Las consultas sobre la propia web se resuelven con datos locales oficiales,
@@ -231,15 +232,37 @@ async function POST(request, env) {
   contents.push({role:"user",parts:[{text:groundedMessage}]});
   try {
     // Native Workers AI fallback: no API key in the browser, no Vercel.
-    if (!env.GEMINI_API_KEY) {
-      const workerModel = "@cf/meta/llama-3.1-8b-instruct";
+    if (env.AI) {
+      const workerModel = WORKERS_MODEL;
       const messages = [{role:"system",content:SYSTEM_PROMPT}, ...contents.map(t=>({
         role:t.role === "model" ? "assistant" : "user",
         content:t.parts.map(p=>p.text).join("\n")
       }))];
-      const result = await env.AI.run(workerModel,{messages,max_tokens:900,temperature:0.35});
-      const answer = typeof result?.response === "string" ? result.response.trim().slice(0,MAX_REPLY_LENGTH) : "";
-      if (!answer) throw new Error("NO_ANSWER");
+      let result;
+      try {
+        result = await env.AI.run(workerModel,{messages,max_completion_tokens:900,temperature:0.35,stream:false});
+      } catch (error) {
+        const detail = String(error?.message || "");
+        const code = String(error?.code || error?.status || detail.match(/\b(?:5028|3040|5016|5035|429|410|403)\b/)?.[0] || "UNKNOWN").slice(0,40);
+        console.error("Workers AI inference failed",{model:workerModel,code,errorName:String(error?.name || "Error")});
+        const quota = /429|quota|rate limit|neurons/i.test(code+" "+detail);
+        const retired = /5028|410|deprecated|retired/i.test(code+" "+detail);
+        const busy = /3040|capacity|busy|overload/i.test(code+" "+detail);
+        return responseJSON({
+          error: quota ? "Se alcanzó el límite de uso de la IA. Intenta más tarde." :
+            retired ? "El modelo de IA configurado ya no está disponible." :
+            busy ? "La IA está ocupada temporalmente. Intenta nuevamente." :
+            "Workers AI no pudo generar una respuesta. Revisa los registros de Cloudflare.",
+          code: quota ? "QUOTA_REACHED" : retired ? "MODEL_UNAVAILABLE" : busy ? "PROVIDER_BUSY" : "WORKERS_AI_ERROR",
+          provider:"cloudflare",model:workerModel
+        },quota?429:busy?503:502,origin);
+      }
+      const content = result?.choices?.[0]?.message?.content;
+      const rawAnswer = typeof result?.response === "string" ? result.response :
+        typeof content === "string" ? content :
+        Array.isArray(content) ? content.filter(p=>typeof p?.text==="string").map(p=>p.text).join("\n") : "";
+      const answer = rawAnswer.trim().slice(0,MAX_REPLY_LENGTH);
+      if (!answer) return responseJSON({error:"El modelo no devolvió texto utilizable.",code:"NO_ANSWER",model:workerModel},502,origin);
       const related = /\b(tours?|excursiones?|recorridos?|viajes?|visitas?|catalogo|website|pagina web)\b/i.test(plainSearchText(message));
       let safeAnswer = related && contradictsOfficialCatalog(answer) ? knownCatalogAnswer(message) : answer;
       if (related && !safeAnswer.includes(OFFICIAL_TOURS_URL)) safeAnswer += "\n\nCatálogo oficial: "+OFFICIAL_TOURS_URL;
