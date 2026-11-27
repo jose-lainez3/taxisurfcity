@@ -148,9 +148,49 @@ function deduplicate(sources) {
   }
   return unique;
 }
+// Only known public destinations, never the visitor's IP or private address.
+async function weatherResearch(question, env, signal) {
+  if (!env.WEATHER_API_KEY || !/\b(clima|tiempo (?:hoy|manana|en)|temperatura|pronostico|lluvia|llover|weather|forecast|rain)\b/.test(normalize(question))) return [];
+  const q = normalize(question);
+  const places = [
+    [/el tunco|surf city|el zonte|la libertad/, "13.493,-89.382"],
+    [/coatepeque/, "13.865,-89.550"],
+    [/suchitoto/, "Suchitoto, El Salvador"],
+    [/santa ana/, "Santa Ana, El Salvador"],
+    [/ataco|ruta de las flores/, "Concepcion de Ataco, El Salvador"],
+    [/san salvador|el salvador|capital/, "San Salvador, El Salvador"]
+  ];
+  const place = places.find(([pattern])=>pattern.test(q));
+  if (!place) return []; // No silently assume the visitor's location.
+  const endpoint = new URL("https://api.weatherapi.com/v1/forecast.json");
+  endpoint.searchParams.set("key",String(env.WEATHER_API_KEY));
+  endpoint.searchParams.set("q",place[1]);
+  endpoint.searchParams.set("days","3");
+  endpoint.searchParams.set("aqi","no");
+  endpoint.searchParams.set("alerts","no");
+  endpoint.searchParams.set("lang","es");
+  const data = await fetchPublicJson(endpoint.href,{headers:{Accept:"application/json"}},signal);
+  const current = data.current;
+  if (!current || !data.location) return [];
+  const name = tidy(data.location.name,70);
+  const days = (data.forecast?.forecastday || []).slice(0,3).map(d=>
+    d.date+": "+d.day?.mintemp_c+" a "+d.day?.maxtemp_c+" °C, "+tidy(d.day?.condition?.text,65)+", lluvia "+d.day?.daily_chance_of_rain+"%"
+  ).join("; ");
+  return [{
+    title:"WeatherAPI.com — "+name,
+    url:"https://www.weatherapi.com/",
+    snippet:tidy("Ubicación: "+name+", "+data.location.country+". Actualizado: "+current.last_updated+" (hora local). "+current.temp_c+" °C, "+current.condition?.text+". Pronóstico: "+days,700),
+    provider:"weatherapi"
+  }];
+}
+
 export async function researchPublicWeb(question, env, signal) {
   if (!needsPublicResearch(question)) return {sources:[], mode:"none", checkedAt:null};
   const checkedAt = new Date().toISOString();
+  try {
+    const weather = await weatherResearch(question,env,signal);
+    if (weather.length) return {sources:weather,mode:"weather",checkedAt};
+  } catch { /* Other research sources may still be available. */ }
   const key = String(env.TAVILY_API_KEY || "").trim();
   if (key) {
     try {
@@ -181,7 +221,9 @@ export async function researchPublicWeb(question, env, signal) {
 }
 export function researchContext(research) {
   if (!research.sources.length) return "";
-  const preface = research.mode === "search"
+  const preface = research.mode === "weather"
+    ? "Datos meteorológicos de WeatherAPI.com: distingue observación actual de pronóstico; indica ubicación y fecha. No garantices condiciones futuras."
+    : research.mode === "search"
     ? "Resultados de búsqueda pública: pueden haber cambiado, verifica fechas y no prometas disponibilidad."
     : "Referencias enciclopédicas de Wikimedia: NO son noticias ni verificación de precios, horarios ni disponibilidad en tiempo real.";
   return [
