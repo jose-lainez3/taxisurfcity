@@ -278,7 +278,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     min-height:0!important;
     --mobile-scene-width:min(136%,940px);
     --mobile-scene-height:clamp(180px,76.5vw,529px);
-    --mobile-scene-fade:linear-gradient(to bottom,#082e23 0%,rgba(8,46,35,.84) 8%,rgba(8,46,35,.38) 19%,rgba(8,46,35,0) 32%);
+    --mobile-scene-fade:linear-gradient(to bottom,#082e23 0%,#082e23 5%,rgba(8,46,35,.88) 12%,rgba(8,46,35,.46) 23%,rgba(8,46,35,0) 37%);
     padding:clamp(20px,5.5vw,30px) 0 calc(var(--mobile-scene-height) + 8px)!important;
     background-attachment:scroll!important;
     overflow:hidden;
@@ -305,6 +305,8 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
     border:0!important;
     box-shadow:none!important;
     background-color:#082e23!important;
+    background-blend-mode:normal!important;
+    mix-blend-mode:normal;
     background-repeat:no-repeat!important;
     background-position:center,center bottom!important;
     background-size:100% 100%,100% auto!important;
@@ -369,10 +371,11 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   body.site-christmas.tours-page .hero .lead{
     width:100%;
     max-width:405px;
-    margin:0 auto 15px!important;
+    margin:0 auto 14px!important;
     color:#f1faf2;
-    font-size:clamp(.84rem,3.35vw,.95rem)!important;
-    line-height:1.5!important;
+    font-size:clamp(.82rem,3.35vw,.95rem)!important;
+    line-height:1.48!important;
+    text-wrap:pretty;
     text-shadow:0 1px 3px rgba(0,18,13,.28);
   }
   body.site-christmas.home-page .home-hero-actions,
@@ -669,7 +672,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   /* Four compact quick actions share the same screen edge. */
   body.site-christmas .christmas-controls{
     position:fixed;
-    bottom:max(16px,calc(env(safe-area-inset-bottom) + 2px))!important;
+    bottom:calc(10px + env(safe-area-inset-bottom))!important;
     left:12px!important;
     display:flex;
     width:auto;
@@ -697,7 +700,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   body.site-christmas .wa-float{
     position:fixed;
     right:12px!important;
-    bottom:max(14px,env(safe-area-inset-bottom))!important;
+    bottom:calc(8px + env(safe-area-inset-bottom))!important;
     width:44px!important;
     height:44px!important;
     z-index:1197;
@@ -705,7 +708,7 @@ body.site-christmas .mobile-scenic-panel{display:none!important;}
   body.site-christmas .cb-launcher{
     position:fixed;
     right:68px!important;
-    bottom:max(14px,env(safe-area-inset-bottom))!important;
+    bottom:calc(8px + env(safe-area-inset-bottom))!important;
     width:44px!important;
     height:44px!important;
     z-index:1198;
