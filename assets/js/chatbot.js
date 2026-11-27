@@ -347,7 +347,7 @@
       '<input type="text" class="cb-input" id="cbInput" placeholder="Pregúntame lo que quieras..." autocomplete="off">' +
       '<button class="cb-send" id="cbSend" aria-label="Enviar"><i class="bi bi-send-fill"></i></button>' +
     '</div>' +
-    '<div class="cb-disclosure">Asistente virtual. No compartas información sensible. Las noticias y el clima en tiempo real requieren búsqueda web habilitada.</div>';
+    '<div class="cb-disclosure">Asistente virtual. No compartas datos sensibles. Las búsquedas pueden consultar proveedores externos.</div>';
 
   document.addEventListener("DOMContentLoaded", function () {
     document.body.appendChild(win);
@@ -676,7 +676,7 @@
                 "El proveedor de IA está temporalmente indisponible. Mostré referencias públicas para que las puedas consultar directamente.",
                 "bot", true);
             }
-            if (!result.searchedWeb && /\b(hoy|mañana|esta semana|últimas|recientes?|noticias?|clima|pronóstico|actualmente|today|tomorrow|latest|news|weather|forecast)\b/i.test(text)) {
+            if (!result.searchedWeb && result.knowledgeSource !== "server-clock" && result.researchMode !== "weather" && /\b(hoy|mañana|esta semana|últimas|recientes?|noticias?|clima|pronóstico|actualmente|today|tomorrow|latest|news|weather|forecast)\b/i.test(text)) {
               addMsg(result.researchMode === "reference"
                 ? "Estas referencias de turismo no verifican noticias, clima o precios en tiempo real."
                 : "No pude verificar fuentes actuales de internet para esta consulta. Confirma los datos antes de organizar el viaje.", "bot", true);
@@ -744,7 +744,7 @@
     launcher.addEventListener("click", function () {
       win.classList.toggle("cb-open");
       if (win.classList.contains("cb-open") && body.children.length === 0) {
-        addMsg("¡Hola! Soy el asistente de Taxi SurfCity Lainez. Puedo ayudarte con taxis, tours y preguntas generales. Las consultas de internet se habilitan cuando la búsqueda web esté disponible.", "bot", true);
+        addMsg("¡Hola! Soy el asistente de Taxi SurfCity Lainez. Pregúntame sobre taxis, tours, fecha y hora, lugares de interés o cualquier tema general.", "bot", true);
       }
       if (win.classList.contains("cb-open")) {
         if (!suggestionsInitialized) {
