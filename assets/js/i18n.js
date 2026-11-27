@@ -11,6 +11,8 @@
     "airport.routes": "Choose your pickup location",
     "airport.intro": "Prices in US dollars per vehicle, for the stated passenger count. Confirm date and time when booking.",
     "airport.from": "From",
+    "airport.sal": "International Airport (SAL)",
+    "airport.noRates": "Request a custom quote on WhatsApp.",
     "airport.to": "To",
     "airport.vehicle": "per vehicle",
     "airport.passengers": "passengers",

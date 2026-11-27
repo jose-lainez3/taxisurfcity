@@ -320,6 +320,29 @@ try {
     await page.close();
   }
 
+  const airportRoute=ORIGIN.includes("127.0.0.1")?"/aeropuerto.html":"/aeropuerto";
+  for(const width of [320,390,1440]){
+    const page=await browser.newPage({viewport:{width,height:850}});
+    await page.addInitScript(()=>localStorage.setItem('lang','es'));
+    const response=await page.goto(ORIGIN+airportRoute,{waitUntil:"domcontentloaded"});
+    assert.equal(response?.status(),200,"Airport page HTTP");
+    const data=await page.evaluate(()=>{
+      const walker=document.createTreeWalker(document,NodeFilter.SHOW_COMMENT);
+      let n,rates=null;while((n=walker.nextNode())){const m=n.data.match(/^\s*CMS:DATA:RATES\s+([\s\S]*?)\s+CMS:DATA:RATES:END\s*$/);if(m){rates=JSON.parse(m[1]);break}}
+      return {rates,rendered:[...document.querySelectorAll(".airport-rate")].map(c=>({id:c.id,price:c.querySelector(".airport-fare>strong").textContent,wa:c.querySelector("a").href})),overflow:Math.max(document.body.scrollWidth,document.documentElement.scrollWidth)-innerWidth}
+    });
+    assert.ok(Array.isArray(data.rates),"Missing airport CMS rates");
+    const active=data.rates.filter(r=>r.active);
+    assert.deepEqual(data.rendered.map(r=>r.id),active.map(r=>r.id),"Airport catalog mismatch");
+    assert.deepEqual(data.rendered.map(r=>r.price),active.map(r=>"$"+r.price.toFixed(2)),"Airport displayed fares mismatch");
+    assert.ok(data.rendered.every(r=>r.wa.startsWith("https://wa.me/50376401181?text=")),"Airport reservation link invalid");
+    assert.ok(data.overflow<=2,"Airport horizontal overflow");
+    await page.locator("#langToggle").click();
+    assert.equal(await page.locator("html").getAttribute("lang"),"en");
+    assert.match(await page.locator("h1").textContent(),/From the coast/);
+    await page.close();
+  }
+
   const reduced = await browser.newPage({viewport:{width:1366,height:768},reducedMotion:"reduce"});
   await reduced.goto(ORIGIN+"/",{waitUntil:"domcontentloaded"});
   await reduced.waitForSelector("#christmas-music-toggle");
