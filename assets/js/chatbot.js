@@ -312,6 +312,17 @@
     + ".cb-send:disabled{opacity:.55;cursor:wait;}"
     + "@media(prefers-reduced-motion:reduce){.cb-launcher,.cb-typing span{animation:none!important;}}";
 
+  css += ".cb-window .cb-body{min-height:0;}"
+    + ".cb-window .cb-suggestion-toggle{display:flex;align-items:center;justify-content:space-between;gap:8px;width:100%;min-height:32px;flex-shrink:0;padding:6px 14px;border:0;border-top:1px solid rgba(242,208,149,.2);background:#103b2b;color:#ecd8aa;text-align:left;font-family:inherit;font-size:11.5px;line-height:1.4;font-weight:600;cursor:pointer;}"
+    + ".cb-window .cb-suggestion-toggle:hover{color:#fff2d7;background:#194c38;}"
+    + ".cb-window .cb-suggestion-toggle:focus-visible{outline:2px solid #f2d095;outline-offset:-3px;}"
+    + ".cb-window .cb-suggestion-toggle .bi{font-size:12px;}"
+    + "body.site-christmas .cb-window .cb-chips[hidden],.cb-window .cb-chips[hidden]{display:none!important;}"
+    + "body.site-christmas .cb-window .cb-chips{flex:0 1 auto;min-height:0;max-height:120px;overflow-y:auto;overscroll-behavior:contain;padding:6px 12px 9px!important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;}"
+    + "body.site-christmas .cb-window .cb-chip{font-size:11px;line-height:1.35;white-space:normal;text-align:center;min-width:0;padding:7px 9px!important;}"
+    + ".cb-window .cb-inputrow,.cb-window .cb-disclosure{flex-shrink:0;}"
+    + "@media(max-width:767px){body.site-christmas .cb-window .cb-chips{max-height:92px;} .cb-window .cb-suggestion-toggle{min-height:36px;}}";
+
   var styleTag = document.createElement("style");
   styleTag.textContent = css;
   document.head.appendChild(styleTag);
@@ -330,7 +341,8 @@
     '</div>' +
     '<div class="cb-mode-detail" id="cbModeDetail" role="status" aria-live="polite" hidden></div>' +
     '<div class="cb-body" id="cbBody"></div>' +
-    '<div class="cb-chips" id="cbChips"></div>' +
+    '<button type="button" class="cb-suggestion-toggle" id="cbSuggestionToggle" aria-expanded="false" aria-controls="cbChips"><span>Preguntas sugeridas</span><i class="bi bi-chevron-up" aria-hidden="true"></i></button>' +
+    '<div class="cb-chips" id="cbChips" hidden></div>' +
     '<div class="cb-inputrow">' +
       '<input type="text" class="cb-input" id="cbInput" placeholder="Pregúntame lo que quieras..." autocomplete="off">' +
       '<button class="cb-send" id="cbSend" aria-label="Enviar"><i class="bi bi-send-fill"></i></button>' +
@@ -343,6 +355,22 @@
 
     var body = document.getElementById("cbBody");
     var chips = document.getElementById("cbChips");
+    var suggestionToggle = document.getElementById("cbSuggestionToggle");
+    var suggestionsInitialized = false;
+    function setSuggestionsOpen(open) {
+      chips.hidden = !open;
+      suggestionToggle.setAttribute("aria-expanded", String(open));
+      var english = document.documentElement.lang === "en";
+      suggestionToggle.querySelector("span").textContent = english
+        ? (open ? "Hide suggestions" : "Suggested questions")
+        : (open ? "Ocultar sugerencias" : "Preguntas sugeridas");
+      suggestionToggle.querySelector("i").className = "bi " + (open ? "bi-chevron-down" : "bi-chevron-up");
+    }
+    suggestionToggle.addEventListener("click", function () {
+      suggestionsInitialized = true;
+      setSuggestionsOpen(chips.hidden);
+    });
+    document.addEventListener("languagechange", function () {setSuggestionsOpen(!chips.hidden);});
     var input = document.getElementById("cbInput");
     var sendBtn = document.getElementById("cbSend");
     var modeEl = document.getElementById("cbMode");
@@ -628,6 +656,8 @@
       if (pending || !text || !text.trim()) return;
       text = text.trim().slice(0, 1400);
       pending = true;
+      suggestionsInitialized = true;
+      setSuggestionsOpen(false);
       sendBtn.disabled = true;
       addMsg(text, "user");
       input.value = "";
@@ -700,6 +730,12 @@
       }
     }
 
+    input.addEventListener("input", function () {
+      if (input.value.trim() && !chips.hidden) {
+        suggestionsInitialized = true;
+        setSuggestionsOpen(false);
+      }
+    });
     sendBtn.addEventListener("click", function () { handleUserMessage(input.value); });
     input.addEventListener("keydown", function (e) {
       if (e.key === "Enter") handleUserMessage(input.value);
@@ -711,6 +747,10 @@
         addMsg("¡Hola! Soy el asistente de Taxi SurfCity Lainez. Puedo ayudarte con taxis, tours y preguntas generales. Las consultas de internet se habilitan cuando la búsqueda web esté disponible.", "bot", true);
       }
       if (win.classList.contains("cb-open")) {
+        if (!suggestionsInitialized) {
+          suggestionsInitialized = true;
+          setSuggestionsOpen(true);
+        }
         checkAI(false);
         input.focus();
       }
