@@ -213,7 +213,8 @@ async function handleGetState(request,env,role){
   const site=await readSite(env);return json({ok:true,role,tours:site.tours.value,promos:normalizePromos(site.promos.value),rates:site.rates.value,content:site.content,contentFields:CONTENT_FIELDS,revision:site.revision,hashes:site.hashes,missing:{tours:false,promo:false,content:[]}});
 }
 async function publicStatus(){
-  const r=await fetch('https://taxistuncoelsalvador.com/api/site-status?check='+crypto.randomUUID(),{headers:{Accept:'application/json','Cache-Control':'no-cache'},redirect:'error'});
+  const r=await fetch('https://taxistuncoelsalvador.com/api/site-status?check='+crypto.randomUUID(),{headers:{Accept:'application/json','Cache-Control':'no-cache'},redirect:'manual'});
+  if(r.status>=300&&r.status<400)throw Error('La verificación pública recibió una redirección (HTTP '+r.status+'). Revisa el dominio y la ruta /api/site-status en Cloudflare.');
   if(!r.ok)throw Error('La verificación pública todavía no está disponible (HTTP '+r.status+').');
   const data=await r.json();if(!data.ok||!data.hashes||!data.maintenance)throw Error('El sitio aún no tiene la API de verificación actualizada.');return data;
 }
