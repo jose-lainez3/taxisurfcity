@@ -3,6 +3,24 @@
 
   /* ---------- Diccionario en inglés ---------- */
   const EN = {
+    "airport.eyebrow": "Private transfers · SAL Airport",
+    "airport.title": "From the coast to your next destination.",
+    "airport.lead": "Travel from Surf City to El Salvador International Airport with clear rates and direct booking.",
+    "airport.view": "View rates",
+    "airport.rates": "One-way fares",
+    "airport.routes": "Choose your pickup location",
+    "airport.intro": "Prices in US dollars per vehicle, for the stated passenger count. Confirm date and time when booking.",
+    "airport.from": "From",
+    "airport.to": "To",
+    "airport.vehicle": "per vehicle",
+    "airport.passengers": "passengers",
+    "airport.book": "Book on WhatsApp",
+    "airport.other": "Another route or more passengers?",
+    "airport.quote": "Ask for availability and a custom quote for other destinations, groups or trips from the airport.",
+    "airport.contact": "Request a quote",
+    "airport.home": "Back to home",
+    "airport.home.title": "Airport transfer rates",
+    "airport.home.lead": "See fares from El Sunzal and El Tunco to the international airport.",
     "premium.home.greeting": "Christmas in Surf City · Travel, Explore and Share",
     "premium.tours.greeting": "Christmas Tours in El Salvador",
     "premium.dest.subtitle": "Choose a tour or combine destinations to create your perfect experience in El Salvador.",
@@ -277,6 +295,7 @@
         description: 'Private 24/7 taxi in El Salvador: transfers from SAL Airport to San Salvador, Surf City, El Tunco and El Zonte. Book via WhatsApp.'
       }
     },
+    airport: {es:{title:'Traslados al aeropuerto SAL | Taxi Surf City',description:'Reserva transporte privado desde El Tunco y El Sunzal hacia el aeropuerto de El Salvador.'},en:{title:'SAL Airport Transfers | Taxi Surf City',description:'Book private transfers from El Tunco and El Sunzal to El Salvador International Airport.'}},
     tours: {
       es: {
         title: 'Tours privados en El Salvador | Ruta de las Flores y volcanes',
@@ -293,7 +312,7 @@
   const btn = document.getElementById('langToggle');
   const label = document.getElementById('langLabel');
   if (!btn) return;
-  const page = document.documentElement.dataset.page === 'tours' ? 'tours' : 'index';
+  const page = Object.hasOwn(META,document.documentElement.dataset.page) ? document.documentElement.dataset.page : 'index';
 
   function setMeta(selector, value) {
     const el = document.querySelector(selector);
