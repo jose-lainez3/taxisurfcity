@@ -56,7 +56,7 @@ public class MainActivity extends Activity {
         bar.addView(title,new LinearLayout.LayoutParams(0,dp(48),1));
         Button refresh = new Button(this); refresh.setText("Recargar"); refresh.setAllCaps(false);
         refresh.setContentDescription("Recargar panel");
-        refresh.setOnClickListener(v -> { status.setVisibility(View.GONE); web.loadUrl(HOME); });
+        refresh.setOnClickListener(v -> web.evaluateJavascript("if(window.taxicmsReload){window.taxicmsReload()}else{location.reload()}",null));
         bar.addView(refresh);
         Button update = new Button(this); update.setText("Actualizar"); update.setAllCaps(false);
         update.setContentDescription("Buscar actualización de TaxiCMS");
@@ -82,6 +82,23 @@ public class MainActivity extends Activity {
         if (android.os.Build.VERSION.SDK_INT >= 26) s.setSafeBrowsingEnabled(true);
         android.webkit.CookieManager.getInstance().setAcceptThirdPartyCookies(web,false);
         web.setWebViewClient(new WebViewClient() {
+            @Override public WebResourceResponse shouldInterceptRequest(WebView view,WebResourceRequest request) {
+                Uri u=request.getUrl();
+                if (request.isForMainFrame() && "GET".equals(request.getMethod()) && "https".equals(u.getScheme())
+                        && HOST.equalsIgnoreCase(u.getHost()) && (u.getPort()==-1 || u.getPort()==443)
+                        && ("/".equals(u.getPath()) || "".equals(u.getPath()))) {
+                    try {
+                        java.util.Map<String,String> headers=new java.util.HashMap<>();
+                        headers.put("Cache-Control","no-store");
+                        headers.put("Content-Security-Policy","default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src https://taxistuncoelsalvador.com blob:; connect-src 'self'; form-action 'none'; base-uri 'none'; frame-src 'none'; object-src 'none'");
+                        return new WebResourceResponse("text/html","UTF-8",200,"OK",headers,getAssets().open("panel.html"));
+                    } catch(IOException ex) {
+                        return new WebResourceResponse("text/plain","UTF-8",500,"Internal Server Error",
+                            java.util.Collections.emptyMap(),new ByteArrayInputStream("No se pudo abrir el panel de TaxiCMS.".getBytes(StandardCharsets.UTF_8)));
+                    }
+                }
+                return super.shouldInterceptRequest(view,request);
+            }
             @Override public boolean shouldOverrideUrlLoading(WebView view,WebResourceRequest request) {
                 Uri u=request.getUrl();
                 if ("https".equals(u.getScheme()) && HOST.equalsIgnoreCase(u.getHost())
