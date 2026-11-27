@@ -237,6 +237,8 @@ try {
   let elfRequests = 0;
   home.on("request",req=>{if(req.url().includes("elfsightcdn.com"))elfRequests++;});
   await inspect(home,"/","home-desktop");
+  assert.equal(await home.locator('#tours-destacados a[href="/tours#centro-historico-san-salvador"]').count(),1,"Independent city tour link missing");
+  assert.equal(await home.locator('#tours-destacados a[href="/tours#joya-de-ceren"]').count(),1,"Independent archaeological tour link missing");
   assert.equal(elfRequests,0,"Reviews provider should not load before scrolling");
 
   await home.locator("#christmas-snow-toggle").click();

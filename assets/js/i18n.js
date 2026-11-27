@@ -3,6 +3,17 @@
 
   /* ---------- Diccionario en inglés ---------- */
   const EN = {
+    "t.city.li3": "Confirm stops, duration and availability when booking",
+    "t.city.li2": "Visit the National Library (BINAES) and emblematic squares",
+    "t.city.li1": "Explore San Salvador's Historic Center",
+    "t.city.capacity": "On request",
+    "t.city.duration": "Flexible schedule",
+    "t.city.price": "Custom quote",
+    "t.city.summary": "Explore San Salvador's Historic Center, its squares, National Library (BINAES) and iconic buildings. A separate urban tour from the Mayan ruins.",
+    "t.city.title": "San Salvador Historic Center City Tour",
+    "t.quick.city": "Historic Center",
+    "destacado.ruinas.desc": "Explore El Salvador's archaeological heritage at Joya de Cerén. Ask about visiting other Mayan ruins when booking.",
+    "destacado.ruinas.title": "Mayan Ruins Tour",
     "airport.eyebrow": "Private transfers · SAL Airport",
     "airport.title": "From the coast to your next destination.",
     "airport.lead": "Travel from Surf City to El Salvador International Airport with clear rates and direct booking.",
@@ -100,8 +111,8 @@
     "destacado.flores.desc": "Private transport to Juayúa, Ataco, Apaneca and Nahuizalco. Enjoy the best highland coffee, local food and waterfalls without worrying about driving.",
     "destacado.volcanes.title": "Volcanoes & Lake Coatepeque",
     "destacado.volcanes.desc": "Travel comfortably to Cerro Verde National Park, Santa Ana Volcano (Ilamatepec), San Salvador Volcano (El Boquerón) and Lake Coatepeque.",
-    "destacado.ciudad.title": "San Salvador City Tour & Mayan Ruins",
-    "destacado.ciudad.desc": "Tours of San Salvador's Historic Center, the National Library (BINAES), Puerta del Diablo and the archaeological sites of Joya de Cerén, Tazumal and San Andrés.",
+    "destacado.ciudad.title": "San Salvador Historic Center City Tour",
+    "destacado.ciudad.desc": "Discover the squares, National Library (BINAES) and iconic buildings of San Salvador's Historic Center.",
     "destacados.cta": "See All Our Tours",
 
     "resenas.title": 'What our passengers say on <span class="text-lime-gradient">Google</span>',
