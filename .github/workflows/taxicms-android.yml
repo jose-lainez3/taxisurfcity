@@ -1,0 +1,76 @@
+name: TaxiCMS Android
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'taxicms-android/**'
+      - '.github/workflows/taxicms-android.yml'
+permissions:
+  contents: write
+concurrency:
+  group: taxicms-android-release
+  cancel-in-progress: false
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      TAXICMS_VERSION_CODE: ${{ github.run_number }}
+      TAXICMS_KEYSTORE_PATH: ${{ runner.temp }}/taxicms-release.p12
+      TAXICMS_KEYSTORE_PASSWORD: ${{ secrets.TAXICMS_KEYSTORE_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+      - name: Android SDK
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Verify debug build
+        run: gradle -p taxicms-android --no-daemon :app:assembleDebug
+      - name: Restore permanent signing key
+        env:
+          KEYSTORE_BASE64: ${{ secrets.TAXICMS_KEYSTORE_BASE64 }}
+        shell: bash
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$TAXICMS_KEYSTORE_PASSWORD" ]; then
+            echo "::error::Configure TAXICMS_KEYSTORE_BASE64 and TAXICMS_KEYSTORE_PASSWORD in GitHub Actions secrets."
+            exit 1
+          fi
+          umask 077
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > "$TAXICMS_KEYSTORE_PATH"
+          keytool -list -keystore "$TAXICMS_KEYSTORE_PATH" -storetype PKCS12 -storepass:env TAXICMS_KEYSTORE_PASSWORD -alias taxicms >/dev/null
+      - name: Build signed release APK
+        run: gradle -p taxicms-android --no-daemon :app:assembleRelease
+      - name: Verify APK signature and prepare artifact
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp taxicms-android/app/build/outputs/apk/release/app-release.apk dist/TaxiCMS.apk
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs dist/TaxiCMS.apk
+          keytool -exportcert -keystore "$TAXICMS_KEYSTORE_PATH" -storetype PKCS12 -storepass:env TAXICMS_KEYSTORE_PASSWORD -alias taxicms -file "$RUNNER_TEMP/taxicms-cert.der"
+          EXPECTED=$(sha256sum "$RUNNER_TEMP/taxicms-cert.der" | cut -d' ' -f1)
+          ACTUAL=$("$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --print-certs dist/TaxiCMS.apk | sed -n 's/^Signer #1 certificate SHA-256 digest: //p')
+          test "$EXPECTED" = "$ACTUAL"
+          (cd dist && sha256sum TaxiCMS.apk > TaxiCMS.apk.sha256)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: TaxiCMS-signed-${{ github.run_number }}
+          path: dist/
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          TAG="taxicms-v$TAXICMS_VERSION_CODE"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "::error::This version has already been released. Start a new workflow run to increment the version."
+            exit 1
+          fi
+          gh release create "$TAG" dist/TaxiCMS.apk dist/TaxiCMS.apk.sha256 --target "$GITHUB_SHA" --title "TaxiCMS 1.0.$TAXICMS_VERSION_CODE" --notes "APK Android firmado. Instalar sobre la versión anterior, sin desinstalar." --latest
+      - name: Remove signing files
+        if: always()
+        run: rm -f "$TAXICMS_KEYSTORE_PATH" "$RUNNER_TEMP/taxicms-cert.der"
