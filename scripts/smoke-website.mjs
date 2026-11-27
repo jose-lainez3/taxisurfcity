@@ -329,13 +329,18 @@ try {
     const data=await page.evaluate(()=>{
       const walker=document.createTreeWalker(document,NodeFilter.SHOW_COMMENT);
       let n,rates=null;while((n=walker.nextNode())){const m=n.data.match(/^\s*CMS:DATA:RATES\s+([\s\S]*?)\s+CMS:DATA:RATES:END\s*$/);if(m){rates=JSON.parse(m[1]);break}}
-      return {rates,rendered:[...document.querySelectorAll(".airport-rate")].map(c=>({id:c.id,price:c.querySelector(".airport-fare>strong").textContent,wa:c.querySelector("a").href})),overflow:Math.max(document.body.scrollWidth,document.documentElement.scrollWidth)-innerWidth}
+      return {rates,rendered:[...document.querySelectorAll(".airport-rate")].map(c=>({id:c.id,price:c.querySelector(".airport-fare>strong").textContent,wa:c.querySelector("a").href,image:c.querySelector(".airport-photo img")?.getAttribute("src")})),overflow:Math.max(document.body.scrollWidth,document.documentElement.scrollWidth)-innerWidth}
     });
     assert.ok(Array.isArray(data.rates),"Missing airport CMS rates");
     const active=data.rates.filter(r=>r.active);
     assert.deepEqual(data.rendered.map(r=>r.id),active.map(r=>r.id),"Airport catalog mismatch");
     assert.deepEqual(data.rendered.map(r=>r.price),active.map(r=>"$"+r.price.toFixed(2)),"Airport displayed fares mismatch");
     assert.ok(data.rendered.every(r=>r.wa.startsWith("https://wa.me/50376401181?text=")),"Airport reservation link invalid");
+    assert.deepEqual(data.rendered.map(r=>r.image),active.map(r=>"/assets/img/"+encodeURIComponent(r.image||"aero.webp")),"Airport photo mismatch");
+    assert.ok(await page.locator(".navbar").isVisible(),"Shared navbar missing");
+    assert.ok(await page.locator(".holiday-navbar-sprigs").count(),"Holiday navigation missing");
+    await page.waitForSelector("#christmas-music-toggle",{timeout:15000});
+    for(const img of await page.locator(".airport-photo img").all()){await img.scrollIntoViewIfNeeded();await img.evaluate(el=>el.decode());assert.ok(await img.evaluate(el=>el.naturalWidth>0),"Airport photo failed to load");}
     assert.ok(data.overflow<=2,"Airport horizontal overflow");
     await page.locator("#langToggle").click();
     assert.equal(await page.locator("html").getAttribute("lang"),"en");
