@@ -153,12 +153,14 @@ async function weatherResearch(question, env, signal) {
   if (!env.WEATHER_API_KEY || !/\b(clima|tiempo (?:hoy|manana|en)|temperatura|pronostico|lluvia|llover|weather|forecast|rain)\b/.test(normalize(question))) return [];
   const q = normalize(question);
   const places = [
-    [/el tunco|surf city|el zonte|la libertad/, "13.493,-89.382"],
+    [/el zonte/, "El Zonte, El Salvador"],
+    [/el tunco|surf city/, "Playa El Tunco, El Salvador"],
+    [/la libertad/, "La Libertad, El Salvador"],
     [/coatepeque/, "13.865,-89.550"],
     [/suchitoto/, "Suchitoto, El Salvador"],
     [/santa ana/, "Santa Ana, El Salvador"],
     [/ataco|ruta de las flores/, "Concepcion de Ataco, El Salvador"],
-    [/san salvador|el salvador|capital/, "San Salvador, El Salvador"]
+    [/san salvador|capital/, "San Salvador, El Salvador"]
   ];
   const place = places.find(([pattern])=>pattern.test(q));
   if (!place) return []; // No silently assume the visitor's location.
@@ -247,13 +249,15 @@ export function travelQuestion(question) {
 export function researchFallbackAnswer(research, language = "es") {
   if (!research.sources.length) return null;
   const english = language.toLowerCase().startsWith("en");
-  const prefix = research.mode === "reference"
+  const prefix = research.mode === "weather"
+    ? (english ? "Current weather data from WeatherAPI.com:" : "Datos meteorológicos de WeatherAPI.com:")
+    : research.mode === "reference"
     ? (english ? "I found these public reference pages. They do not verify current prices or availability:" :
         "Encontré estas referencias públicas. No confirman precios ni disponibilidad actual:")
     : (english ? "These public web sources may help you compare options:" :
         "Estas fuentes públicas pueden ayudarte a comparar opciones:");
   const list = research.sources.slice(0,4)
-    .map((s,i)=> (i+1)+". "+s.title+" — "+s.url).join("\n");
+    .map((s,i)=> (i+1)+". "+s.title+" — "+s.url+(research.mode === "weather" ? "\n"+s.snippet : "")).join("\n");
   return prefix + "\n\n" + list +
     (english ? "\n\nFor a personalized taxi or tour recommendation, ask our team via WhatsApp." :
       "\n\nPara una recomendación personalizada de transporte o tours, consulta a nuestro equipo por WhatsApp.");
