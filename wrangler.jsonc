@@ -1,0 +1,17 @@
+{
+  "name": "taxisurfcity",
+  "main": "worker.mjs",
+  "compatibility_date": "2026-11-27",
+  "assets": {
+    "directory": ".",
+    "binding": "ASSETS",
+    "html_handling": "auto-trailing-slash",
+    "run_worker_first": [
+      "/api/*",
+      "/functions/*"
+    ]
+  },
+  "ai": {
+    "binding": "AI"
+  }
+}
