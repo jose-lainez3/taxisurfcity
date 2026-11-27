@@ -1,6 +1,6 @@
 /**
  * Taxi SurfCity — investigación pública controlada.
- * Tavily (opcional, en Vercel): búsqueda general. Wikimedia (sin clave):
+ * Tavily y Cloudflare Web Search (opcionales): búsqueda general. Wikimedia (sin clave):
  * información enciclopédica/de viajes, con cuotas y atribución.
  * No rastrea URLs del usuario ni trata textos externos como instrucciones.
  */
@@ -55,10 +55,13 @@ async function fetchPublicJson(url, init = {}, signal) {
 export function needsPublicResearch(input) {
   const text = normalize(input).trim();
   if (!text || /^(hola|hello|hi|gracias|thanks|ok|vale|buenas|adios|goodbye)[!.\s]*$/.test(text)) return false;
-  if (/\b(cotiz|reserv|precio de nuestro|cuanto cuesta nuestro|mi pedido|disponibilidad de taxi)\b/.test(text) &&
-      !/\b(recomend|buscar|encontrar|investig|lugares|que visitar|where)\b/.test(text)) return false;
-  return /\b(recomiend\w*|recomend\w*|busca\w*|encuentra\w*|investig\w*|visitar|conocer|hacer|lugares?|atracciones?|destinos?|playas?|restaurantes?|hoteles?|volcanes?|ciudades?|historia|noticias?|hoy|esta semana|actual\w*|recient\w*|turismo|rutas?|viajes?|vacaciones|tours?|pueblos?|museos?|donde|where|what|best|nearby|visit|travel|recommend\w*|search|weather|clima)\b/.test(text) ||
-    /[?¿]/.test(text) && /\b(el salvador|surf city|el tunco|el zonte|san salvador|santa ana|coatepeque|suchitoto|ruta de las flores)\b/.test(text);
+  // Do not send booking details or obvious personal data to search providers.
+  if (/\b(cotiz\w*|reserv\w*|booking|book a taxi|mi pedido|mi telefono|mi direccion|my address|my phone|pasaporte|passport|contrasena|password)\b/.test(text) ||
+      /[\w.+-]+@[\w.-]+\.[a-z]{2,}|\b\d{7,}\b|\b(?:\d[\s()-]*){8,}\b/.test(text)) return false;
+  return /\b(recomiend\w*|recomend\w*|busca\w*|investig\w*|encuentra\w*|internet|web|noticias?|hoy|manana|actual\w*|recient\w*|ultima\w*|precio\w*|clima|temperatura|pronostico|lluvia|weather|forecast|latest|news|today|tomorrow|search|visit|travel|recommend\w*|donde|where|what|quien|cual|cuando|historia|lugares?|destinos?|restaurantes?|hoteles?|turismo|tours?|playas?|volcanes?|museos?)\b/.test(text) || /[?¿]/.test(text);
+}
+export function fullWebAvailable(env) {
+  return Boolean(env.TAVILY_API_KEY) || (env.CLOUDFLARE_WEB_SEARCH === "true" && typeof env.AI?.websearch === "function");
 }
 
 function knowledgeQuery(question) {
@@ -80,9 +83,23 @@ function knowledgeQuery(question) {
   return pick ? pick[1] : tidy(question, 120);
 }
 function completeQuery(question) {
-  const core = tidy(question, 230);
-  return /\b(el salvador|surf city|el tunco|el zonte|san salvador|santa ana)\b/i.test(normalize(core))
-    ? core : core + " El Salvador";
+  const core = tidy(question, 300);
+  const local = /\b(surf city|el tunco|el zonte|ruta de las flores|coatepeque|suchitoto|joya de ceren)\b/i.test(normalize(core));
+  return local && !/el salvador/i.test(core) ? core + " El Salvador" : core;
+}
+async function cloudflareSearch(question, env, signal) {
+  if (signal?.aborted) return [];
+  let timer;
+  try {
+    const response = await Promise.race([
+      env.AI.websearch({gatewayId:env.SEARCH_GATEWAY_ID || "default",query:completeQuery(question),provider:"ceramic",limit:5}),
+      new Promise((_,reject)=>{timer=setTimeout(()=>reject(new Error("SEARCH_TIMEOUT")),TIMEOUT_MS);})
+    ]);
+    if (!response.ok) throw new Error("search unavailable");
+    const result = await response.json();
+    return (result.items || []).slice(0,MAX_SOURCES)
+      .map(r=>verifiedSource(r.title,r.url,r.description,"cloudflare")).filter(Boolean);
+  } finally {clearTimeout(timer);}
 }
 async function tavilySearch(question, apiKey, signal) {
   const response = await fetchPublicJson("https://api.tavily.com/search", {
@@ -142,6 +159,12 @@ export async function researchPublicWeb(question, env, signal) {
     } catch {
       // Cuota, red o clave: información de Wikimedia como respaldo.
     }
+  }
+  if (env.CLOUDFLARE_WEB_SEARCH === "true" && typeof env.AI?.websearch === "function" && !signal?.aborted) {
+    try {
+      const sources = deduplicate(await cloudflareSearch(question,env,signal));
+      if (sources.length) return {sources,mode:"search",checkedAt};
+    } catch { /* Fall back to public references. */ }
   }
   const query = knowledgeQuery(question);
   const spanish = !/\b(what|where|which|best|recommend|visit|travel|places)\b/i.test(question);
