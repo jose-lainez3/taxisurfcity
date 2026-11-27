@@ -13,7 +13,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     env:
       TAXICMS_VERSION_CODE: ${{ github.run_number }}
       TAXICMS_KEYSTORE_PASSWORD: ${{ secrets.TAXICMS_KEYSTORE_PASSWORD }}
@@ -26,8 +26,19 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
-      - name: Android SDK
-        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-35 build-tools;35.0.0'
+          accept-android-sdk-licenses: 'true'
+          log-accepted-android-sdk-licenses: 'false'
+      - name: Verify Android SDK
+        shell: bash
+        run: |
+          command -v sdkmanager
+          sdkmanager --version
+          test -f "$ANDROID_HOME/platforms/android-35/android.jar"
+          test -x "$ANDROID_HOME/build-tools/35.0.0/apksigner"
       - name: Set signing key path
         run: echo "TAXICMS_KEYSTORE_PATH=$RUNNER_TEMP/taxicms-release.p12" >> "$GITHUB_ENV"
       - name: Verify debug build
