@@ -1,5 +1,5 @@
-/* Navidad SurfCity — nieve por capas y música. Versión ligera: solo se anima
-   transform (compositor), sin canvas, sin RAF y sin filtros por fotograma. */
+/* Navidad SurfCity — nieve por capas y música. Solo transform y opacidad,
+   sin canvas, RAF ni filtros por fotograma. */
 body.site-christmas .christmas-snow-overlay {
   position: fixed;
   inset: 0;
@@ -46,10 +46,12 @@ body.site-christmas .christmas-snowflake.is-near {
   will-change: transform;
 }
 @keyframes christmas-snow-drift {
-  0%   {transform:translate3d(var(--snow-x-start,0px),-16vh,0) rotate(0deg)}
+  0%   {opacity:0;transform:translate3d(var(--snow-x-start,0px),-16vh,0) rotate(0deg)}
+  12%  {opacity:var(--snow-opacity,.55)}
   29%  {transform:translate3d(var(--snow-x-mid1,15px),25vh,0) rotate(var(--snow-spin-mid1,0deg))}
   66%  {transform:translate3d(var(--snow-x-mid2,-10px),72vh,0) rotate(var(--snow-spin-mid2,0deg))}
-  100% {transform:translate3d(var(--snow-drift,0px),116vh,0) rotate(var(--snow-spin,0deg))}
+  88%  {opacity:var(--snow-opacity,.55)}
+  100% {opacity:0;transform:translate3d(var(--snow-drift,0px),116vh,0) rotate(var(--snow-spin,0deg))}
 }
 html.fx-paused body.site-christmas .christmas-snowflake,
 body.site-christmas.christmas-snow-paused .christmas-snowflake,
