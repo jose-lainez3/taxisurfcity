@@ -19,6 +19,17 @@
       (navigator.deviceMemory && navigator.deviceMemory <= 3) ||
       (conn && (conn.saveData || /2g/.test(conn.effectiveType || ""))));
     document.body.classList.toggle("christmas-low-power", lowPower);
+    document.body.classList.toggle("christmas-snow-paused", document.hidden);
+
+    // Two static light textures cross-fade in CSS; no per-bulb timers.
+    const navbar = document.querySelector(".navbar");
+    if (navbar && !navbar.querySelector(".holiday-light-string")) {
+      const lights = document.createElement("span");
+      lights.className = "holiday-light-string";
+      lights.setAttribute("aria-hidden", "true");
+      navbar.appendChild(lights);
+      navbar.classList.add("holiday-lights-ready");
+    }
     let wantsMusic = true;
     let snowPaused = false;
     let snowOverlay = null;
@@ -49,15 +60,17 @@
         const kind = crystal ? "is-crystal" : (far ? "is-soft" : (i % 11 === 0 ? "is-gold" : ""));
         const flake = document.createElement("span");
         flake.className = "christmas-snowflake" + (kind ? " " + kind : "") + (near ? " is-near" : "");
-        const duration = near ? 12 + random() * 10 : far ? 27 + random() * 13 : 18 + random() * 15;
-        const size = crystal ? (near ? 16 + random() * 7 : 9 + random() * 7)
-                     : near ? 6 + random() * 5 : far ? 2 + random() * 2.5 : 3.5 + random() * 4;
-        const opacity = crystal ? (.46 + random() * .31) :
-                        near ? (.62 + random() * .27) : far ? (.26 + random() * .25) : (.35 + random() * .34);
-        const drift = Math.round(-120 + random() * 240);
-        const sway = Math.round(16 + random() * 49);
+        const duration = near ? 16 + random() * 10 : far ? 30 + random() * 12 : 21 + random() * 12;
+        const size = crystal ? (near ? 12 + random() * 6 : 8 + random() * 6)
+                     : near ? 5 + random() * 4 : far ? 2 + random() * 2 : 3 + random() * 3.5;
+        const opacity = crystal ? (.38 + random() * .30) :
+                        near ? (.49 + random() * .24) : far ? (.22 + random() * .25) : (.33 + random() * .30);
+        const drift = Math.round(-80 + random() * 160);
+        const sway = Math.round(12 + random() * 30);
         const spin = Math.round(-115 + random() * 230);
-        flake.style.setProperty("--snow-left", (random() * 99).toFixed(2) + "%");
+        const visibleSlots = compactQuery.matches ? Math.min(count, 14) : count;
+        const slot = (i % visibleSlots + random()) / visibleSlots;
+        flake.style.setProperty("--snow-left", (slot * 98 + 1).toFixed(2) + "%");
         flake.style.setProperty("--snow-size", size.toFixed(1) + "px");
         flake.style.setProperty("--snow-opacity", opacity.toFixed(2));
         flake.style.setProperty("--snow-drift", drift + "px");
