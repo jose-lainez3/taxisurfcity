@@ -347,14 +347,14 @@
     var sendBtn = document.getElementById("cbSend");
     var modeEl = document.getElementById("cbMode");
     var aiEndpoint = typeof window.TAXISURFCITY_AI_ENDPOINT === "string" &&
-      /^https:\/\//.test(window.TAXISURFCITY_AI_ENDPOINT)
+      window.TAXISURFCITY_AI_ENDPOINT === "/api/assistant"
         ? window.TAXISURFCITY_AI_ENDPOINT : "/api/assistant";
     var aiReady = false;
     var aiSearchEnabled = false;
     var aiPublicResearch = false;
     var aiCheckedAt = 0;
     var aiChecking = null;
-    var aiDetail = "Verificando servicio Gemini...";
+    var aiDetail = "Verificando servicio de IA...";
     var modeDetail = document.getElementById("cbModeDetail");
     var retryButton = win.querySelector(".cb-retry");
     var conversation = [];
@@ -377,7 +377,7 @@
       if (!force && aiCheckedAt && Date.now() - aiCheckedAt < 30000) return aiReady;
       aiChecking = (async function() {
         retryButton.disabled = true;
-        modeEl.textContent = "Comprobando Gemini...";
+        modeEl.textContent = "Comprobando conexión IA...";
         var controller = new AbortController();
         var timeout = setTimeout(function() { controller.abort(); }, 10000);
         try {
@@ -386,13 +386,13 @@
           });
           aiReady = false;
           if (response.status === 401 || response.status === 403) {
-            aiDetail = "El servidor bloquea el acceso (HTTP " + response.status + "). Revisa Deployment Protection y permisos de Vercel.";
+            aiDetail = "El servidor bloquea el acceso (HTTP " + response.status + "). Revisa los permisos de Cloudflare.";
           } else if (response.status === 404) {
-            aiDetail = "La función /api/assistant no está publicada (HTTP 404). Revisa Root Directory y Deployments en Vercel.";
+            aiDetail = "La función /api/assistant no está publicada (HTTP 404). Revisa el despliegue de Pages Functions en Cloudflare.";
           } else if (!response.ok) {
-            aiDetail = "El servidor respondió con HTTP " + response.status + ". Revisa los logs de Vercel.";
+            aiDetail = "El servidor respondió con HTTP " + response.status + ". Revisa los registros de Cloudflare.";
           } else if (!(response.headers.get("content-type") || "").includes("application/json")) {
-            aiDetail = "La dirección devuelve una página HTML en vez de la API JSON. Revisa el proyecto y sus rutas en Vercel.";
+            aiDetail = "La dirección devuelve una página HTML en vez de la API JSON. Revisa las rutas de Pages Functions.";
           } else {
             var result = await response.json();
             aiReady = result.ready === true;
@@ -400,13 +400,13 @@
             aiPublicResearch = result.publicResearch === true;
             aiDetail = aiReady
               ? ""
-              : "La API responde, pero GEMINI_API_KEY no está configurada. Añádela a Vercel (Production) y vuelve a desplegar.";
+              : "La API responde, pero falta habilitar el servicio de IA en Cloudflare.";
           }
         } catch (error) {
           aiReady = false;
           aiDetail = error && error.name === "AbortError"
-            ? "La API tardó demasiado en responder. Revisa que el despliegue esté en Ready."
-            : "No se pudo contactar la API. Comprueba la dirección y que Vercel permita llamadas CORS desde este dominio.";
+            ? "La API tardó demasiado en responder. Reintenta en unos segundos."
+            : "No se pudo contactar la API. Comprueba la conexión con Cloudflare.";
         } finally {
           clearTimeout(timeout);
           aiCheckedAt = Date.now();
@@ -624,7 +624,7 @@
             addSources(result.sources);
             if (result.aiGenerated === false) {
               addMsg(result.warning ||
-                "Gemini está temporalmente indisponible. Mostré referencias públicas para que las puedas consultar directamente.",
+                "El proveedor de IA está temporalmente indisponible. Mostré referencias públicas para que las puedas consultar directamente.",
                 "bot", true);
             }
             if (!result.searchedWeb && /\b(hoy|mañana|esta semana|últimas|recientes?|noticias?|clima|pronóstico|actualmente|today|tomorrow|latest|news|weather|forecast)\b/i.test(text)) {
@@ -643,14 +643,14 @@
               return;
             }
             var statusText = error.status ? " (HTTP " + error.status + ")" : "";
-            addMsg("No pude obtener respuesta de Gemini" + statusText + ": " + String(error.message || "Error de conexión") + ". No voy a presentar respuestas locales como si fueran resultados de IA. Puedes reintentar con ↻ o contactar al equipo.", "bot", true);
+            addMsg("No pude obtener respuesta del servicio de IA" + statusText + ": " + String(error.message || "Error de conexión") + ". No voy a presentar respuestas locales como si fueran resultados de IA. Puedes reintentar con ↻ o contactar al equipo.", "bot", true);
             addWhatsappCta("Hola, necesito ayuda con: " + text);
             return;
           }
         } else {
           hideTyping();
           if (!offlineNoticeShown) {
-            addMsg("Estoy usando respuestas locales porque Gemini no está disponible: " + aiDetail + " Puedes volver a probar con el botón ↻ del encabezado.", "bot", true);
+            addMsg("Estoy usando respuestas locales porque el servicio de IA no está disponible: " + aiDetail + " Puedes volver a probar con el botón ↻ del encabezado.", "bot", true);
             offlineNoticeShown = true;
           }
         }
