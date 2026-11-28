@@ -185,7 +185,7 @@
     "t.ben.3.desc": "Drivers with deep knowledge of the country's best routes and destinations.",
 
     "t.cat.eyebrow": "Excursion catalog",
-    "t.cat.title": "6 Private Tours from Surf City and El Tunco",
+    "t.cat.title": "Explore our private tours and excursions in El Salvador",
     "t.cat.desc": "Depart from El Tunco, El Zonte, Surf City, San Salvador or the airport. Compare destinations, approximate tour lengths and itineraries, then request a quote on WhatsApp.",
 
     "t.toggle": "View details",
